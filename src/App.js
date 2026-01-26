@@ -1,10 +1,11 @@
-import './styles/App.css';
-
+import Menu from './components/Menu';
+import Contenido from './components/Contenido';
 function App() {
   return (
-    <div className='ctnGeneral'>
-      Hola mundo
-    </div>
+    <>
+      <Menu/>
+      <Contenido/>
+    </>
   );
 }
 

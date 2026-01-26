@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo API Logística</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        button {
+            margin: 4px;
+            padding: 6px 10px;
+            cursor: pointer;
+        }
+
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ccc;
+            max-height: 300px;
+            overflow: auto;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #999;
+            padding: 6px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        th {
+            background: #eee;
+        }
+
+        h3 {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Demo API Logística</h2>
+
+<div>
+    <button onclick="login()">Login</button>
+    <button onclick="getData('tipos-item')">Tipos Item</button>
+    <button onclick="getData('categorias-item')">Categorías Item</button>
+    <button onclick="getData('unidades-medida')">Unidades Medida</button>
+    <button onclick="getData('proveedores')">Proveedores</button>
+    <button onclick="getData('actividades')">Actividades</button>
+    <button onclick="getData('items')">Items</button>
+</div>
+
+<h3>Respuesta JSON (debug)</h3>
+<pre id="output">Esperando acción...</pre>
+
+<h3>Tablas</h3>
+<div id="tables"></div>
+
+<script>
+const API_BASE = 'https://comerciald4.sg-host.com/api';
+const API_KEY  = 'UPCH2026';
+
+function setOutput(data) {
+    document.getElementById('output').textContent =
+        JSON.stringify(data, null, 2);
+}
+
+function renderTable(endpoint, data) {
+    if (!Array.isArray(data) || data.length === 0) {
+        return;
+    }
+
+    const container = document.getElementById('tables');
+
+    const title = document.createElement('h3');
+    title.textContent = endpoint;
+
+    const table = document.createElement('table');
+
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+
+    Object.keys(data[0]).forEach(key => {
+        const th = document.createElement('th');
+        th.textContent = key;
+        headerRow.appendChild(th);
+    });
+
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+
+    data.forEach(row => {
+        const tr = document.createElement('tr');
+        Object.values(row).forEach(value => {
+            const td = document.createElement('td');
+            td.textContent = value;
+            tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+    });
+
+    table.appendChild(tbody);
+
+    container.appendChild(title);
+    container.appendChild(table);
+}
+
+async function login() {
+    try {
+        const response = await fetch(`${API_BASE}/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-API-KEY': API_KEY
+            },
+            body: JSON.stringify({
+                usuario: 'admin',
+                password: 'upch2026'
+            })
+        });
+
+        const data = await response.json();
+        setOutput(data);
+
+    } catch (error) {
+        setOutput({ error: error.message });
+    }
+}
+
+async function getData(endpoint) {
+    try {
+        const response = await fetch(`${API_BASE}/${endpoint}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-API-KEY': API_KEY
+            }
+        });
+
+        const data = await response.json();
+        setOutput(data);
+
+        if (data.ok && Array.isArray(data.data)) {
+            renderTable(endpoint, data.data);
+        }
+
+    } catch (error) {
+        setOutput({ error: error.message });
+    }
+}
+</script>
+
+</body>
+</html>
