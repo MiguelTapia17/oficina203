@@ -1,10 +1,14 @@
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import "../styles/dashboard.css"
+import Menu from "../components/Menu";
+import Contenido from "../components/Contenido";
 
-function Dashboard() {
-  const { user } = useContext(AuthContext);
-
-  return <h1>Bienvenido {user.name}</h1>;
+export default function Dashboard() {
+  return (
+    <div className="ctnDashboard">
+      <div className="dashboard">
+        <Menu />
+        <Contenido />
+      </div>
+    </div>
+  );
 }
-
-export default Dashboard;

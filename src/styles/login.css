@@ -1,0 +1,213 @@
+*{
+    font-family: 'poppins', sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    text-decoration: none;
+    padding: 0;
+}
+:root {
+    --primary:#FF0C29;
+    --secundary: #971A36;
+    --azul: #2663D9;
+    --rojo: #FF0C29;
+    --vino: #971A36;
+    --txt: #000;
+    --black: #000;
+    --white: #fff;
+    --gray: #eee;
+    --gray-two: #e0e0e0;
+    --formulario-primario: #8d8d8d;
+    --formulario-borde: black;
+    --gestion: #2663D9;
+    --salud: #d73dff;
+    --ingenieria: #35ef6a;
+    --educacion: #00c99c;
+    --ciencia: #4ac0ff;
+}
+
+.ctnLogin{
+    height: 100vh;
+    width: 100%;
+    position: relative;
+    /* ELIMINAR SI NO SIRVE */
+    --s: 200px; /* control the size */
+    --c1: #1d1d1d;
+    --c2: #4e4f51;
+    --c3: #3c3c3c;
+
+    background: repeating-conic-gradient(
+        from 30deg,
+        #0000 0 120deg,
+        var(--c3) 0 180deg
+        )
+        calc(0.5 * var(--s)) calc(0.5 * var(--s) * 0.577),
+    repeating-conic-gradient(
+        from 30deg,
+        var(--c1) 0 60deg,
+        var(--c2) 0 120deg,
+        var(--c3) 0 180deg
+    );
+    background-size: var(--s) calc(var(--s) * 0.577);
+}
+
+
+.login{
+    background-color: white;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    width: 22rem;
+    max-width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 0 0.8rem #ddd;
+    border-radius: 1rem;
+}
+
+input:focus {
+  outline: none;
+}
+input:-internal-autofill-selected {
+    background-color: white !important;
+}
+.login button{
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    border: none;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+}
+.errorTxt{
+    color: var(--primary);
+    position: absolute;
+    bottom: -2.5rem;
+}
+/* FORMULARIO */
+.double__form {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+
+.input-field {
+    position: relative;
+    width: 100%;
+}
+
+.input-field input,
+.input-field select {
+    width: 100%;
+    border-radius: 0.3rem;
+    padding: 0.5rem 0.8rem;
+    border: 1px solid #8d8d8d;
+    font-size: 0.8rem;
+    box-sizing: border-box;
+    background-color: var(--white);
+    height: 2.4rem;
+    /* Altura consistente */
+    line-height: 1rem;
+    /* evita que el texto verticalmente se desplace */
+}
+
+
+.input-field select:invalid {
+    color: var(--formulario-primario);
+}
+
+/* FORMULARIO INVALIDO */
+
+/* ❌ INPUT inválido (con texto ingresado pero no válido) */
+.input-field input:invalid:not(:focus):not(:placeholder-shown) {
+    border-color: var(--rojo);
+}
+
+/* ❌ LABEL rojo si el input es inválido y hay algo escrito */
+.input-field input:invalid:not(:focus):not(:placeholder-shown)~label {
+    top: 0;
+    left: 0.5rem;
+    font-size: 0.7rem;
+    color: var(--rojo);
+    font-weight: 600;
+    background-color: #fff;
+    padding: 1px 5px;
+    white-space: nowrap;
+    border-radius: 0.5rem;
+}
+/* FIN DE FORMULARIO INVALIDO */
+
+
+
+.input-field input.invalid,
+.input-field select.invalid {
+    border: 1px solid var(--rojo) !important;
+}
+
+.input-field input.invalid~label,
+.input-field select.invalid~label {
+    top: 0;
+    left: 0.5rem;
+    font-size: 0.7rem;
+    color: var(--rojo);
+    font-weight: 600;
+    background-color: #fff;
+    padding: 1px 5px;
+    white-space: nowrap;
+    border-radius: 0.5rem;
+}
+
+.input-field label {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    color: var(--formulario-primario);
+    font-size: 0.9rem;
+    transform: translate(0, -50%);
+    pointer-events: none;
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.input-field select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23000000" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.3rem center;
+    background-size: 1rem;
+    padding-right: 2.2rem;
+    color: black;
+    /* color de texto por defecto */
+}
+
+/* FLECHA */
+
+.input-field input:focus,
+.input-field input:valid,
+.input-field select:focus,
+.input-field select:valid {
+    outline: none;
+    border: 1px solid #8d8d8d;
+}
+
+.input-field input:focus~label,
+.input-field input:valid~label,
+.input-field select:focus~label,
+.input-field select:valid~label {
+    white-space: nowrap;
+    border-radius: 0.5rem;
+    background-color: #fff;
+    padding: 1px 5px;
+    top: 0;
+    left: 0.5rem;
+    font-size: 0.7rem;
+    color: var(--formulario-primario);
+    font-weight: 600;
+}

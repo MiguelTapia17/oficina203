@@ -1,20 +1,8 @@
-*{
-  margin: 0;
-  padding: 0;
-  text-decoration: none;
-  font-family: "poppins",sans-serif;
-  box-sizing: border-box;
-}
+
 body{
   background-color: black;
 }
 #root{
-  /* display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100vh;
-  background-color: black; */
   width: 80rem;
   height: 50rem;
   max-width: 95%;
@@ -29,10 +17,8 @@ body{
   padding: 2rem;
 }
 
-
 .ctnGeneral{
-  width: 80rem;
-  height: 50rem;
-  max-width: 95%;
-  max-height: 95vh;
+  width: 100%;
+  height: 100%;
+  display: flex;
 }

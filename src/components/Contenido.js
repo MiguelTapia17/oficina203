@@ -1,10 +1,13 @@
-// import "../styles/menu.css";
-function Contenido() {
+import '../styles/contenido.css';
+import Inicio from "../components/Inicio";
+import Inventario from '../components/Inventario';
+
+export default function Contenido() {
+
   return (
-    <>
-        Contenido 
-    </>
+    <div className="ctnContenido">
+      {/* <Inicio/> */}
+      <Inventario/>
+    </div>
   );
 }
-
-export default Contenido;

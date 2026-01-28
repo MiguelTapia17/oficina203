@@ -1,34 +1,58 @@
-import { useContext, useState } from "react";
-import { AuthContext } from "../context/AuthContext";
+import '../styles/login.css'
+// import { SVG, IMAGES } from "../assets/imgSvg";
+// import { SVG } from "../assets/imgSvg";
 
-function Login() {
-  const { login } = useContext(AuthContext);
-  const [email, setEmail] = useState("");
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { apiLogin } from "../services/api";
+import { useAuth } from "../context/AuthContext";
+
+export default function Login() {
+  const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
+  
+  const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
-    const res = await fetch("https://tudominio.com/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
+  const handleLogin = async () => {
+    setError("");
 
-    const data = await res.json();
+    const response = await apiLogin(usuario, password);
 
-    if (data.token) {
-      login(data.user, data.token);
+    if (!response.ok) {
+      setError("Credenciales incorrectas");
+      return;
     }
+
+    // ✅ AQUÍ VA (cuando el login ya es correcto)
+    localStorage.setItem("session", "true");
+    localStorage.setItem("admin", JSON.stringify(response.data));
+
+    // Flag simple para AuthContext
+    const token = "logged";
+    login(token);
+
+    navigate("/dashboard");
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input onChange={e => setEmail(e.target.value)} />
-      <input type="password" onChange={e => setPassword(e.target.value)} />
-      <button>Login</button>
-    </form>
+    <div className='ctnLogin'>
+      <div className="login">
+        <h2>Login</h2>
+        <div className='input-field'>
+          <input required placeholder="" value={usuario} autocomplete="off" onChange={(e) => setUsuario(e.target.value)}/>
+          <label>Usuario</label>
+        </div>
+        <div className='input-field'>
+          <input type="password" required placeholder="" autocomplete="off" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <label>Contraseña</label>
+        </div>
+        <button onClick={handleLogin}>Ingresar</button>
+        {error && <p className='errorTxt'>{error}</p>}
+      </div>      
+    </div>
+
   );
 }
-
-export default Login;

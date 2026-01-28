@@ -1,39 +1,38 @@
-import { createContext, useState, useEffect } from "react";
-import { authFetch } from "../services/api";
+/**
+ * Contexto de autenticación.
+ * Guarda si el usuario está logueado y expone funciones de login/logout.
+ */
 
-export const AuthContext = createContext();
+import { createContext, useContext, useState } from "react";
+
+const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // Estado principal de autenticación
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem("token")
+  );
 
-  const login = (userData, token) => {
-    setUser(userData);
+  // Guarda sesión
+  const login = (token) => {
     localStorage.setItem("token", token);
+    setIsAuthenticated(true);
   };
 
+  // Cierra sesión
   const logout = () => {
-    setUser(null);
     localStorage.removeItem("token");
+    setIsAuthenticated(false);
   };
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      authFetch("/api/me")
-        .then(res => res.json())
-        .then(user => setUser(user))
-        .catch(() => logout())
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
-  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
+}
+
+// Hook para consumir el contexto más fácil
+export function useAuth() {
+  return useContext(AuthContext);
 }
