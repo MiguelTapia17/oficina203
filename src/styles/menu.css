@@ -7,7 +7,8 @@
     height: 100%;
     gap: 1rem;
     padding: 2rem;
-    background-color: #F8F8FA;
+    background: var(--menu1);
+    /* transition: background 5s ease-in-out; */
 }
 .ctnMenu .logo{
     width: 12rem;
@@ -30,14 +31,16 @@
     line-height: 1;
     font-weight: 500;
     background: none;
+    color: var(--menuTxt);
 }
+
 .ctnMenu button.active{
     background: var(--primary);
-    color: white;
+    color: #fff;
     font-weight: 700;
 }
 .ctnMenu button .icon{
-    fill: var(--primary);
+    fill: var(--primarySVG);
     min-width: 24px;
     min-height: 24px;
 }
@@ -52,80 +55,82 @@
 }
 
 /* SOL Y LUNA */
-/* The switch - the box around the slider */
-.switch {
-  font-size: 17px;
+
+.themeToggle {
+  color: var(--primary);
+  width: 24px;
+}
+
+.st-sunMoonThemeToggleBtn {
   position: relative;
-  display: inline-block;
-  width: 3.5em;
-  height: 2em;
-}
-
-/* Hide default HTML checkbox */
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* The slider */
-.slider {
-  position: absolute;
   cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #223243;
-  transition: .4s;
-  border-radius: 30px;
 }
 
-.slider:before {
+.st-sunMoonThemeToggleBtn .themeToggleInput {
+  opacity: 0;
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+.st-sunMoonThemeToggleBtn svg {
   position: absolute;
-  content: "";
-  height: 1.4em;
-  width: 1.4em;
-  border-radius: 20px;
-  left: 0.3em;
-  bottom: 0.3em;
-  background-color: #223243;
-  box-shadow: inset 2px -2px 0 1.8px #fff;
-  transition: .4s;
-  animation: anima1 0.3s linear;
+  left: 0;
+  width:  100%;
+  height: auto;
+  transition: transform 0.4s ease;
+  transform: rotate(40deg);
 }
 
-@keyframes anima1 {
+.st-sunMoonThemeToggleBtn svg .sunMoon {
+  transform-origin: center center;
+  transition: inherit;
+  transform: scale(1);
+}
+
+.st-sunMoonThemeToggleBtn svg .sunRay {
+  transform-origin: center center;
+  transform: scale(0);
+}
+
+.st-sunMoonThemeToggleBtn svg mask > circle {
+  transition: transform 0.64s cubic-bezier(0.41, 0.64, 0.32, 1.575);
+  transform: translate(0px, 0px);
+}
+
+.st-sunMoonThemeToggleBtn svg .sunRay2 {
+  animation-delay: 0.05s !important;
+}
+.st-sunMoonThemeToggleBtn svg .sunRay3 {
+  animation-delay: 0.1s !important;
+}
+.st-sunMoonThemeToggleBtn svg .sunRay4 {
+  animation-delay: 0.17s !important;
+}
+.st-sunMoonThemeToggleBtn svg .sunRay5 {
+  animation-delay: 0.25s !important;
+}
+.st-sunMoonThemeToggleBtn svg .sunRay5 {
+  animation-delay: 0.29s !important;
+}
+
+.st-sunMoonThemeToggleBtn .themeToggleInput:checked + svg {
+  transform: rotate(90deg);
+}
+.st-sunMoonThemeToggleBtn .themeToggleInput:checked + svg mask > circle {
+  transform: translate(16px, -3px);
+}
+.st-sunMoonThemeToggleBtn .themeToggleInput:checked + svg .sunMoon {
+  transform: scale(0.55);
+}
+.st-sunMoonThemeToggleBtn .themeToggleInput:checked + svg .sunRay {
+  animation: showRay1832 0.4s ease 0s 1 forwards;
+}
+
+@keyframes showRay1832 {
   0% {
-    transform: translateX(1.5em);
+    transform: scale(0);
   }
-
-  80% {
-    transform: translateX(-0.3em);
-  }
-
   100% {
-    transform: translateX(0em);
-  }
-}
-
-.switch input:checked + .slider:before {
-  background-color: yellow;
-  box-shadow: none;
-  transform: translateX(1.5em);
-  animation: anima 0.3s linear;
-}
-
-@keyframes anima {
-  0% {
-    transform: translateX(0px)
-  }
-
-  80% {
-    transform: translateX(1.6em)
-  }
-
-  100% {
-    transform: translateX(1.4em)
+    transform: scale(1);
   }
 }

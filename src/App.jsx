@@ -28,10 +28,3 @@ export default function App() {
     </BrowserRouter>
   );
 }
-/*
-App.js: decide qué se ve primero (Login o Dashboard)
-AuthContext: guarda si el usuario está logueado
-Login.js: hace la consulta /login
-Dashboard.js: muestra la app ya logueado
-api.js: todas las llamadas a la API (una sola fuente)
-Menu / Contenido: UI, no lógica*/

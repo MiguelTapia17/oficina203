@@ -23,8 +23,23 @@
     --ingenieria: #35ef6a;
     --educacion: #00c99c;
     --ciencia: #4ac0ff;
+    
+    /* tema white */
+    --menu1: #efefef;
+    --contenido: #fff;
+    --menuTxt: black;
+    --primarySVG: #FF0C29;
 }
-
+html[data-theme="dark"]{
+    /* TEMA DARK */
+    --primarySVG: #FF0C29;
+    /* MENU IZQUIERDA */
+    /* --menu1: linear-gradient( -90deg, #971A36 0%, #7A1F33 100%); */
+    --menu1: linear-gradient( 180deg, #B1122A 0%, #971A36 38%, #6F1628 70%, #2A0B13 100%);
+    --menuTxt: #fff;
+    /* --contenido: linear-gradient( 90deg, #7A1F33 0%, #2B0F16 100%); */
+    --contenido: #1E1216;
+}
 .ctnLogin{
     height: 100vh;
     width: 100%;

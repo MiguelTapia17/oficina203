@@ -1,0 +1,26 @@
+.tipoM p{
+  text-align: center;
+  font-weight: 400;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+}
+.tipoM.merma p{
+  background-color: #FDECEC; /* fondo claro */
+  border: 1px solid #E4142C; /* borde */
+  color: #8B1D2C;
+}
+.tipoM.entrada p{
+  background-color: #d4f5e6; /* fondo claro */
+  border: 1px solid #129b62; /* borde */
+  color: #1F5E46;
+}
+.tipoM.entrega p{
+  background-color: #EAF3FF; /* fondo claro */
+  border: 1px solid #2F80ED; /* borde */
+  color: #1C4E8A;
+}
+.tipoM.sobrante p{
+  background-color: #FFF6DB; /* fondo claro */
+  border: 1px solid #F2B705; /* borde */
+  color: #7A5A00;
+}

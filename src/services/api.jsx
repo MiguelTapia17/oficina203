@@ -1,8 +1,3 @@
-/**
- * Servicio centralizado de la API Logística
- * Aquí se definen todas las llamadas HTTP
- */
-
 const API_BASE = "https://comerciald4.sg-host.com/api";
 const API_KEY = "UPCH2026";
 
@@ -36,12 +31,3 @@ export async function apiGet(endpoint) {
   
   return response.json();
 }
-
-/**
- * Llamada a la API para obtener las categorías
- */
-// export async function apiGetCategorias() {
-//   const response = await apiGet("categorias");  // 'categorias' es el endpoint que asumo tienes
-//   return response.data; 
-// }
-
