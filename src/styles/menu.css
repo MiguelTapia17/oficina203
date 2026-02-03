@@ -26,14 +26,46 @@
     border: none;
     cursor: pointer;
     display: flex;
-    gap: 0.8rem;
+    gap: 0.7rem;
     align-items: center;
     line-height: 1;
     font-weight: 500;
     background: none;
     color: var(--menuTxt);
 }
-
+.ctnUsuario{
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: start;
+  background-color: white;
+  padding: 10px;
+  border-radius: 1rem;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.ctnUsuario .iconUser{
+  width:  3rem;
+  height: 3rem;
+  border: 2px solid #dedede;
+  border-radius: 100%;
+  fill: #dedede;
+}
+.ctnUsuario .ctnTxt {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 0.1rem;
+}
+.ctnUsuario .ctnTxt .name{
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+.ctnUsuario .ctnTxt .rol{
+  font-size: 0.8rem;
+  line-height: 1.1;
+}
 .ctnMenu button.active{
     background: var(--primary);
     color: #fff;

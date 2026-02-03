@@ -11,8 +11,6 @@ export default function Inicio() {
         </div>
         <div className="item">
         </div>
-        <div className="item">
-        </div>
       </div>
       <div className="segundoNivel">
         <div className="ctnHistorial">

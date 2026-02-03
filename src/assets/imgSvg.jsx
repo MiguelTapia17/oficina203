@@ -8,6 +8,7 @@ import { ReactComponent as Dashboard } from "./svg/dashboard.svg";
 import { ReactComponent as Settings } from "./svg/settings.svg";
 import { ReactComponent as Tema } from "./svg/tema.svg";
 import { ReactComponent as Guardar } from "./svg/guardar.svg";
+import { ReactComponent as User } from "./svg/user.svg";
 
 import logoBlanco from "./images/logoBlanco.webp";
 import logoNegro from "./images/logoNegro.webp";
@@ -22,7 +23,8 @@ export const SVG = {
   Dashboard,
   Settings,
   Tema,
-  Guardar
+  Guardar,
+  User
 };
 
 export const IMAGES = {

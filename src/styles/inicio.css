@@ -8,9 +8,8 @@
     gap: 1rem;
 }
 .ctnIndicadores .item{
-    width: 15rem;
-    height: 8rem;
+    width: calc(100%/3);
+    height: 10rem;
     box-shadow: 0 0 5px #bebebe;
     border-radius: 1rem;
-
 }
