@@ -25,6 +25,9 @@ table {
 tbody{
   background-color: white;
 }
+tbody tr{
+  min-height: 5rem;
+}
 th, td {
   padding: 10px;
   text-align: left;

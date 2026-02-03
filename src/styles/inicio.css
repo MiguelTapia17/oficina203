@@ -1,15 +1,121 @@
-.ctnIndicadores .inicio{
+.ctnInicio{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.ctnInicio .title{
+    font-weight: 600;
+    font-size: 0.90rem;
+    color: #D7D8D9;
+}
+.ctnInicio .subtitle{
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+.nivel > div{
+    padding: 15px 20px;
+    background-color: white;
+    border-radius: 10px;
+}
+.nivel.uno{
+    width: 100%;
+    display: flex;
+    gap: 1%;
+    height: 20%;
+}
+.nivel.uno .inicio{
     width: 100%;
     height: 100%;
 }
-.ctnIndicadores{
-    width: 100%;
+.nivel.uno .item{
+    width: calc(100% / 3);
+    height: 20rem;
+    max-height: 100%;
+    box-shadow: 0 0 5px #bebebe;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.nivel.uno .item .top{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.nivel.uno .item .top svg{
+    fill: var(--gray);
+    background: #f1f0f0;
+    border: 1px solid #cfcccc;
+    padding: 2px;
+    height: 26px;
+    width: 26px;
+    border-radius: 8px;
+}
+.nivel.uno .item .cantidad{
+    font-size: 3rem;
+    font-weight: 550;
+    color: var(--gray);
+}
+.nivel.uno .item .disc{
+    font-size: 0.8rem;
+    color: var(--gray);
+}
+
+.nivel.uno .item .medium{
     display: flex;
     gap: 1rem;
+    justify-content: start;
+    align-items: center;
 }
-.ctnIndicadores .item{
-    width: calc(100%/3);
-    height: 10rem;
+.nivel.uno .item .medium .barra{
+  border: 1px solid;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nivel.uno .item .medium .barra{
+    width: 4rem;
+    height: 2rem;
+    background-color: #d4f5e6; /* fondo claro */
+    border-color:  #129b62; /* borde */
+    color: #129b62;
+    font-weight: 600;
+}
+.nivel.uno .item .medium .barra svg{
+    fill: #129b62;
+}
+.nivel.uno .item .disc span{
+    font-weight: 600;
+}
+.nivel.uno .item .cantidad span{
+    font-size: 1rem;
+}
+
+.nivel.dos{
+    height: 50%;
+    width: 100%;
+    display: flex;
+    gap: 1%;
+}
+
+.nivel.dos .ctnHistorial{
+    width: 67%;
+    height: 100%;
     box-shadow: 0 0 5px #bebebe;
-    border-radius: 1rem;
+}
+.nivel.dos .vistaRigth{
+    width: 33%;
+    height: 100%;
+    box-shadow: 0 0 5px #bebebe;
+}
+.nivel.tres{
+    height: 28%;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.nivel.tres > div{
+    width: 49.5%;
+    box-shadow: 0 0 5px #bebebe;
 }

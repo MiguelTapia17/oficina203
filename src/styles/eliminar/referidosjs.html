@@ -1,0 +1,328 @@
+<script>
+        window.addEventListener("load", () => {
+
+    let inputCampaign = document.getElementById('utm_campaign');
+    let inputCarreras = document.getElementById('career');
+    let inputGrado = document.getElementById('degree-study');
+    let inputGradoPos = document.getElementById('degree-study-pos');
+    let tipoPrograma = document.getElementById('type');
+    let periodo = document.getElementById('LEADCF10');
+    let tipoEsp = document.getElementById('tipo-especialidad');
+    let formCont = document.getElementById('form__content');
+    let origen = document.getElementById("origin");
+
+    function removeOptionsAndCreate(selectElement, textEle) {
+        var i, L = selectElement.options.length - 1;
+        for(i = L; i >= 0; i--) {
+            selectElement.remove(i);
+        }
+        let opt = document.createElement('option');
+        opt.text = textEle;
+        opt.value = "";
+        opt.disabled = true;
+        opt.selected = true;
+        selectElement.options.add(opt);
+        selectElement.value = ""; // LIMPIA selección
+    }
+
+    function createBlockGrades(selectElement, textEle) {
+        removeOptionsAndCreate(selectElement, textEle);
+        selectElement.add(new Option("En 3ro. de secundaria", "994950000"));
+        selectElement.add(new Option("En 4to. de secundaria", "994950001"));
+        selectElement.add(new Option("En 5to. de secundaria", "994950002"));
+        selectElement.add(new Option("Ya terminé la secundaria", "994950003"));
+        selectElement.value = ""; // LIMPIA selección
+    }
+
+    function createBlockGradesEsp(selectElement, textEle) {
+        removeOptionsAndCreate(selectElement, textEle);
+        selectElement.add(new Option("Doctorado Completo", "994950017"));
+        selectElement.add(new Option("Doctorado Incompleto", "994950016"));
+        selectElement.add(new Option("Grado de Bachiller", "994950004"));
+        selectElement.add(new Option("Grado de Doctor", "994950007"));
+        selectElement.add(new Option("Grado de Maestría", "994950006"));
+        selectElement.add(new Option("Lic. / Ing. / Titulado", "994950005"));
+        selectElement.add(new Option("Maestría Completa", "994950015"));
+        selectElement.add(new Option("Maestría Incompleta", "994950014"));
+        selectElement.add(new Option("Técnica Completa", "994950009"));
+        selectElement.add(new Option("Técnica Incompleta", "994950008"));
+        selectElement.add(new Option("Universitaria Completa", "994950003"));
+        selectElement.add(new Option("Universitaria Incompleta", "994950002"));
+        selectElement.value = ""; // LIMPIA selección
+    }
+
+    function createBlockCampaignsPregrado(selectElement, textEle) {
+        removeOptionsAndCreate(selectElement, textEle);
+        selectElement.add(new Option("pregrado-2026-01", "pregrado-2026-01"));
+        selectElement.add(new Option("pregrado-2026-02", "pregrado-2026-02"));
+        selectElement.add(new Option("pregrado-2027-01", "pregrado-2027-01"));
+        selectElement.add(new Option("beca18-2026-01", "beca18-2026-01"));
+        selectElement.value = ""; // LIMPIA selección
+    }
+
+    function createBlockEspEnfermeria(selectElement, textEle) {
+        removeOptionsAndCreate(selectElement, textEle);
+        selectElement.add(new Option("Centro Quirúrgico Especializado", "de6272f8-161f-f011-998b-002248383b9f"));
+        selectElement.add(new Option("Cuidados Intensivos Neonatales", "e06272f8-161f-f011-998b-002248383b9f"));
+        selectElement.add(new Option("Cuidados Nefrológicos", "e26272f8-161f-f011-998b-002248383b9f"));
+        selectElement.add(new Option("Emergencias y Desastres", "e46272f8-161f-f011-998b-002248383b9f"));
+        
+        selectElement.add(new Option("Gestión en Salud", "0e22ce7c-93ba-f011-bbd3-002248e0be41"));
+        selectElement.add(new Option("Enfermería Oncológica", "dd1ae36b-cb82-f011-b4cc-6045bd3a2cb5"));
+        selectElement.add(new Option("Salud Ocupacional", "0293fc01-a320-f011-998b-002248383b9f"));
+        selectElement.value = ""; // LIMPIA selección
+    }
+
+    function createBlockEspEst(selectElement, textEle) {
+      removeOptionsAndCreate(selectElement, textEle);
+        selectElement.add(new Option("Odontología Forense", "1335671c-cb82-f011-b4cc-6045bd3a2cb5"));
+        selectElement.add(new Option("Odontología Restauradora y Estética", "e66272f8-161f-f011-998b-002248383b9f"));
+        selectElement.add(new Option("Odontopediatría", "6c345145-ca82-f011-b4cc-6045bd3a2cb5"));
+        selectElement.add(new Option("Ortodoncia y Ortopedia Maxilar", "ee6272f8-161f-f011-998b-002248383b9f"));
+        selectElement.add(new Option("Rehabilitación Oral", "f46272f8-161f-f011-998b-002248383b9f"));
+        selectElement.add(new Option("Periodoncia e Implantología", "f06272f8-161f-f011-998b-002248383b9f"));
+        selectElement.add(new Option("Radiología Bucal y Maxilofacial", "f26272f8-161f-f011-998b-002248383b9f"));
+        selectElement.add(new Option("Administración y Gestión en Estomatología", "0c93fc01-a320-f011-998b-002248383b9f"));
+        selectElement.add(new Option("Auditoría Odontológica", "0e93fc01-a320-f011-998b-002248383b9f"));
+        // selectElement.add(new Option("Estomatología de Pacientes Especiales", "ea6272f8-161f-f011-998b-002248383b9f"));
+        // selectElement.add(new Option("Cirugía Bucal y Maxilofacial", "e86272f8-161f-f011-998b-002248383b9f"));
+
+        selectElement.value = ""; // LIMPIA selección
+    }
+
+    function createBlockEspTm(selectElement, textEle) {
+        removeOptionsAndCreate(selectElement, textEle);
+        // selectElement.add(new Option("Fisioterapia en Quemados y Cirugía Plástica Reconstructiva y Estética", "ee6272f8-161f-f011-998b-002248383b9f"));
+        
+        selectElement.add(new Option("Terapia Ocupacional en Pediatría", "67569884-58a8-f011-bbd3-6045bd3c84a3"));
+        selectElement.add(new Option("Terapia Ocupacional en Neurorrehabilitación", "ee930ede-58a8-f011-bbd3-6045bd3c84a3"));
+        selectElement.add(new Option("Fisioterapia en Ortopedia y Traumatología", "ac889dfd-58a8-f011-bbd3-6045bd3c84a3"));
+        selectElement.add(new Option("Biomecánica y Podología", "f827891d-59a8-f011-bbd3-6045bd3c84a3"));
+        
+        selectElement.value = ""; // LIMPIA selección
+    }
+
+    function createBlockEspFavez(selectElement, textEle) {
+        removeOptionsAndCreate(selectElement, textEle);
+        selectElement.add(new Option("Medicina de Animales de Compañía", "f86272f8-161f-f011-998b-002248383b9f"));
+        selectElement.value = ""; // LIMPIA selección
+    }
+
+    tipoPrograma.addEventListener("change", () => {
+        // Siempre limpia selects antes de cargar opciones
+        inputGrado.value = "";
+        inputGradoPos.value = "";
+        inputCampaign.value = "";
+        inputCarreras.value = "";
+
+        if (tipoPrograma.value === "pregrado") {
+            inputGrado.style.display = "block";
+            inputGradoPos.style.display = "none";
+            tipoEsp.style.display = "none";
+
+            createBlockGrades(inputGrado, '¿En qué grado se encuentra?');
+            createBlockCampaignsPregrado(inputCampaign, 'UTM Campaña');
+            
+            
+
+        } else if (tipoPrograma.value === "pge") {
+            inputGrado.style.display = "none";
+            inputGradoPos.style.display = "block";
+            tipoEsp.style.display = "none";
+
+
+            removeOptionsAndCreate(inputCampaign, 'UTM Campaña');
+            inputCampaign.add(new Option("pge-2026-02", "pge-2026-02"));
+            createBlockGradesEsp(inputGradoPos, '¿En qué grado se encuentra?');
+            const ADMIN_SALUD_ID = "4cf6fe91-4784-f011-b4cc-6045bd3a2cb5";
+            // origen.value = "ead5fef9-0d52-f011-877b-6045bd3c8409";
+            origen.value = "08279ce6-def6-f011-8407-000d3ac04e17";
+            
+            inputCarreras.addEventListener("change", () => {
+                if (inputCarreras.value === ADMIN_SALUD_ID) {
+                    periodo.value = "2bfa94eb-9bb6-f011-bbd3-6045bd3c84a3";
+                } else {
+                    periodo.value = "2bfa94eb-9bb6-f011-bbd3-6045bd3c84a3";
+                }
+            });
+
+        } else {
+            removeOptionsAndCreate(inputCarreras, '- Seleccionar Especialidad -');
+            createBlockGradesEsp(inputGradoPos, '¿En qué grado se encuentra?');
+            inputGrado.style.display = "none";
+            inputGradoPos.style.display = "block";
+            tipoEsp.style.display = "block";
+            formCont.className += " formulario__content--block";
+            removeOptionsAndCreate(inputCampaign, 'UTM Campaña');
+            // periodo.value = "6c2b17e7-b509-f011-bae3-002248367022";
+            periodo.value = "a53d1c25-cd2f-f011-8c4e-000d3ac087da";//MIGUEL
+        }
+    });
+    
+    function evaluateLabels() {
+                
+        if(tipoPrograma.value === "pregrado" && inputCampaign.value === "pregrado-2026-01") {
+            
+            formCont.className = "formulario__content";
+            
+            removeOptionsAndCreate(inputCarreras, '- Seleccionar carrera -');
+            inputCarreras.add(new Option("Administración en Salud", "2c6372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Administración", "2a6372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Biología", "006372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Enfermería", "166372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Educación", "146372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Estomatología", "186372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Farmacia y Bioquímica", "026372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Gestión de Desarrollo Global", "5edd571c-fa3f-f011-877a-6045bd3c8409"));
+            // inputCarreras.add(new Option("Ingeniería Ambiental", "066372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Ingeniería Biomédica", "086372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Ingeniería Industrial", "0a6372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Ingeniería Informática", "0e6372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Laboratorio Clínico y Anatomía Patológica", "1c6372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Medicina Veterinaria y Zootecnia", "2e6372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Medicina", "1a6372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Nutrición", "046372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Psicología", "266372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Radiología", "1e6372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Terapia de lenguaje", "206372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Terapia Física y Rehabilitación", "226372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Terapia Ocupacional", "246372f8-161f-f011-998b-002248383b9f"));
+            
+            periodo.value = "a53d1c25-cd2f-f011-8c4e-000d3ac087da";
+            origen.value = "c186517f-c12f-f011-8c4d-6045bd39d13b";   
+        }
+
+        if(tipoPrograma.value === "pregrado" && inputCampaign.value === "pregrado-2026-02") {
+            
+            formCont.className = "formulario__content";
+            
+            removeOptionsAndCreate(inputCarreras, '- Seleccionar carrera -');
+            inputCarreras.add(new Option("Administración en Salud", "2c6372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Administración", "2a6372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Biología", "006372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Enfermería", "166372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Educación", "146372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Estomatología", "186372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Farmacia y Bioquímica", "026372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Gestión de Desarrollo Global", "5edd571c-fa3f-f011-877a-6045bd3c8409"));
+            inputCarreras.add(new Option("Ingeniería Ambiental", "066372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Ingeniería Biomédica", "086372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Ingeniería Industrial", "0a6372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Ingeniería Informática", "0e6372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Laboratorio Clínico y Anatomía Patológica", "1c6372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Medicina Veterinaria y Zootecnia", "2e6372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Medicina", "1a6372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Nutrición", "046372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Psicología", "266372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Radiología", "1e6372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Terapia de lenguaje", "206372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Terapia Física y Rehabilitación", "226372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Terapia Ocupacional", "246372f8-161f-f011-998b-002248383b9f"));
+            
+            periodo.value = "2bfa94eb-9bb6-f011-bbd3-6045bd3c84a3";
+            origen.value = "a70f3bcc-def6-f011-8407-000d3ac04e17";
+            
+        } 
+
+        if(tipoPrograma.value === "pregrado" && inputCampaign.value === "pregrado-2027-01") {
+            
+            formCont.className = "formulario__content";
+            
+            removeOptionsAndCreate(inputCarreras, '- Seleccionar carrera -');
+            // inputCarreras.add(new Option("Administración en Salud", "2c6372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Administración", "2a6372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Biología", "006372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Enfermería", "166372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Estomatología", "186372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Farmacia y Bioquímica", "026372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Ingeniería Biomédica", "086372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Ingeniería Industrial", "0a6372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Ingeniería Informática", "0e6372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Laboratorio Clínico y Anatomía Patológica", "1c6372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Medicina Veterinaria y Zootecnia", "2e6372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Medicina", "1a6372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Nutrición", "046372f8-161f-f011-998b-002248383b9f"));
+            // inputCarreras.add(new Option("Psicología", "266372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Radiología", "1e6372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Terapia de lenguaje", "206372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Terapia Física y Rehabilitación", "226372f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Terapia Ocupacional", "246372f8-161f-f011-998b-002248383b9f"));
+            
+            periodo.value = "2b09660e-5200-f111-8407-000d3a88757b";
+            origen.value = "dd5694d3-def6-f011-8407-000d3ac04e17";
+        }
+        
+        if(tipoPrograma.value === "pregrado" && inputCampaign.value === "beca18-2026-01") {
+            
+            formCont.className = "formulario__content";
+            
+            removeOptionsAndCreate(inputCarreras, '- Seleccionar carrera -');
+            inputCarreras.add(new Option("Administración", "0a4b6cd7-ccae-f011-bbd3-6045bd39235d"));
+            inputCarreras.add(new Option("Administración en Salud", "24024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Biología", "26024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Educación", "2c024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Educación Inicial Intercultural Bilingüe", "2e024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Educación Primaria Intercultural Bilingüe", "30024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Enfermería", "32024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Estomatología", "34024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Farmacia y Bioquímica", "36024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Gestión de Desarrollo Global", "38024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Ingeniería Ambiental", "3a024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Ingeniería Biomédica", "3c024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Ingeniería Industrial", "3e024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Ingeniería Informática", "42024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Laboratorio Clínico y Anatomía Patológica", "4e024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Medicina Veterinaria y Zootecnia", "46024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Medicina", "44024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Nutrición", "48024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Psicología", "4a024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Radiología", "50024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Terapia de lenguaje", "52024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Terapia Física y Rehabilitación", "54024a49-fead-f011-bbd3-002248379852"));
+            inputCarreras.add(new Option("Terapia Ocupacional", "56024a49-fead-f011-bbd3-002248379852"));
+            
+            periodo.value = "a53d1c25-cd2f-f011-8c4e-000d3ac087da";
+            origen.value = "ab86517f-c12f-f011-8c4d-6045bd39d13b";
+            
+        }
+        
+        if(tipoPrograma.value === "pge") {
+            formCont.className = "formulario__content";
+            removeOptionsAndCreate(inputCarreras, '- Seleccionar carrera -');
+            inputCarreras.add(new Option("Enfermería", "fc6272f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Educación", "fa6272f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Psicología", "fe6272f8-161f-f011-998b-002248383b9f"));
+            inputCarreras.add(new Option("Administración en Salud", "4cf6fe91-4784-f011-b4cc-6045bd3a2cb5"));
+        }
+        
+    }
+    
+    inputCampaign.addEventListener("change", evaluateLabels);
+    tipoPrograma.addEventListener("change", evaluateLabels);
+
+    tipoEsp.addEventListener("change", () => {
+        removeOptionsAndCreate(inputCampaign, 'UTM Campaña');
+        inputCampaign.value = ""; // Limpia selección
+        if(tipoEsp.value === "enf") {
+            createBlockEspEnfermeria(inputCarreras, '- Selecciona Especialidad en Enfermería -')
+            inputCampaign.add(new Option("se-faenf-2026-01", "se-faenf-2026-01"));
+            origen.value = "2ea81a32-eac3-f011-bbd3-6045bd3bf1a2";
+        } else if (tipoEsp.value === "est") {
+            createBlockEspEst(inputCarreras, '- Selecciona Especialidad en Estomatología -')
+            // inputCampaign.add(new Option("se-faest-2025-02", "se-faest-2025-02"));
+            inputCampaign.add(new Option("se-faest-2026-01", "se-faest-2026-01")); // MIGUEL
+            origen.value = "02e32ab0-bfc4-f011-bbd3-6045bd3bf1a2";
+        } else if (tipoEsp.value === "tm") {
+            createBlockEspTm(inputCarreras, '- Selecciona Especialidad en Tecnologías Médicas -')
+            inputCampaign.add(new Option("se-tm-2026-02", "se-tm-2026-02"));
+            // origen.value = "29243659-66af-f011-bbd3-002248dfbfde";
+            origen.value = "025f57a1-74f8-f011-8406-000d3a8874d9";
+        } else {
+            createBlockEspFavez(inputCarreras, '- Selecciona Especialidad en Medicina Veterinaria -')
+            inputCampaign.add(new Option("se-favez-2025-02", "se-favez-2025-02"));
+        }
+        inputCarreras.value = ""; // LIMPIA selección
+    });
+
+});
+</script>

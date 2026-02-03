@@ -4,6 +4,7 @@
     margin: 0;
     text-decoration: none;
     padding: 0;
+    line-height: 1.25;
 }
 :root {
     --primary:#FF0C29;
@@ -11,11 +12,11 @@
     --azul: #2663D9;
     --rojo: #FF0C29;
     --vino: #971A36;
-    --txt: #000;
     --black: #000;
     --white: #fff;
-    --gray: #eee;
-    --gray-two: #e0e0e0;
+    --gray: #323639;
+    --gray-one: #474747;
+    --gray-two: #cfcccc;
     --formulario-primario: #8d8d8d;
     --formulario-borde: black;
     --gestion: #2663D9;
@@ -23,7 +24,6 @@
     --ingenieria: #35ef6a;
     --educacion: #00c99c;
     --ciencia: #4ac0ff;
-    
     /* tema white */
     --menu1: #efefef;
     --contenido: #fff;
