@@ -52,7 +52,7 @@ export default function Menu({ activeView, setActiveView }) {
       <img src={IMAGES.logoNegro} className="logo" />
       <div className="ctnBotones">
         <button className={activeView === "inicio" ? "active" : ""} onClick={() => handleViewChange("inicio")}>
-          <SVG.Dashboard className="icon" /> Inicio
+          <SVG.Dashboard className="icon" /> Dashboard
         </button>
         <button className={activeView === "inventario" ? "active" : ""} onClick={() => handleViewChange("inventario")}>
           <SVG.Box className="icon" /> Inventario
@@ -82,7 +82,7 @@ export default function Menu({ activeView, setActiveView }) {
               </g>
             </svg>
           </span>
-          Tema
+          Tema: Claro / Oscuro
         </button>
         
         <button className="exit" onClick={logout}>

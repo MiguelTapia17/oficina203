@@ -6,7 +6,7 @@
 }
 .ctnInicio .title{
     font-weight: 600;
-    font-size: 0.90rem;
+    font-size: 1rem;
     color: var(--gray);
 }
 .ctnInicio .subtitle{
@@ -17,7 +17,8 @@
     padding: 15px 20px;
     background-color: white;
     border-radius: 10px;
-    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.15);
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.15);
+    overflow: hidden;
 }
 .nivel.uno{
     width: 100%;
@@ -38,6 +39,13 @@
     justify-content: space-between;
 }
 .nivel.uno .item .top{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    height: 20%;
+}
+.nivel.uno .item .top div{
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -66,24 +74,46 @@
     gap: 1rem;
     justify-content: start;
     align-items: center;
+    height: 70%;
 }
 .nivel.uno .item .medium .barra{
-  border: 1px solid;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.nivel.uno .item .medium .barra{
+    border: 1px solid;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
     width: 4rem;
     height: 2rem;
+}
+.nivel.uno .item .medium .barra{
     background-color: #d4f5e6; /* fondo claro */
     border-color:  #129b62; /* borde */
     color: #129b62;
-    font-weight: 600;
 }
 .nivel.uno .item .medium .barra svg{
     fill: #129b62;
+}
+
+.nivel.uno .item .medium .resta{
+    background-color: #FFF6DB; /* fondo claro */
+    border-color: #F2B705; /* borde */
+    color: #7A5A00;
+}
+.nivel.uno .item .medium .resta svg{
+    fill: #7A5A00;
+}
+
+.nivel.uno .item .medium .menos{
+    background-color: #FDECEC; /* fondo claro */
+    border-color: #E4142C; /* borde */
+    color: #8B1D2C;
+}
+.nivel.uno .item .medium .menos svg{
+    fill: #8B1D2C;
+}
+.nivel.uno .item .bottom{
+    height: 10%;
 }
 .nivel.uno .item .disc span{
     font-weight: 600;
@@ -100,12 +130,31 @@
 }
 
 .nivel.dos .ctnHistorial{
-    width: 67%;
+    width: 60%;
+    min-width: 60%;
     height: 100%;
 }
 .nivel.dos .vistaRigth{
-    width: 33%;
+    width: 40%;
+    min-width: 40%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 0.5rem;
+}
+.nivel.dos .vistaRigth .top{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.nivel.dos .vistaRigth .input-field{
+    width: 10rem;
+    height: 2rem;
+}
+.nivel.dos .vistaRigth select{
+    height: 2rem;
+
 }
 .nivel.tres{
     height: 28%;
@@ -115,4 +164,41 @@
 }
 .nivel.tres > div{
     width: 49.5%;
+}
+.chartWrap{
+    height: 110% !important;
+}
+
+
+.tablaSinStock{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tablaSinStock .fila{
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 10px;
+}
+
+.tablaSinStock .producto{
+  font-size: 13px;
+  line-height: 1.2;
+  max-width: 75%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tablaSinStock .badge{
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 12, 41, 0.12);
+  color: #971A36;
+  white-space: nowrap;
 }

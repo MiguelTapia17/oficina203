@@ -12,6 +12,9 @@ import { ReactComponent as User } from "./svg/user.svg";
 import { ReactComponent as Vencimiento } from "./svg/vencimiento.svg";
 import { ReactComponent as ArrowTop } from "./svg/arrowTop.svg";
 import { ReactComponent as ArrowDown } from "./svg/arrowDown.svg";
+import { ReactComponent as ArrowLeft } from "./svg/arrowLeft.svg";
+import { ReactComponent as ArrowRight } from "./svg/arrowRight.svg";
+import { ReactComponent as Resta } from "./svg/resta.svg";
 
 import logoBlanco from "./images/logoBlanco.webp";
 import logoNegro from "./images/logoNegro.webp";
@@ -31,6 +34,9 @@ export const SVG = {
   Vencimiento,
   ArrowTop,
   ArrowDown,
+  ArrowRight,
+  ArrowLeft,
+  Resta,
 };
 
 export const IMAGES = {
