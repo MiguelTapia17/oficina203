@@ -29,7 +29,7 @@ export default function Historial() {
         ] = await Promise.all([
           apiGet("movimientos-item"),
           apiGet("actividades"),
-          apiGet("usuarios"), // si tu endpoint es "usuaros" cámbialo aquí
+          apiGet("usuarios"), // si tu endpoint es "usuario" cámbialo aquí
           apiGet("items"),
         ]);
 

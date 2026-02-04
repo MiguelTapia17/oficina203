@@ -7,7 +7,7 @@
 .ctnInicio .title{
     font-weight: 600;
     font-size: 0.90rem;
-    color: #D7D8D9;
+    color: var(--gray);
 }
 .ctnInicio .subtitle{
     font-weight: 500;
@@ -17,6 +17,7 @@
     padding: 15px 20px;
     background-color: white;
     border-radius: 10px;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.15);
 }
 .nivel.uno{
     width: 100%;
@@ -32,7 +33,6 @@
     width: calc(100% / 3);
     height: 20rem;
     max-height: 100%;
-    box-shadow: 0 0 5px #bebebe;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -102,12 +102,10 @@
 .nivel.dos .ctnHistorial{
     width: 67%;
     height: 100%;
-    box-shadow: 0 0 5px #bebebe;
 }
 .nivel.dos .vistaRigth{
     width: 33%;
     height: 100%;
-    box-shadow: 0 0 5px #bebebe;
 }
 .nivel.tres{
     height: 28%;
@@ -117,5 +115,4 @@
 }
 .nivel.tres > div{
     width: 49.5%;
-    box-shadow: 0 0 5px #bebebe;
 }

@@ -95,7 +95,7 @@ export default function Menu({ activeView, setActiveView }) {
           <div className="ctnTxt">
             {/* <p>{usuario.nombre_completo}</p> */}
             {/* <span>{usuario.rol}</span> */}
-            <p className="name">Usario Principal</p>
+            <p className="name">Usuario Principal</p>
             <p className="rol">Cargo</p>
           </div>
         </div>
