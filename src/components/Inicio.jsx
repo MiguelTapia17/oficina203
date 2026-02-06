@@ -5,6 +5,8 @@ import "../styles/inicio.css";
 
 import MaterialesPorSede from "./inicio/MaterialesPorSede";
 import SinStockDonut from "./inicio/SinStockDonut";
+import HistorialMovimientos from "./inicio/HistorialMovimientos";
+import UsuariosActivos from "./inicio/UsuariosActivos";
 
 export default function Inicio() {
   // Cards (números)
@@ -54,7 +56,7 @@ export default function Inicio() {
         <div className="item">
           <div className="top">
             <div className="">
-              <SVG.Vencimiento />
+              {/* <SVG.Vencimiento /> */}
               <p className="subtitle">Total de Materiales</p>
             </div>
             <SVG.ArrowRight />
@@ -70,7 +72,8 @@ export default function Inicio() {
           </div>
           <div className="bottom">
             <p className="disc">
-              Mes anterior: <span>4900 und.</span>
+              {/* Mes anterior: <span>4900 und.</span> */}
+              Materiales en todas las sedes
             </p>
           </div>
         </div>
@@ -79,8 +82,8 @@ export default function Inicio() {
         <div className="item">
           <div className="top">
             <div>
-              <SVG.Vencimiento />
-              <p className="subtitle">Productos por acabarse</p>
+              {/* <SVG.Vencimiento /> */}
+              <p className="subtitle">Materiales por acabarse</p>
             </div>
             <SVG.ArrowRight />
           </div>
@@ -93,15 +96,19 @@ export default function Inicio() {
               0% <SVG.Resta className="iconoResta" />
             </div>
           </div>
-          <div className="bottom" />
+          <div className="bottom">
+            <p className="disc">
+              Materiales bajo de stock
+            </p>
+          </div>
         </div>
 
         {/* PRODUCTOS SIN STOCK */}
         <div className="item">
           <div className="top">
             <div>
-              <SVG.Vencimiento />
-              <p className="subtitle">Productos sin stock</p>
+              {/* <SVG.Vencimiento /> */}
+              <p className="subtitle">Materiales sin stock</p>
             </div>
             <SVG.ArrowRight />
           </div>
@@ -116,7 +123,7 @@ export default function Inicio() {
           </div>
           <div className="bottom">
             <p className="disc">
-              Mes anterior: <span>4900 und.</span>
+              Materiales sin disponibilidad
             </p>
           </div>
         </div>
@@ -125,8 +132,8 @@ export default function Inicio() {
         <div className="item">
           <div className="top">
             <div>
-              <SVG.Vencimiento />
-              <p className="subtitle">Productos por vencer</p>
+              {/* <SVG.Vencimiento /> */}
+              <p className="subtitle">Materiales por vencer</p>
             </div>
             <SVG.ArrowRight />
           </div>
@@ -140,7 +147,8 @@ export default function Inicio() {
           </div>
           <div className="bottom">
             <p className="disc">
-              Mes anterior: <span>4900 und.</span>
+              {/* Mes anterior: <span>4900 und.</span> */}
+              Materiales por vencer en los próximos 30 días
             </p>
           </div>
         </div>
@@ -152,12 +160,8 @@ export default function Inicio() {
       </div>
 
       <div className="nivel tres">
-        <div>
-          <p className="title">Mostrar los movimientos de los administradores - SUPER</p>
-        </div>
-        <div>
-          <p className="title">Mostrar los movimientos de uno mismo - ADMIN</p>
-        </div>
+        <HistorialMovimientos/>
+        <UsuariosActivos/>
       </div>
     </div>
   );

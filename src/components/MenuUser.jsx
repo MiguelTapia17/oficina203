@@ -3,10 +3,10 @@ import '../styles/menu.css';
 import { useAuth } from "../context/AuthContext";
 import { useState, useEffect } from "react";
 
-export default function Menu({ activeView, setActiveView }) {
+export default function MenuUser({ activeView, setActiveView }) {
   const [isDark, setIsDark] = useState(false);
   const { logout } = useAuth();
-
+ 
   const handleViewChange = (view) => {
     setActiveView(view);  // Cambia la vista activa cuando se hace clic en un botón
   };
@@ -26,17 +26,11 @@ export default function Menu({ activeView, setActiveView }) {
     <div className="ctnMenu">
       <img src={IMAGES.logoNegro} className="logo" />
       <div className="ctnBotones">
-        <button className={activeView === "inicio" ? "active" : ""} onClick={() => handleViewChange("inicio")}>
-          <SVG.Dashboard className="icon" /> Dashboard
-        </button>
         <button className={activeView === "inventario" ? "active" : ""} onClick={() => handleViewChange("inventario")}>
           <SVG.Box className="icon" /> Inventario
         </button>
         <button className={activeView === "añadirStock" ? "active" : ""} onClick={() => handleViewChange("añadirStock")}>
           <SVG.BoxAdd className="icon" /> Nuevo Producto
-        </button>
-        <button className={activeView === "historial" ? "active" : ""} onClick={() => handleViewChange("historial")}>
-          <SVG.History className="icon" /> Historial de movimientos
         </button>
         <button id="btnTheme" type="button" onClick={toggleTheme}>
           <span className="themeToggle st-sunMoonThemeToggleBtn">

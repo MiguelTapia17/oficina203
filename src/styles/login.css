@@ -19,11 +19,20 @@
     --gray-two: #cfcccc;
     --formulario-primario: #8d8d8d;
     --formulario-borde: black;
+    /* COLORES CLUSTER */
     --gestion: #2663D9;
     --salud: #d73dff;
     --ingenieria: #35ef6a;
     --educacion: #00c99c;
     --ciencia: #4ac0ff;
+
+    /* COLORES CARRERAS SALUD */
+    --medicina: #8B33C9;
+    --enfermeria: #00B5C4;
+    --estomatologia: #174AE3;
+    --psicologia: #FFBB17;
+    --veterinaria: #FF5B1F;
+
     /* tema white */
     --menu1: #efefef;
     --contenido: #fff;
