@@ -113,6 +113,12 @@ input:-internal-autofill-selected {
     bottom: -2.5rem;
 }
 /* FORMULARIO */
+.triple__form {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+}
 .double__form {
     width: 100%;
     display: grid;
@@ -135,9 +141,6 @@ input:-internal-autofill-selected {
     box-sizing: border-box;
     background-color: var(--white);
     height: 2.4rem;
-    /* Altura consistente */
-    line-height: 1rem;
-    /* evita que el texto verticalmente se desplace */
 }
 
 
@@ -214,7 +217,8 @@ input:-internal-autofill-selected {
 /* FLECHA */
 
 .input-field input:focus,
-.input-field input:valid,
+/* .input-field input:valid, */
+.input-field input:not(:placeholder-shown),
 .input-field select:focus,
 .input-field select:valid {
     outline: none;
@@ -222,7 +226,8 @@ input:-internal-autofill-selected {
 }
 
 .input-field input:focus~label,
-.input-field input:valid~label,
+/* .input-field input:valid~label */
+.input-field input:not(:placeholder-shown)~label,
 .input-field select:focus~label,
 .input-field select:valid~label {
     white-space: nowrap;

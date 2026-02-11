@@ -7,10 +7,11 @@ export default function Historial() {
   const [movimientos, setMovimientos] = useState([]);
   const [error, setError] = useState("");
 
-  // Filtros
-  const [search, setSearch] = useState("");     // buscar por tipo / item / actividad / admin
-  const [idMovimiento, setIdMovimiento] = useState(""); // buscar por id_movimiento
-  const [tipoFilter, setTipoFilter] = useState("");     // filtro por tipo_movimiento
+  // 🔎 Buscador global
+  const [search, setSearch] = useState("");
+
+  // 🎛 Filtro por tipo (se mantiene independiente)
+  const [tipoFilter, setTipoFilter] = useState("");
 
   // Lookups
   const [actividadesMap, setActividadesMap] = useState({});
@@ -20,16 +21,10 @@ export default function Historial() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Ajusta estos endpoints según tu API real
-        const [
-          movRes,
-          actRes,
-          userRes,
-          itemRes
-        ] = await Promise.all([
+        const [movRes, actRes, userRes, itemRes] = await Promise.all([
           apiGet("movimientos-item"),
           apiGet("actividades"),
-          apiGet("usuarios"), // si tu endpoint es "usuario" cámbialo aquí
+          apiGet("usuarios"),
           apiGet("items"),
         ]);
 
@@ -38,29 +33,21 @@ export default function Historial() {
         const users = userRes.data ?? [];
         const items = itemRes.data ?? [];
 
-        // Armamos mapas para resolver nombres por ID (O(1))
         const actMap = {};
-        for (const a of acts) {
-          actMap[a.id_actividad] = a.nombre_actividad;
-        }
+        acts.forEach(a => actMap[a.id_actividad] = a.nombre_actividad);
 
         const userMap = {};
-        for (const u of users) {
-          userMap[u.id_admin] = u.nombre_completo; 
-          // Si tu tabla usuarios usa otro id (ej. id_usuario), cambia la llave aquí.
-          // Ej: userMap[u.id_usuario] = u.nombre_completo;
-        }
+        users.forEach(u => userMap[u.id_admin] = u.nombre_completo);
 
         const itemMap = {};
-        for (const it of items) {
-          itemMap[it.id_item] = it.nombre_item;
-        }
+        items.forEach(i => itemMap[i.id_item] = i.nombre_item);
 
         setMovimientos(movs);
         setActividadesMap(actMap);
         setUsuariosMap(userMap);
         setItemsMap(itemMap);
-      } catch (e) {
+
+      } catch {
         setError("No se pudo cargar el historial.");
       }
     };
@@ -68,7 +55,14 @@ export default function Historial() {
     fetchData();
   }, []);
 
-  // Enriquecemos movimientos con nombres
+  // Normalizador (ignora tildes y mayúsculas)
+  const normalize = (str) =>
+    String(str ?? "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+
+  // Enriquecemos movimientos
   const enriched = useMemo(() => {
     return movimientos.map(m => ({
       ...m,
@@ -78,55 +72,71 @@ export default function Historial() {
     }));
   }, [movimientos, actividadesMap, usuariosMap, itemsMap]);
 
-  // Tipos únicos para el filtro
+  // Tipos únicos
   const tiposUnicos = useMemo(() => {
     const set = new Set(enriched.map(m => m.tipo_movimiento).filter(Boolean));
     return Array.from(set);
   }, [enriched]);
 
-  // Filtrado
-  const filteredItems = useMemo(() => {
-    const q = search.trim().toLowerCase();
+  // 🔎 FILTRO GLOBAL + TIPO
+const filteredItems = useMemo(() => {
+  const q = normalize(search);
 
-    return enriched.filter((m) => {
-      const matchesIdMov = idMovimiento
-        ? String(m.id_movimiento ?? "").includes(idMovimiento)
-        : true;
+  return enriched.filter(m => {
 
-      const matchesTipo = tipoFilter
-        ? (m.tipo_movimiento === tipoFilter)
-        : true;
+    // 🎛 filtro por tipo
+    const matchesTipo = tipoFilter
+      ? m.tipo_movimiento === tipoFilter
+      : true;
 
-      const matchesSearch = q
-        ? (
-            String(m.tipo_movimiento ?? "").toLowerCase().includes(q) ||
-            String(m.nombre_item ?? "").toLowerCase().includes(q) ||
-            String(m.nombre_actividad ?? "").toLowerCase().includes(q) ||
-            String(m.nombre_admin ?? "").toLowerCase().includes(q)
-          )
-        : true;
+    if (!q) return matchesTipo;
 
-      return matchesIdMov && matchesTipo && matchesSearch;
-    });
-  }, [enriched, idMovimiento, tipoFilter, search]);
+    // 📅 quitar hora de la fecha
+    const fechaSolo = String(m.fecha_movimiento ?? "").split(" ")[0].split("T")[0];
+
+    // 🔎 SOLO campos permitidos
+    const rowString = normalize(`
+      ${m.id_movimiento}
+      ${m.nombre_actividad}
+      ${m.nombre_admin}
+      ${m.nombre_item}
+      ${fechaSolo}
+    `);
+
+    return matchesTipo && rowString.includes(q);
+  });
+
+}, [enriched, search, tipoFilter]);
+
 
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="inventario">
+    <div className="historial">
       <h2>Historial</h2>
 
       <div className="filters">
-        <input type="number" placeholder="Buscar por ID movimiento" value={idMovimiento} onChange={(e) => setIdMovimiento(e.target.value)}/>
 
-        <input type="text" placeholder="Buscar (tipo, item, actividad, admin)" value={search} onChange={(e) => setSearch(e.target.value)}/>
+        <div className='input-field'>
+          <input
+            type="text"
+            placeholder=" "
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <label>Buscar en historial</label>
+        </div>
+        <div className='input-field'>
 
-        <select value={tipoFilter} onChange={(e) => setTipoFilter(e.target.value)}>
-          <option value="">Todos los tipos</option>
-          {tiposUnicos.map((t, idx) => (
-            <option key={idx} value={t}>{t}</option>
-          ))}
-        </select>
+          <select value={tipoFilter} onChange={(e) => setTipoFilter(e.target.value)}>
+            <option value="">Todos los tipos</option>
+            {tiposUnicos.map((t, idx) => (
+              <option key={idx} value={t}>{t}</option>
+            ))}
+          </select>
+          <label>Tipo</label>
+
+        </div>
       </div>
 
       <div className="ctnTable">
@@ -140,7 +150,6 @@ export default function Historial() {
               <th>Tipo</th>
               <th>Cantidad</th>
               <th>Fecha</th>
-              {/* <th>Obs.</th> */}
             </tr>
           </thead>
 
@@ -151,10 +160,11 @@ export default function Historial() {
                 <td>{m.nombre_actividad}</td>
                 <td>{m.nombre_admin}</td>
                 <td>{m.nombre_item}</td>
-                <td className={`tipoM ${String(m.tipo_movimiento || "").toLowerCase()}`}><p>{m.tipo_movimiento}</p></td>
+                <td className={`tipoM ${String(m.tipo_movimiento || "").toLowerCase()}`}>
+                  <p>{m.tipo_movimiento}</p>
+                </td>
                 <td>{parseInt(m.cantidad)}</td>
                 <td>{m.fecha_movimiento}</td>
-                {/* <td>{m.observaciones ?? "—"}</td> */}
               </tr>
             ))}
           </tbody>

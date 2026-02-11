@@ -16,7 +16,7 @@ export async function apiLogin(usuario, password) {
   return response.json();
 }
 
-// Endpoints protegidos
+// Endpoints protegidos (GET)
 export async function apiGet(endpoint) {
   const token = localStorage.getItem("token");
 
@@ -28,6 +28,23 @@ export async function apiGet(endpoint) {
     },
   });
 
-  
+  return response.json();
+}
+
+// Endpoints protegidos (POST)
+export async function apiPost(endpoint, body) {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${API_BASE}/${endpoint}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "X-API-KEY": API_KEY,
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
+    body: JSON.stringify(body),
+  });
+
   return response.json();
 }

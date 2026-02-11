@@ -8,14 +8,29 @@ export default function MaterialesPorSede({ sedes = [] }) {
   useEffect(() => {
     if (!chartWrapRef.current) return;
 
+    let frame;
+
     const ro = new ResizeObserver((entries) => {
-      const h = entries[0]?.contentRect?.height || 300;
-      setChartHeight(Math.max(200, Math.floor(h)));
+      cancelAnimationFrame(frame);
+
+      frame = requestAnimationFrame(() => {
+        const containerHeight = entries[0]?.contentRect?.height || 300;
+
+        // altura deseada
+        const nextHeight = Math.min(containerHeight, 420); // 👈 MAX REAL
+
+        setChartHeight((prev) => (prev !== nextHeight ? nextHeight : prev));
+      });
     });
 
     ro.observe(chartWrapRef.current);
-    return () => ro.disconnect();
+
+    return () => {
+      cancelAnimationFrame(frame);
+      ro.disconnect();
+    };
   }, []);
+
 
   const chartCategorias = useMemo(() => sedes.map((s) => s.nombre_sede), [sedes]);
 

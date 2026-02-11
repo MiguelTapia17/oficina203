@@ -32,9 +32,6 @@ export default function Menu({ activeView, setActiveView }) {
         <button className={activeView === "inventario" ? "active" : ""} onClick={() => handleViewChange("inventario")}>
           <SVG.Box className="icon" /> Inventario
         </button>
-        <button className={activeView === "añadirStock" ? "active" : ""} onClick={() => handleViewChange("añadirStock")}>
-          <SVG.BoxAdd className="icon" /> Nuevo Producto
-        </button>
         <button className={activeView === "historial" ? "active" : ""} onClick={() => handleViewChange("historial")}>
           <SVG.History className="icon" /> Historial de movimientos
         </button>
@@ -58,6 +55,9 @@ export default function Menu({ activeView, setActiveView }) {
             </svg>
           </span>
           Tema: Claro / Oscuro
+        </button>
+        <button className={activeView === "usuarios" ? "active" : ""} onClick={() => handleViewChange("usuarios")}>
+          <SVG.History className="icon" /> Gestión de Usuarios
         </button>
         
         <button className="exit" onClick={logout}>

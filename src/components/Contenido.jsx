@@ -2,6 +2,7 @@ import "../styles/contenido.css";
 import Inicio from "./Inicio";
 import Inventario from "./Inventario";
 import Historial from "./Historial";
+import Usuarios from "./Usuarios";
 
 export default function Contenido({ activeView, loading }) {
   // Renderizamos el componente correspondiente según la vista activa
@@ -15,6 +16,8 @@ export default function Contenido({ activeView, loading }) {
         return <div>Nuevo Producto</div>; // Este es un ejemplo, puedes reemplazar con el componente real
       case "historial":
         return <Historial />; // Este es un ejemplo, puedes reemplazar con el componente real
+      case "usuarios":
+        return <Usuarios />; // Este es un ejemplo, puedes reemplazar con el componente real
       default:
         return <Inicio />;
     }

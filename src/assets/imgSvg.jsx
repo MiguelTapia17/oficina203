@@ -15,6 +15,7 @@ import { ReactComponent as ArrowDown } from "./svg/arrowDown.svg";
 import { ReactComponent as ArrowLeft } from "./svg/arrowLeft.svg";
 import { ReactComponent as ArrowRight } from "./svg/arrowRight.svg";
 import { ReactComponent as Resta } from "./svg/resta.svg";
+import { ReactComponent as Close } from "./svg/close.svg";
 
 import logoBlanco from "./images/logoBlanco.webp";
 import logoNegro from "./images/logoNegro.webp";
@@ -37,6 +38,7 @@ export const SVG = {
   ArrowRight,
   ArrowLeft,
   Resta,
+  Close,
 };
 
 export const IMAGES = {

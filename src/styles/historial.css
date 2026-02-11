@@ -25,3 +25,9 @@
   border-color: #F2B705; /* borde */
   color: #7A5A00;
 }
+
+.historial{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

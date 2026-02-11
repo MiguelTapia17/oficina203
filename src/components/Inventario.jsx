@@ -1,94 +1,208 @@
 import { useState, useEffect } from 'react';
-import { apiGet } from "../services/api";
+import { apiGet, apiPost } from "../services/api";
 import { SVG } from "../assets/imgSvg";
 import '../styles/inventario.css';
 
-export default function Inventario({ loading }) {  // Recibimos el estado de carga desde Dashboard
+export default function Inventario() {
+
   const [items, setItems] = useState([]);
   const [error, setError] = useState("");
-  const [search, setSearch] = useState("");  // Buscador por nombre
-  const [id, setID] = useState("");  // Buscador por ID
-  const [categoryFilter, setCategoryFilter] = useState("");  // Filtro Categoria
-  const [categories, setCategories] = useState([]);  // Estado para las categorías únicas
 
-  const [editingItem, setEditingItem] = useState(null);  // Estado para el ítem que estamos editando
-  const [newQuantity, setNewQuantity] = useState("");  // Estado para la nueva cantidad del ítem
-  
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [categories, setCategories] = useState([]);
+
+  const [showEditPopup, setShowEditPopup] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [editStock, setEditStock] = useState("");
+
+  const normalize = (str) =>
+    String(str ?? "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+
+  // =======================
+  // CARGAR ITEMS
+  // =======================
+  const fetchItems = async () => {
+    try {
+      const data = await apiGet(`items?t=${Date.now()}`); // evita cache
+      setItems(data.data);
+
+      const uniqueCategories = [
+        ...new Set(data.data.map(item => item.nombre_categoria))
+      ];
+      setCategories(uniqueCategories);
+
+    } catch (error) {
+      setError("No se pudo cargar el inventario.");
+    }
+  };
 
   useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const data = await apiGet("items");  // Llamada a la API para obtener los items
-        setItems(data.data);
-        
-        // Extraer las categorías únicas de los items
-        const uniqueCategories = [
-          ...new Set(data.data.map(item => item.nombre_categoria))
-        ];
-        setCategories(uniqueCategories);  // Guardar las categorías únicas en el estado
-      } catch (error) {
-        setError("No se pudo cargar el inventario.");
-      }
-    };
-
     fetchItems();
   }, []);
 
-  // Filtrado por nombre, categoría e ID
+  // =======================
+  // FILTRO
+  // =======================
   const filteredItems = items.filter((item) => {
-    const matchesName = item.nombre_item.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = categoryFilter ? item.nombre_categoria === categoryFilter : true;
-    const matchesID = id ? item.id_item.toString().includes(id) : true;  // Filtro por ID
-    return matchesName && matchesCategory && matchesID;  // Filtrado combinado
+
+    const matchesCategory = categoryFilter
+      ? item.nombre_categoria === categoryFilter
+      : true;
+
+    if (!search.trim()) return matchesCategory;
+
+    const rowString = normalize(`
+      ${item.id_item}
+      ${item.nombre_item}
+      ${item.descripcion}
+    `);
+
+    return matchesCategory && rowString.includes(normalize(search));
   });
 
-  // Función para manejar la edición de la cantidad
+  // =======================
+  // ABRIR EDITAR
+  // =======================
   const handleEdit = (item) => {
-    setEditingItem(item);  // Establecemos el ítem que estamos editando
-    setNewQuantity(item.cantidad);  // Establecemos el valor actual de cantidad como valor inicial
+    setSelectedItem(item);
+    setEditStock(item.cantidad_disponible ?? 0);
+    setShowEditPopup(true);
   };
 
-  // Función para guardar los cambios de cantidad
-  const handleSave = () => {
-    // Aquí podrías realizar una llamada a la API para actualizar el stock
-    const updatedItem = {
-      ...editingItem,
-      cantidad: newQuantity
-    };
+  // =======================
+  // GUARDAR STOCK
+  // =======================
+  const handleSaveStock = async () => {
 
-    // Actualizamos el estado de los items
-    setItems(items.map(item => item.id_item === updatedItem.id_item ? updatedItem : item));
-    setEditingItem(null);  // Cerramos el modo de edición
+    if (editStock === "" || Number(editStock) < 0) {
+      alert("Cantidad inválida");
+      return;
+    }
+
+    try {
+      // obtener item real
+      const res = await apiGet(`items/${selectedItem.id_item}?t=${Date.now()}`);
+      const item = res.data;
+
+      const payload = {
+        id_item: Number(item.id_item),
+        nombre_item: String(item.nombre_item),
+        id_categoria: Number(item.id_categoria),
+        id_tipo: Number(item.id_tipo),
+        id_unidad: Number(item.id_unidad),
+        descripcion: item.descripcion ?? "",
+        cantidad: Number(editStock),
+        activo: Number(item.activo ?? 1),
+        id_admin: Number(item.id_admin)
+      };
+
+      const update = await apiPost("items-actualizar", payload);
+
+      if (!update.ok) throw new Error("Falló actualización");
+
+      // 🔥 ACTUALIZAR LOCALMENTE SIN ESPERAR REFETCH
+      setItems(prev => prev.map(i =>
+        i.id_item === item.id_item
+          ? { ...i, cantidad_disponible: Number(editStock) }
+          : i
+      ));
+
+      // cerrar popup
+      setShowEditPopup(false);
+      setSelectedItem(null);
+
+      // sincronizar silenciosamente con backend
+      fetchItems();
+
+    } catch (error) {
+      console.error(error);
+      alert("El servidor rechazó la actualización");
+    }
   };
 
-  if (error) {
-    return <p>{error}</p>;
-  }
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="inventario">
       <h2>Inventario</h2>
-      <div className="filters">
-        {/* Filtro por ID */}
-        <input type="number" placeholder="Buscar por ID"
-          value={id}
-          onChange={(e) => setID(e.target.value)}  // Actualiza el estado del filtro por ID
-        />
-        {/* Buscador por nombre */}
-        <input type="text" placeholder="Buscar por nombre" value={search} 
-        onChange={(e) => setSearch(e.target.value)}  // Actualiza el estado del buscador por nombre
-        />
 
-        {/* Filtro por categoría dinámica */}
-        <select onChange={(e) => setCategoryFilter(e.target.value)} value={categoryFilter}>
-          <option value="">Todas las categorías</option>
-          {categories.map((category, index) => (
-            <option key={index} value={category}>{category}</option>
-          ))}
-        </select>
+      <div className="filters">
+
+        <div className='input-field'>
+          <input
+            type="text"
+            placeholder=" "
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <label>Buscar en inventario</label>
+        </div>
+
+        <div className='input-field'>
+          <select onChange={(e) => setCategoryFilter(e.target.value)} value={categoryFilter}>
+            <option value="">Todas las categorias</option>
+            {categories.map((category, index) => (
+              <option key={index} value={category}>{category}</option>
+            ))}
+          </select>
+          <label>Categoria</label>
+        </div>
 
       </div>
-      <div className='ctnTable'>
+
+      {showEditPopup && selectedItem && (
+        <div className="popup">
+          <div className="popup-content editStock">
+
+            <h3>Editar Stock</h3>
+
+            <div className='input-field'>
+              <input value={selectedItem.id_item} readOnly disabled/>
+              <label className="active">ID</label>
+            </div>
+
+            <div className='input-field'>
+              <input value={selectedItem.nombre_item} readOnly disabled/>
+              <label className="active">Nombre</label>
+            </div>
+
+            <div className='input-field'>
+              <input value={selectedItem.nombre_categoria} readOnly disabled />
+              <label className="active">Categoría</label>
+            </div>
+
+            <div className='input-field'>
+              <input value={selectedItem.descripcion} readOnly disabled/>
+              <label className="active">Descripción</label>
+            </div>
+
+            <div className='input-field'>
+              <input
+                type="number"
+                min="0"
+                step="1"
+                value={editStock}
+                onChange={(e) => setEditStock(e.target.value)}
+              />
+              <label className="active">Stock disponible</label>
+            </div>
+
+            <div className="actions">
+              <button className="saveEdit" onClick={handleSaveStock}>Guardar</button>
+              <button className="closeForm" onClick={() => setShowEditPopup(false)}>
+                <SVG.Close className="icon"/>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      <div className="ctnTable">
         <table>
           <thead>
             <tr>
@@ -107,27 +221,16 @@ export default function Inventario({ loading }) {  // Recibimos el estado de car
                 <td>{item.nombre_item}</td>
                 <td>{item.nombre_categoria}</td>
                 <td>{item.descripcion}</td>
-                <td>
-                  {editingItem && editingItem.id_item === item.id_item ? (
-                    <input className='cantidad' type="number" value={newQuantity} onChange={(e) => setNewQuantity(e.target.value)}/>  // Actualiza la nueva cantidad
-                  ) : (
-                    parseInt(item.cantidad_disponible)
-                  )}
-                </td>
+                <td>{parseInt(item.cantidad_disponible)}</td>
                 <td className="center">
-                  {editingItem && editingItem.id_item === item.id_item ? (
-                    <button onClick={handleSave}>
-                      Guardar
-                    </button>
-                  ) : (
-                    <SVG.BoxEdit className="icon" onClick={() => handleEdit(item)} />
-                  )}
+                  <SVG.BoxEdit className="icon" onClick={() => handleEdit(item)} />
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
     </div>
   );
 }

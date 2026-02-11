@@ -86,6 +86,7 @@
     font-weight: 600;
     width: 4rem;
     height: 2rem;
+    display: none;
 }
 .nivel.uno .item .medium .barra{
     background-color: #d4f5e6; /* fondo claro */
@@ -174,9 +175,15 @@
     align-items: center;
 }
 .chartWrap{
-    height: 110% !important;
+  width:100%;
+  height:110%;
+  max-height:420px;   /* <- límite real */
+  position:relative;
 }
 
+.chartWrap > div{
+  height:100% !important;
+}
 
 .tablaSinStock{
   display: flex;
