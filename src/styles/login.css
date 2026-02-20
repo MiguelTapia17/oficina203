@@ -20,6 +20,18 @@
     --gray-two: #cfcccc;
     --formulario-primario: #8d8d8d;
     --formulario-borde: black;
+    
+    /* FOMRULARIO */
+    --formBg: trasparent;
+    --form-text: white;
+    --form-text-alter: #323639;
+    --form-txt-disabled: #8d8d8d;
+    --form-txt: #323639;
+    --input-bg: rgb(255,255,255,0.15);
+    --input-txt: white;
+    --input-txt-option: black;
+    --input-border: white;
+    
     /* COLORES CLUSTER */
     --gestion: #2663D9;
     --salud: #d73dff;
@@ -131,6 +143,12 @@ input:-internal-autofill-selected {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.5rem;
 }
+.double__form2{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 20% 1fr;
+    gap: 0.5rem;
+}
 
 .input-field {
     position: relative;
@@ -142,19 +160,39 @@ input:-internal-autofill-selected {
     width: 100%;
     border-radius: 0.3rem;
     padding: 0.5rem 0.8rem;
-    border: 1px solid #8d8d8d;
+    border: 1px solid var(--form-txt);
     font-size: 0.8rem;
     box-sizing: border-box;
     background-color: var(--white);
     height: 2.4rem;
 }
+.input-field textarea{
+    width: 100% !important;
+    height: 5rem  !important;
+    overflow: auto;
+    border-radius: 0.3rem;
+    padding: 0.5rem 0.8rem;
+}
+.input-field .char-counter{
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    font-size: 0.8rem;
 
-
+}
+.input-field input:disabled, .input-field select:disabled{
+    border: 1px solid var(--form-txt-disabled) !important;
+    color: var(--form-txt-disabled) !important;
+}
+.input-field input:disabled~label{
+    color: var(--form-txt-disabled) !important;
+}
 .input-field select:invalid {
-    color: var(--formulario-primario);
+    /* color: var(--formulario-primario); */
+    color: var(--form-txt);
 }
 
-/* FORMULARIO INVALIDO */
+/* FORMULARIO INVALIDO */ 
 
 /* ❌ INPUT inválido (con texto ingresado pero no válido) */
 .input-field input:invalid:not(:focus):not(:placeholder-shown) {
@@ -178,7 +216,7 @@ input:-internal-autofill-selected {
 
 
 .input-field input.invalid,
-.input-field select.invalid {
+.input-field select.invalid{
     border: 1px solid var(--rojo) !important;
 }
 
@@ -199,7 +237,7 @@ input:-internal-autofill-selected {
     position: absolute;
     top: 50%;
     left: 12px;
-    color: var(--formulario-primario);
+    color: var(--black);
     font-size: 0.9rem;
     transform: translate(0, -50%);
     pointer-events: none;
@@ -216,7 +254,7 @@ input:-internal-autofill-selected {
     background-position: right 0.3rem center;
     background-size: 1rem;
     padding-right: 2.2rem;
-    color: black;
+    color: var(--form-txt);
     /* color de texto por defecto */
 }
 
@@ -228,14 +266,17 @@ input:-internal-autofill-selected {
 .input-field select:focus,
 .input-field select:valid {
     outline: none;
-    border: 1px solid #8d8d8d;
+    border: 1px solid var(--form-txt);
 }
 
 .input-field input:focus~label,
 /* .input-field input:valid~label */
 .input-field input:not(:placeholder-shown)~label,
 .input-field select:focus~label,
-.input-field select:valid~label {
+.input-field select:valid~label,
+.input-field textarea:valid~label,
+.input-field input:disabled~label,
+.input-field select:disabled~label{
     white-space: nowrap;
     border-radius: 0.5rem;
     background-color: #fff;
@@ -243,6 +284,6 @@ input:-internal-autofill-selected {
     top: 0;
     left: 0.5rem;
     font-size: 0.7rem;
-    color: var(--formulario-primario);
+    color: var(--form-txt);
     font-weight: 600;
 }

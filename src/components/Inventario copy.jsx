@@ -22,7 +22,7 @@ export default function Inventario() {
 
   const [sedeTransferencia, setSedeTransferencia] = useState("");
 
-  const MAX_OBS = 150; // limite de campo observaciones
+  const MAX_OBS = 150;
   const [observaciones, setObservaciones] = useState("");
 
   const normalize = (str) =>
@@ -110,7 +110,7 @@ export default function Inventario() {
   };
 
   /* ================================
-     GUARDAR STOCK
+     GUARDAR
   ===================================*/
   const handleSaveStock = async () => {
 
@@ -124,7 +124,7 @@ export default function Inventario() {
       return;
     }
 
-     if (movementType === "transferencia" && !sedeTransferencia) {
+    if (movementType === "transferencia" && !sedeTransferencia) {
       alert("Debe seleccionar sede destino");
       return;
     }
@@ -136,24 +136,15 @@ export default function Inventario() {
 
     const cantidad = Number(editStock);
 
-    // Movimientos que RESTAN
-    const movimientosResta = ["salida", "merma", "transferencia"];
-
     if (["salida", "merma", "transferencia"].includes(movementType) && cantidad > currentStock) {
       alert("No puede restar más del stock actual");
       return;
     }
 
-    let nuevoStock = currentStock;
-
-    if (movimientosResta.includes(movementType)) {
-      nuevoStock = currentStock - cantidad;
-    } else {
-      nuevoStock = currentStock + cantidad;
-    }
-
     try {
+
       const item = selectedItem;
+
       const payload = {
         id_item: Number(item.id_item),
         nombre_item: String(item.nombre_item),
@@ -178,33 +169,6 @@ export default function Inventario() {
 
       if (!update.ok) throw new Error("Falló actualización");
 
-      // 🔥 Actualizar estado local correctamente
-      setStockPorSede(prev => {
-        const existe = prev.find(
-          s =>
-            Number(s.id_item) === Number(item.id_item) &&
-            Number(s.id_sede) === Number(selectedSede)
-        );
-
-        if (existe) {
-          return prev.map(s =>
-            Number(s.id_item) === Number(item.id_item) &&
-            Number(s.id_sede) === Number(selectedSede)
-              ? { ...s, cantidad_actual: nuevoStock }
-              : s
-          );
-        }
-
-        return [
-          ...prev,
-          {
-            id_item: Number(item.id_item),
-            id_sede: Number(selectedSede),
-            cantidad_actual: nuevoStock
-          }
-        ];
-      });
-
       setShowEditPopup(false);
       setSelectedItem(null);
 
@@ -218,55 +182,13 @@ export default function Inventario() {
     <div className="inventario">
       <h2>Inventario</h2>
 
-      <div className="filters">
-
-        <div className='input-field'>
-          <input
-            type="text"
-            placeholder=" "
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <label>Buscar en inventario</label>
-        </div>
-
-        <div className='input-field'>
-          <select
-            onChange={(e) => setCategoryFilter(e.target.value)}
-            value={categoryFilter}
-          >
-            <option value="">Todas las categorias</option>
-            {categories.map((category, index) => (
-              <option key={index} value={category}>{category}</option>
-            ))}
-          </select>
-          <label>Categoria</label>
-        </div>
-
-        <div className='input-field'>
-          <select
-            value={selectedSede}
-            onChange={(e) => setSelectedSede(e.target.value)}
-          >
-            <option value="">Todas</option>
-            {sedes.map((sede) => (
-              <option key={sede.id_sede} value={sede.id_sede}>
-                {sede.nombre_sede}
-              </option>
-            ))}
-          </select>
-          <label>Sede</label>
-        </div>
-      </div>
-
+      {/* TABLA */}
       <div className="ctnTable">
         <table>
           <thead>
             <tr>
               <th>Id</th>
               <th>Nombre</th>
-              <th>Categoría</th>
-              <th>Descripción</th>
               <th>Stock</th>
               {selectedSede && <th>Editar</th>}
             </tr>
@@ -282,8 +204,6 @@ export default function Inventario() {
                 <tr key={item.id_item}>
                   <td>{item.id_item}</td>
                   <td>{item.nombre_item}</td>
-                  <td>{item.nombre_categoria}</td>
-                  <td>{item.descripcion}</td>
                   <td>{stock}</td>
 
                   {selectedSede && (
@@ -301,23 +221,13 @@ export default function Inventario() {
         </table>
       </div>
 
+      {/* POPUP */}
       {showEditPopup && selectedItem && (
         <div className="popup">
           <div className="popup-content editStock">
             <h3>Editar Stock</h3>
-            {/* ID Y NOMBRE */}
-            <div className="double__form2">
-              <div className='input-field'>
-                <input value={selectedItem.id_item} readOnly disabled />
-                <label className="active">ID</label>
-              </div>
 
-              <div className='input-field'>
-                <input value={selectedItem.nombre_item} readOnly disabled />
-                <label className="active">Nombre</label>
-              </div>
-            </div>
-            {/* TIPO DE MOVIMIENTO */}
+            {/* MOVIMIENTO */}
             <div className='input-field'>
               <select
                 value={movementType}
@@ -334,9 +244,12 @@ export default function Inventario() {
             </div>
 
             {/* SEDES */}
-            <div className="double__form" style={{ display: "flex"}}>
+            <div
+              className="double__form"
+              style={{ display: "flex", gap: "20px" }}
+            >
               <div className='input-field' style={{ flex: 1 }}>
-                <select value={selectedSede} required disabled >
+                <select value={selectedSede} disabled>
                   {sedes.map((sede) => (
                     <option key={sede.id_sede} value={sede.id_sede}>
                       {sede.nombre_sede}
@@ -363,27 +276,21 @@ export default function Inventario() {
                 <label className="active">Sede a transferir</label>
               </div>
             </div>
-            
-            {/* STOCK ACTUAL Y NUEVO */}
+
+            {/* STOCK */}
             <div className="double__form">
               <div className='input-field'>
                 <input type="number" value={currentStock} disabled />
                 <label className="active">Stock actual</label>
               </div>
+
               <div className='input-field'>
                 <input
                   type="number"
                   min="1"
                   step="1"
-                  max={
-                    ["salida", "merma"].includes(movementType)
-                      ? currentStock
-                      : undefined
-                  }
                   value={editStock}
                   onChange={(e) => setEditStock(e.target.value)}
-                  required
-                  placeholder=""
                 />
                 <label className="active">Cantidad</label>
               </div>
@@ -395,11 +302,9 @@ export default function Inventario() {
                 maxLength={MAX_OBS}
                 value={observaciones}
                 onChange={(e) => setObservaciones(e.target.value)}
-                placeholder=""
                 rows="3"
               />
               <label className="active">Observaciones</label>
-
               <div className="char-counter">
                 {observaciones.length} / {MAX_OBS}
               </div>

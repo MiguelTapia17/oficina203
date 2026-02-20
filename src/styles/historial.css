@@ -5,7 +5,7 @@
   border-radius: 1rem;
   font-size: 0.8rem;
 }
-.tipoM.merma p{
+.tipoM.salida p{
   background-color: #FDECEC; /* fondo claro */
   border-color: #E4142C; /* borde */
   color: #8B1D2C;
@@ -15,7 +15,7 @@
   border-color:  #129b62; /* borde */
   color: #1F5E46;
 }
-.tipoM.entrega p{
+.tipoM.merma p{
   background-color: #EAF3FF; /* fondo claro */
   border-color: #2F80ED; /* borde */
   color: #1C4E8A;

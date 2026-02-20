@@ -67,7 +67,7 @@
   height: 48px;
   margin-top: 64px;
   margin-left: 0px;
-  animation: abox1 3s 1s forwards ease-in-out infinite;
+  animation: abox1 1.5s 0s forwards ease-in-out infinite;
 }
 
 .box2 {
@@ -75,7 +75,7 @@
   height: 48px;
   margin-top: 0px;
   margin-left: 0px;
-  animation: abox2 3s 1s forwards ease-in-out infinite;
+  animation: abox2 1.5s 0s forwards ease-in-out infinite;
 }
 
 .box3 {
@@ -83,7 +83,7 @@
   height: 48px;
   margin-top: 0px;
   margin-left: 64px;
-  animation: abox3 3s 1s forwards ease-in-out infinite;
+  animation: abox3 1.5s 0s forwards ease-in-out infinite;
 }
 
 @keyframes abox1 {
