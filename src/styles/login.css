@@ -14,7 +14,8 @@
     --vino: #971A36;
     --black: #000;
     --white: #fff;
-    --gray: #323639;
+    --txt: #323639;
+    --gray: #323639;    
     --gray-one: #474747;
     --gray-two: #cfcccc;
     --formulario-primario: #8d8d8d;
@@ -38,6 +39,8 @@
     --contenido: #fff;
     --menuTxt: black;
     --primarySVG: #FF0C29;
+    --bgItemDashboard: white;
+    --txtItemDashboard: #323639;
 }
 html[data-theme="dark"]{
     /* TEMA DARK */
@@ -48,6 +51,9 @@ html[data-theme="dark"]{
     --menuTxt: #fff;
     /* --contenido: linear-gradient( 90deg, #7A1F33 0%, #2B0F16 100%); */
     --contenido: #1E1216;
+    --bgItemDashboard: radial-gradient(circle,rgba(255, 12, 41, 0.5) 0%, rgba(151, 26, 54, 0.5) 90%);
+    --txtItemDashboard: white;
+    --txt: white;
 }
 .ctnLogin{
     height: 100vh;

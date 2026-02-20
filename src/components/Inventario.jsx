@@ -11,6 +11,10 @@ export default function Inventario() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [categories, setCategories] = useState([]);
+  
+  const [selectedSede, setSelectedSede] = useState("");
+  const [sedes, setSedes] = useState([]);
+  const [sedesOptions, setSedesOptions] = useState([]);
 
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -29,11 +33,21 @@ export default function Inventario() {
     try {
       const data = await apiGet(`items?t=${Date.now()}`); // evita cache
       setItems(data.data);
-
       const uniqueCategories = [
         ...new Set(data.data.map(item => item.nombre_categoria))
       ];
       setCategories(uniqueCategories);
+      
+      /* SEDES */
+      const dataSede = await apiGet(`sedes?t=${Date.now()}`);
+      setSedes(dataSede.data); // datos completos
+      // const uniqueSedes = [
+      //   ...new Map(dataSede.data.map(s => [s.sedes, s])).values()
+      // ];
+      setSedesOptions(dataSede.data);
+      // setSedesOptions(uniqueSedes);
+      /* FIN DE CARGAR SEDES */
+      
 
     } catch (error) {
       setError("No se pudo cargar el inventario.");
@@ -43,6 +57,7 @@ export default function Inventario() {
   useEffect(() => {
     fetchItems();
   }, []);
+
 
   // =======================
   // FILTRO
@@ -77,6 +92,10 @@ export default function Inventario() {
   // GUARDAR STOCK
   // =======================
   const handleSaveStock = async () => {
+    if (!selectedSede) {
+      alert("Debe seleccionar una sede");
+      return;
+    }
 
     if (editStock === "" || Number(editStock) < 0) {
       alert("Cantidad inválida");
@@ -95,16 +114,18 @@ export default function Inventario() {
         id_tipo: Number(item.id_tipo),
         id_unidad: Number(item.id_unidad),
         descripcion: item.descripcion ?? "",
+        id_sede: Number(selectedSede),
         cantidad: Number(editStock),
         activo: Number(item.activo ?? 1),
         id_admin: Number(item.id_admin)
       };
+      console.log("Payload enviado:", payload);
 
       const update = await apiPost("items-actualizar", payload);
 
       if (!update.ok) throw new Error("Falló actualización");
 
-      // 🔥 ACTUALIZAR LOCALMENTE SIN ESPERAR REFETCH
+      // ACTUALIZAR LOCALMENTE SIN ESPERAR REFETCH
       setItems(prev => prev.map(i =>
         i.id_item === item.id_item
           ? { ...i, cantidad_disponible: Number(editStock) }
@@ -133,12 +154,7 @@ export default function Inventario() {
       <div className="filters">
 
         <div className='input-field'>
-          <input
-            type="text"
-            placeholder=" "
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <input type="text" placeholder=" " value={search} onChange={(e) => setSearch(e.target.value)} />
           <label>Buscar en inventario</label>
         </div>
 
@@ -157,9 +173,7 @@ export default function Inventario() {
       {showEditPopup && selectedItem && (
         <div className="popup">
           <div className="popup-content editStock">
-
             <h3>Editar Stock</h3>
-
             <div className='input-field'>
               <input value={selectedItem.id_item} readOnly disabled/>
               <label className="active">ID</label>
@@ -181,13 +195,20 @@ export default function Inventario() {
             </div>
 
             <div className='input-field'>
-              <input
-                type="number"
-                min="0"
-                step="1"
-                value={editStock}
-                onChange={(e) => setEditStock(e.target.value)}
-              />
+              <select value={selectedSede} onChange={(e) => setSelectedSede(e.target.value)}>
+                <option value="">Seleccione sede</option>
+                {sedesOptions.map((sede) => (
+                  <option key={sede.id_sede} value={sede.id_sede}>
+                    {sede.nombre_sede}
+                  </option>
+                ))}
+              </select>
+              <label className="active">Sede</label>
+            </div>
+
+
+            <div className='input-field'>
+              <input type="number" min="0" step="1" value={editStock} onChange={(e) => setEditStock(e.target.value)} />
               <label className="active">Stock disponible</label>
             </div>
 
@@ -221,7 +242,7 @@ export default function Inventario() {
                 <td>{item.nombre_item}</td>
                 <td>{item.nombre_categoria}</td>
                 <td>{item.descripcion}</td>
-                <td>{parseInt(item.cantidad_disponible)}</td>
+                <td>{parseInt(item.cantidad)}</td>
                 <td className="center">
                   <SVG.BoxEdit className="icon" onClick={() => handleEdit(item)} />
                 </td>
