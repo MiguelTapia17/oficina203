@@ -187,7 +187,7 @@ input:-internal-autofill-selected {
     border: 1px solid var(--form-txt-disabled) !important;
     color: var(--form-txt-disabled) !important;
 }
-.input-field input:disabled~label{
+.input-field input:disabled~label,.input-field select:disabled~label{
     color: var(--form-txt-disabled) !important;
 }
 .input-field select:invalid {
