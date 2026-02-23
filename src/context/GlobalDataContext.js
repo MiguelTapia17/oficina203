@@ -6,20 +6,22 @@ const GlobalDataContext = createContext();
 export const GlobalDataProvider = ({ children }) => {
   const [items, setItems] = useState([]);
   const [sedes, setSedes] = useState([]);
-  // const [admins, setAdmins] = useState([]);
+  const [actividades, setActividades] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchGlobalData = async () => {
     try {
-      const [itemsRes, sedesRes, adminRes] = await Promise.all([
+      const [itemsRes, sedesRes, actividadesRes] = await Promise.all([
         apiGet("items"),
         apiGet("sedes"),
+        apiGet("actividades")
         // apiGet("admins"),
       ]);
 
       setItems(itemsRes.data);
       setSedes(sedesRes.data);
+      setActividades(actividadesRes.data);
       // setAdmins(adminRes.data);
 
       const uniqueCategories = [
@@ -44,6 +46,8 @@ export const GlobalDataProvider = ({ children }) => {
         items,
         setItems,
         sedes,
+        actividades,
+        setActividades,
         // admins,
         categories,
         loading,

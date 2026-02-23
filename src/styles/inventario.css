@@ -37,6 +37,7 @@ th, td {
 td.center {
   text-align: center;
 }
+
 td svg{
   fill: black;
   transition: fill 0.2s ease-in-out;
@@ -92,7 +93,13 @@ tr:hover {
   height: 2.4rem;
   cursor: pointer;
 }
-
+.disclaimer{
+  color: var(--primary);
+  font-size: 0.8rem;
+  min-height: 1.5rem;
+  display: flex;
+  align-items: center;
+}
 input.cantidad{
   border-radius: 1rem;
   padding: 5px 10px;

@@ -1,0 +1,752 @@
+/* GENERALES */
+:root {
+    --font: poppins, sans-serif;
+
+    --primary: #2663D9;
+    --secundary: #FF0C29;
+    --bg: #EDEFEC;
+    --rojo: #FF0C29;
+    --vino: #971A36;
+    --txt: #000;
+    --black: #000;
+    --white: #fff;
+    --gray: #ebebeb;
+
+    /* COLORES CARRERA */
+    --gestion: #2663D9;
+    --salud: #d73dff;
+    --ingenieria: #35ef6a;
+    --educacion: #00c99c;
+    --ciencia: #4ac0ff;
+    
+    /* FOMRULARIO */
+    --formBg: trasparent;
+    --form-text: white;
+    --form-text-alter: #323639;
+    --form-text-2: #8d8d8d;
+    --input-bg: rgb(255,255,255,0.15);
+    --input-txt: white;
+    --input-txt-option: black;
+    --input-border: white;
+
+    /* MAX-WIDTH GENERALES */
+    --maxW: 80rem;
+    --maxW2: 60rem;
+}
+*{
+    /*color: ;*/
+    font-family: poppins, sans-serif;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    line-height: 1.2;
+}
+h1{
+    font-size: 3rem;
+    font-weight: 600;
+}
+h2{
+    font-size: 2rem;
+    text-align: center;
+    font-weight: 600;
+}
+h3{
+    font-size: 1.5rem;
+    font-weight: 400;
+}
+h4{
+    font-size: 1rem;
+}
+h1,h2,h3,h4,p{
+    margin: 0;
+}
+p{
+    line-height: 1.2;
+    font-size: 1.2rem;
+}
+/* FIN DE GENERALES */
+/* BANNER */
+.ctnBanner{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100vh;
+    z-index: 99;
+    background-color: var(--bg);
+    padding: 2rem;
+    overflow: hidden;
+    position: relative;
+}
+.ctnInterBanner{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: var(--maxW);
+    height: 44rem;
+    z-index: 1;
+}
+.ctnInterBanner .left,.ctnInterBanner .right{
+    width: 50%;
+}
+
+.ctnInterBanner .left{
+    width: 60%;
+}
+.ctnInterBanner .right{
+    display: flex;
+    justify-content: end;
+    width: 40%;
+}
+.ctnInterBanner .left{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    height: 100%;
+    padding: 0 0 5rem 0;
+}
+.ctnInterBanner .left .ctnLogo{
+    height: 100%;
+    width: 100%;
+}
+.ctnInterBanner .left .ctnLogo .logoEvento{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 100% !important;
+    height:  auto !important;
+    object-fit: cover;
+    z-index: 0;
+}
+
+.ctnInterBanner .left h3{
+    font-weight: 600;
+    z-index: 1;
+}
+header {
+    display: flex;
+    align-self: center;
+    justify-content: space-between;
+    height: 4rem;
+    width: 100%;
+    max-width: var(--maxW);
+}
+header img{
+    height: 100% !important;
+    z-index: 99;
+}
+.bannerBack{
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+}
+.bannerBack img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+ /* FORMULARIO */
+.backFormulario {
+    /* overflow: hidden; */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    height: auto;
+    /* padding: 5rem 0; */
+    background: transparent;
+}
+
+.ctnFormulario {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: fit-content;
+    padding: 2rem;
+    background-color: var(--formBg);
+    border: 2px solid white;
+    border-radius: 2rem;
+    box-sizing: border-box;
+    gap: 1.4rem;
+    width: 27rem;
+    max-width: 100%;
+}
+
+/* .ctnFormulario:before {
+    content: "";
+    position: absolute;
+    bottom: -19px;
+    left: -9.8px;
+    width: 100%;
+    height: 19.5px;
+    background: #000;
+    transform: skewX(-45deg);
+    transform-origin: left;
+    z-index: -1;
+} */
+/* .ctnFormulario:after {
+    content: "";
+    position: absolute;
+    left: -20px;
+    top: 10px;
+    width: 20px;
+    height: 100%;
+    background: #000;
+    transform: skewY(-45deg);
+    transform-origin: top;
+    z-index: -1;
+} */
+.ctnFormulario h3{
+    text-align: center;
+    color: white;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+}
+
+form .double__form {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+
+form .input-field {
+    position: relative;
+    width: 100%;
+}
+form .ctnColegio{
+    position: relative;
+    width: 100%;
+}
+
+form .input-field input,
+form .input-field select {
+    width: 100%;
+    border-radius: 0.3rem;
+    padding: 0.5rem 0.8rem;
+    border: 0.1rem solid var(--input-border);
+    font-size: 0.8rem;
+    box-sizing: border-box;
+    background-color: var(--input-bg) !important;
+    color: var(--input-txt);
+    height: 2rem;
+    /* evita que el texto verticalmente se desplace */
+}
+
+form .input-field select:invalid {
+    color: var(--form-text);
+}
+
+/* FORMULARIO INVALIDO */
+
+/* ❌ INPUT inválido (con texto ingresado pero no válido) */
+form .input-field input:invalid:not(:focus):not(:placeholder-shown) {
+    border-color: var(--rojo);
+}
+
+/* ❌ LABEL rojo si el input es inválido y hay algo escrito */
+form .input-field input:invalid:not(:focus):not(:placeholder-shown)~label {
+    top: 0;
+    left: 0.5rem;
+    font-size: 0.7rem;
+    color: var(--rojo);
+    font-weight: 600;
+    background-color: #fff;
+    padding: 1px 5px;
+    white-space: nowrap;
+    border-radius: 0.5rem;
+}
+/* FIN DE FORMULARIO INVALIDO */
+
+
+
+form .input-field input.invalid,
+form .input-field select.invalid {
+    border: 1px solid var(--rojo) !important;
+}
+
+form .input-field input.invalid~label,
+form .input-field select.invalid~label {
+    top: 0;
+    left: 0.5rem;
+    font-size: 0.7rem;
+    color: var(--rojo);
+    font-weight: 600;
+    background-color: #fff;
+    padding: 1px 5px;
+    white-space: nowrap;
+    border-radius: 0.5rem;
+}
+
+form .input-field label {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    color: var(--form-text);
+    font-size: 0.9rem;
+    transform: translate(0, -50%);
+    pointer-events: none;
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+form .input-field select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23ffffff" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.3rem center;
+    background-size: 1rem;
+    padding-right: 2.2rem;
+    color: var(--input-txt);
+    /* color de texto por defecto */
+}
+form .input-field select option{
+    color: var(--input-txt-option);
+}
+/* FLECHA */
+
+form .input-field input:focus,
+form .input-field input:valid,
+form .input-field select:focus,
+form .input-field select:valid {
+    outline: none;
+    border: 1px solid var(--input-border);
+}
+
+form .input-field input:focus~label,
+form .input-field input:valid~label,
+form .input-field select:focus~label,
+form .input-field select:valid~label {
+    white-space: nowrap;
+    border-radius: 0.5rem;
+    background-color: #fff;
+    padding: 1px 5px;
+    top: 0;
+    left: 0.5rem;
+    font-size: 0.7rem;
+    color: var(--form-text-alter);
+    font-weight: 600;
+}
+
+form .ctnCheckbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+/*INPUT CHECKBOX*/
+.ctnCheckbox label{
+    display: flex;
+    align-items: center;
+    justify-content: center;   
+    cursor: pointer;
+}
+
+.ctnCheckbox input {
+  display: none;
+}
+
+form .ctnCheckbox input {
+    width: 20px !important;
+}
+
+.ctnCheckbox svg {
+  overflow: visible;
+}
+
+.ctnCheckbox .path {
+  fill: none;
+  stroke: white;
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke-dasharray 0.5s ease, stroke-dashoffset 0.5s ease;
+  stroke-dasharray: 241 9999999;
+  stroke-dashoffset: 0;
+}
+
+.ctnCheckbox input:checked ~ svg .path {
+  stroke-dasharray: 70.5096664428711 9999999;
+  stroke-dashoffset: -262.2723388671875;
+}
+
+/*INPUT CHECKBOX*/
+
+form .ctnCheckbox p {
+    width: 100%;
+    font-size: 0.7rem;
+    color: var(--form-text);
+}
+
+form .ctnCheckbox p a {
+    text-decoration: underline !important;
+    font-size: 0.7rem !important;
+    color: var(--form-text) !important;
+}
+
+form .ctnCheckbox p span {
+    text-decoration: underline !important;
+    cursor: pointer;
+}
+
+form .bloque1FormButton button {
+    padding: .5rem 1.5rem;
+    margin: 0;
+    color: var(--white);
+    background-color: var(--black);
+    font-size: 1.2rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 1rem;
+    transition: opacity 0.5s ease-in-out;
+}
+.button__change:disabled{
+    transition: opacity 0.5s ease-in-out;
+    opacity: .5;
+    cursor: not-allowed;
+}
+/* FIN DE FORMULARIO */
+
+@media(max-width: 1050px){
+    .ctnInterBanner .left, .ctnInterBanner .right {
+        justify-content: center;
+    }
+    .ctnInterBanner .left .ctnLogo .logoEvento{
+        display: none;
+    }
+    .ctnInterBanner .left .ctnLogo .logoEvento.mobile{
+        display: flex !important;
+        position: relative;
+        width: 30rem !important;
+        height: auto !important;
+        max-width: 100% !important;
+        transform: none;
+        top: auto;
+        left: auto;
+        bottom: auto;
+        right: auto;
+    }
+    .ctnInterBanner .left .ctnLogo{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .ctnBanner .ctnInterBanner{
+        flex-direction: column;
+        height: auto;
+        gap: 0.5rem;
+    }
+    .ctnInterBanner .left, .ctnInterBanner .right{
+        width: 100%;
+    }
+    .ctnInterBanner .left{
+        height: auto;
+        padding: 0;
+    }
+    .ctnInterBanner .left .ctnLogo{
+        width: 100%;
+        height: auto;
+    }
+    .backFormulario{
+        justify-content: center;
+    }
+    .ctnBanner{
+        padding: 2rem 0;
+        gap: 2rem;
+    }
+    .ctnCinta{
+        position:initial !important;
+    }
+    header{
+        padding: 0 2rem;
+        height: 3.5rem;
+    }
+    .ctnFormulario{
+        padding: 2rem 1.5rem;
+    }
+}
+@media(max-width: 700px){
+    .ctnBanner{
+        gap: 1rem;
+    }
+    header{
+        height: 3rem;
+    }
+    .backFormulario{
+        padding: 2rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    form .input-field label{
+        font-size: 0.8rem;
+    }
+}
+@media(max-width: 350px){
+    form .double__form{
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+/* CAPTCHA */
+
+.ctnCaptcha {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    height: 4.5rem !important;
+}
+
+.g-recaptcha {
+    height: auto;
+    transform: scale(0.63);
+}
+
+/* FIN DE CAPTCHA */
+/*FIN DE  BANNER */
+
+/* CINTA */
+.ctnCinta{
+    background-color: var(--secundary);
+    display: flex;
+    display: none !important;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 2rem;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    z-index: 1;
+}
+.ctnCinta .cinta{
+    font-size: 1.2rem;
+    color: white;
+}
+.ctnCinta .cinta p{
+    text-align: center;
+}
+/* FIN DE CINTA */
+
+/* BLOQUES Y SUB BLOQUES */
+.ctnBloque{
+    padding: 4rem 2rem;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    overflow: hidden;/* eliminar */
+}
+.ctnBloque .bloque{
+    max-width: var(--maxW);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+}
+/* FIN BLOQUES Y SUB BLOQUES */
+
+/* FOOTER */
+footer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: black;
+    width: 100%;
+    padding: 2rem;
+    position: relative;
+    z-index: 100;
+}
+.ctnFooter{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: var(--maxW);
+    width: 100%;
+}
+.ctnFooter img{
+    height: 4rem;
+}
+.ctnFooter .txtFooter{
+    color: white;
+    font-size: 0.85rem;
+    text-align: end;
+}
+/* FIN DE FOOTER */
+/* BTN FLOTANTE */
+.ctnFixed{
+    cursor: pointer;
+    background-color: var(--secundary);
+    padding: 1rem 1.5rem;
+    border-radius: 5rem;
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 20;
+    color: white;
+    font-weight: 600;
+}
+/* FIN DE FLOTANTE */
+@media (max-width: 1000px) {
+    .B5 .bloque img{
+        left: -4rem;
+        top: 2rem;
+    }
+    .B5 .bloque img.tano {
+        width: 12rem;
+    }
+}
+@media (max-width: 700px){
+    .ctnFixed{
+        right: auto;
+        left: 50%;
+        bottom: 2rem;
+        transform: translateX(-50%);
+    }
+    .ctnFooter .txtFooter{
+        text-align: start;
+    }
+    .ctnBloque {
+        padding: 3rem 1.5rem;
+    }
+    .escudoUpch{
+        display: flex !important;
+    }
+    .logoUpch{
+        display: none;
+    }
+    h1{
+        font-size: 2rem;
+    }
+    h2{
+        font-size: 1.5rem;
+    }
+    h3{
+        font-size: 1.2rem;
+    }
+    p{
+        font-size: 1rem;
+    }
+}
+/* NUEVOS */
+#sugerencias{
+    border:1px solid #ddd;
+    max-height:150px;
+    overflow-y:auto;
+    display:none;
+    position:absolute;
+    top:2rem;
+    width:100%;
+    z-index: 99;
+}
+
+.sugerencia{
+    padding: 4px 10px;
+    background-color:#fff;
+    cursor:pointer;
+    font-size: .8rem;
+}
+
+.sugerencia:hover{
+    background-color:#f0f0f0;
+}
+
+#sugerencias2 {
+    border:1px solid #ddd;
+    max-height:150px;
+    overflow-y:auto;
+    margin-top:5px;
+    display:none;
+    position:absolute;
+    top:30rem;
+    width:89%;
+    z-index: 99;
+}
+
+.sugerencia2 {
+    padding: 4px 10px;
+    background-color:#fff;
+    cursor:pointer;
+    font-size: .8rem;
+}
+
+.sugerencia2:hover{
+    background-color:#f0f0f0;
+}
+.grecaptcha-badge { 
+    visibility: hidden !important;
+    opacity: 0 !important;
+    display: none !important;
+}
+
+form .invitado {
+    display: none;
+}
+.input_checkbox{
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: white;
+    width: 100%;
+}
+/* NUEVOS */
+
+/* CARGANDO */
+.ctnCargando{
+    z-index: 147;
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--rojo);
+    overflow: hidden;
+}
+.escudoBack{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    height: 40rem;
+    width: 100%;
+    z-index: 0;
+    fill: white;
+}
+.ctnCargando img{
+    width: 28rem;
+    height: auto;
+    max-width: 100%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+/* FIN CARGANDO */

@@ -6,21 +6,26 @@ import "../styles/inventario.css";
 
 export default function Inventario() {
 
-  const { items, sedes, categories } = useGlobalData();
+  const { items, sedes, categories, actividades } = useGlobalData();
 
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [selectedSede, setSelectedSede] = useState("");
 
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [editStock, setEditStock] = useState("");
   const [movementType, setMovementType] = useState("");
+  const [selectActividad, setSelectActividad] =useState(""); 
 
   const [currentStock, setCurrentStock] = useState(0);
   const [stockPorSede, setStockPorSede] = useState([]);
 
   const [sedeTransferencia, setSedeTransferencia] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   const MAX_OBS = 150; // limite de campo observaciones
   const [observaciones, setObservaciones] = useState("");
@@ -113,34 +118,46 @@ export default function Inventario() {
      GUARDAR STOCK
   ===================================*/
   const handleSaveStock = async () => {
+    if (isSaving) return;
 
+    setIsSaving(true);  
+    setErrorMsg("");
+    setSuccessMsg("");
     if (!movementType) {
-      alert("Seleccione tipo de movimiento");
+      setErrorMsg("Seleccione tipo de movimiento");
       return;
     }
 
     if (!selectedSede) {
-      alert("Debe seleccionar una sede");
+      setErrorMsg("Debe seleccionar una sede");
       return;
     }
 
-     if (movementType === "transferencia" && !sedeTransferencia) {
-      alert("Debe seleccionar sede destino");
+    if (movementType === "transferencia" && !sedeTransferencia) {
+      setErrorMsg("Debe seleccionar sede destino");
       return;
     }
 
-    if (editStock === "" || Number(editStock) <= 0) {
-      alert("Cantidad inválida");
+    if (movementType === "salida" && !selectActividad) {
+      setErrorMsg("Debe seleccionar una actividad");
       return;
     }
 
-    const cantidad = Number(editStock);
+    if (!editStock || Number(editStock) <= 0) {
+      setErrorMsg("La cantidad debe ser mayor o igual a 0.");
+      return;
+    }
+    if (movementType === "transferencia" && selectedSede === sedeTransferencia) {
+      setErrorMsg("No puede transferir a la misma sede");
+      return;
+    }
 
+  const cantidad = Number(editStock);
     // Movimientos que RESTAN
     const movimientosResta = ["salida", "merma", "transferencia"];
 
     if (["salida", "merma", "transferencia"].includes(movementType) && cantidad > currentStock) {
-      alert("No puede restar más del stock actual");
+      setErrorMsg("No puede restar más del stock actual");
       return;
     }
 
@@ -171,7 +188,8 @@ export default function Inventario() {
           : "",
         observaciones: observaciones,
         activo: Number(item.activo ?? 1),
-        id_admin: Number(item.id_admin)
+        id_admin: Number(item.id_admin),
+        id_actividad: selectActividad ? Number(selectActividad) : null
       };
 
       const update = await apiPost("items-actualizar", payload);
@@ -204,13 +222,29 @@ export default function Inventario() {
           }
         ];
       });
+      const detalleMovimiento = `
+        Movimiento: ${movementType}
+        Cantidad: ${cantidad}
+        Nuevo stock: ${nuevoStock}
+        `;
 
-      setShowEditPopup(false);
-      setSelectedItem(null);
+        setSuccessMsg(`Actualización exitosa. ${detalleMovimiento}`);
+        setErrorMsg("");
+
+        setTimeout(() => {
+          setSuccessMsg("");
+        }, 5000);
+      // setShowEditPopup(false);
+      setTimeout(() => {
+        setShowEditPopup(false);
+        setSelectedItem(null);
+      }, 5000);
 
     } catch (error) {
       console.error(error);
       alert("El servidor rechazó la actualización");
+    }finally {
+      setIsSaving(false);
     }
   };
 
@@ -322,6 +356,7 @@ export default function Inventario() {
               <select
                 value={movementType}
                 onChange={(e) => setMovementType(e.target.value)}
+                required
               >
                 <option value=""></option>
                 <option value="entrada">Entrada</option>
@@ -332,38 +367,54 @@ export default function Inventario() {
               </select>
               <label>Tipo de movimiento</label>
             </div>
-
-            {/* SEDES */}
-            <div className="double__form" style={{ display: "flex"}}>
-              <div className='input-field' style={{ flex: 1 }}>
-                <select value={selectedSede} required disabled >
-                  {sedes.map((sede) => (
-                    <option key={sede.id_sede} value={sede.id_sede}>
-                      {sede.nombre_sede}
-                    </option>
-                  ))}
-                </select>
-                <label className="active">Sede actual</label>
-              </div>
-
-              <div className='input-field' style={{ flex: 1 }}>
-                <select
-                  value={sedeTransferencia}
-                  onChange={(e) => setSedeTransferencia(e.target.value)}
-                  required={movementType === "transferencia"}
-                  disabled={movementType !== "transferencia"}
-                >
+            {/* ACTIVIDAD */}
+            {movementType === "salida" && (
+              <div className='input-field'>
+                <select value={selectActividad} 
+                        onChange={(e) => setSelectActividad(e.target.value)} required >
                   <option value=""></option>
-                  {sedes.map((sede) => (
-                    <option key={sede.id_sede} value={sede.id_sede}>
-                      {sede.nombre_sede}
-                    </option>
-                  ))}
+                  {actividades.map((actividades) => (
+                      <option key={actividades.id_actividad} value={actividades.id_actividad}>
+                        {actividades.nombre_actividad}
+                      </option>
+                    ))}
                 </select>
-                <label className="active">Sede a transferir</label>
+                <label>Seleccionar actividad</label>
               </div>
-            </div>
-            
+            )}
+            {/* SEDES */}
+            {movementType === "transferencia" && (
+              <div className="double__form">
+              {/* <div className="double__form" style={{ 
+                display: movementType === "transferencia" ? "flex" : "none" }}> */}
+                <div className='input-field'>
+                  <select value={selectedSede} required disabled >
+                    {sedes.map((sede) => (
+                      <option key={sede.id_sede} value={sede.id_sede}>
+                        {sede.nombre_sede}
+                      </option>
+                    ))}
+                  </select>
+                  <label className="active">Sede actual</label>
+                </div>
+
+                <div className='input-field'>
+                  <select
+                    value={sedeTransferencia}
+                    onChange={(e) => setSedeTransferencia(e.target.value)}
+                    required={movementType === "transferencia"}
+                  >
+                    <option value=""></option>
+                    {sedes.map((sede) => (
+                      <option key={sede.id_sede} value={sede.id_sede}>
+                        {sede.nombre_sede}
+                      </option>
+                    ))}
+                  </select>
+                  <label className="active">Sede a transferir</label>
+                </div>
+              </div>
+            )}
             {/* STOCK ACTUAL Y NUEVO */}
             <div className="double__form">
               <div className='input-field'>
@@ -376,7 +427,7 @@ export default function Inventario() {
                   min="1"
                   step="1"
                   max={
-                    ["salida", "merma"].includes(movementType)
+                    ["salida", "merma", "transferencia"].includes(movementType)
                       ? currentStock
                       : undefined
                   }
@@ -390,7 +441,7 @@ export default function Inventario() {
             </div>
 
             {/* OBSERVACIONES */}
-            <div className='input-field'>
+            <div className='input-field ctnTextArea'>
               <textarea
                 maxLength={MAX_OBS}
                 value={observaciones}
@@ -404,10 +455,22 @@ export default function Inventario() {
                 {observaciones.length} / {MAX_OBS}
               </div>
             </div>
+            
+            <div className="disclaimer">
+              {errorMsg && <p className="error"><b> {errorMsg}</b></p>}
+              {successMsg && <p className="success">{successMsg}</p>}
+            </div>
 
             <div className="actions">
-              <button className="saveEdit" onClick={handleSaveStock}>
+              {/* <button className="saveEdit" onClick={handleSaveStock}>
                 Guardar
+              </button> */}
+              <button
+                className="saveEdit"
+                onClick={handleSaveStock}
+                disabled={isSaving}
+              >
+                {isSaving ? "Guardando..." : "Guardar"}
               </button>
               <button
                 className="closeForm"

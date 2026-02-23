@@ -94,7 +94,6 @@ const filteredItems = useMemo(() => {
     // 📅 quitar hora de la fecha
     const fechaSolo = String(m.fecha_movimiento ?? "").split(" ")[0].split("T")[0];
 
-    // 🔎 SOLO campos permitidos
     const rowString = normalize(`
       ${m.id_movimiento}
       ${m.nombre_actividad}
@@ -144,8 +143,9 @@ const filteredItems = useMemo(() => {
           <thead>
             <tr>
               <th>N°</th>
-              <th>Actividad</th>
               <th>Admin</th>
+              <th>Actividad</th>
+              <th>Comentario</th>
               <th>Ítem</th>
               <th>Tipo</th>
               <th>Cantidad</th>
@@ -157,8 +157,9 @@ const filteredItems = useMemo(() => {
             {filteredItems.map((m) => (
               <tr key={m.id_movimiento}>
                 <td>{m.id_movimiento}</td>
-                <td>{m.nombre_actividad}</td>
                 <td>{m.nombre_admin}</td>
+                <td>{m.nombre_actividad}</td>
+                <td>{m.observaciones}</td>
                 <td>{m.nombre_item}</td>
                 <td className={`tipoM ${String(m.tipo_movimiento || "").toLowerCase()}`}>
                   <p>{m.tipo_movimiento}</p>

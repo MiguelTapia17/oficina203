@@ -126,7 +126,7 @@ input:-internal-autofill-selected {
     cursor: pointer;
 }
 .errorTxt{
-    color: var(--primary);
+    color: var(--primary) !important;
     position: absolute;
     bottom: -2.5rem;
 }
@@ -173,6 +173,9 @@ input:-internal-autofill-selected {
     border-radius: 0.3rem;
     padding: 0.5rem 0.8rem;
 }
+.ctnTextArea{
+    height: 5rem;
+}
 .input-field .char-counter{
     position: absolute;
     bottom: 1rem;
@@ -190,47 +193,6 @@ input:-internal-autofill-selected {
 .input-field select:invalid {
     /* color: var(--formulario-primario); */
     color: var(--form-txt);
-}
-
-/* FORMULARIO INVALIDO */ 
-
-/* ❌ INPUT inválido (con texto ingresado pero no válido) */
-.input-field input:invalid:not(:focus):not(:placeholder-shown) {
-    border-color: var(--rojo);
-}
-
-/* ❌ LABEL rojo si el input es inválido y hay algo escrito */
-.input-field input:invalid:not(:focus):not(:placeholder-shown)~label {
-    top: 0;
-    left: 0.5rem;
-    font-size: 0.7rem;
-    color: var(--rojo);
-    font-weight: 600;
-    background-color: #fff;
-    padding: 1px 5px;
-    white-space: nowrap;
-    border-radius: 0.5rem;
-}
-/* FIN DE FORMULARIO INVALIDO */
-
-
-
-.input-field input.invalid,
-.input-field select.invalid{
-    border: 1px solid var(--rojo) !important;
-}
-
-.input-field input.invalid~label,
-.input-field select.invalid~label {
-    top: 0;
-    left: 0.5rem;
-    font-size: 0.7rem;
-    color: var(--rojo);
-    font-weight: 600;
-    background-color: #fff;
-    padding: 1px 5px;
-    white-space: nowrap;
-    border-radius: 0.5rem;
 }
 
 .input-field label {
@@ -287,3 +249,46 @@ input:-internal-autofill-selected {
     color: var(--form-txt);
     font-weight: 600;
 }
+
+
+/* FORMULARIO INVALIDO */ 
+
+/* ❌ INPUT inválido (con texto ingresado pero no válido) */
+.input-field input:invalid:not(:focus):not(:placeholder-shown) {
+    border: 1px solid var(--rojo)  !important;
+}
+
+/* ❌ LABEL rojo si el input es inválido y hay algo escrito */
+.input-field input:invalid:not(:focus):not(:placeholder-shown)~label {
+    top: 0;
+    left: 0.5rem;
+    font-size: 0.7rem;
+    color: var(--rojo) !important;
+    font-weight: 600;
+    background-color: #fff;
+    padding: 1px 5px;
+    white-space: nowrap;
+    border-radius: 0.5rem;
+}
+
+
+
+.input-field input.invalid,
+.input-field select.invalid{
+    border: 1px solid var(--rojo) !important;
+}
+
+
+.input-field input.invalid~label,
+.input-field select.invalid~label {
+    top: 0;
+    left: 0.5rem;
+    font-size: 0.7rem;
+    color: var(--rojo) !important;
+    font-weight: 600;
+    background-color: #fff;
+    padding: 1px 5px;
+    white-space: nowrap;
+    border-radius: 0.5rem;
+}
+/* FIN DE FORMULARIO INVALIDO */
