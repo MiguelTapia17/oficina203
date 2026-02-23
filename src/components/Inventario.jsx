@@ -119,8 +119,6 @@ export default function Inventario() {
   ===================================*/
   const handleSaveStock = async () => {
     if (isSaving) return;
-
-    setIsSaving(true);  
     setErrorMsg("");
     setSuccessMsg("");
     if (!movementType) {
@@ -151,8 +149,9 @@ export default function Inventario() {
       setErrorMsg("No puede transferir a la misma sede");
       return;
     }
-
-  const cantidad = Number(editStock);
+    
+    
+    const cantidad = Number(editStock);
     // Movimientos que RESTAN
     const movimientosResta = ["salida", "merma", "transferencia"];
 
@@ -160,7 +159,7 @@ export default function Inventario() {
       setErrorMsg("No puede restar más del stock actual");
       return;
     }
-
+    setIsSaving(true);
     let nuevoStock = currentStock;
 
     if (movimientosResta.includes(movementType)) {
