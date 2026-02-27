@@ -129,6 +129,7 @@ input.cantidad{
   border-radius: 10px;
   width: 400px;
   gap: 10px;
+  overflow: hidden;
 }
 
 .popup-content h3 {
@@ -143,7 +144,7 @@ input.cantidad{
   margin: 0;
 }
 
-.addProduct, .saveEdit{
+.inventario .addProduct, .inventario .saveEdit{
   padding: 10px;
   background-color: var(--primary);
   color: white;
@@ -156,15 +157,31 @@ input.cantidad{
 
 .closeForm{
   background-color: var(--gray-one);
-  border-radius: 50%;
+  border-radius: 0 0 0 10px;
   position: absolute;
-  top: 5px;
-  right: 5px;
+  top: 0;
+  right: 0;
   width: 30px;
   height: 30px;
+  padding: 0 0 1px 1px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   border: none;
+}
+
+.btnAddProduct{
+  background-color: var(--primary);
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.btnAddProduct svg{
+  fill: white;
 }

@@ -1,15 +1,29 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { apiPost, apiGet } from "../services/api";
 import { useGlobalData } from "../context/GlobalDataContext";
 import { SVG } from "../assets/imgSvg";
 import "../styles/inventario.css";
+import NewProduct from "../components/NewProduct"; // Importamos el componente
 
 export default function Inventario() {
+  const [showNewProductPopup, setShowNewProductPopup] = useState(false); // Controlamos la visibilidad del popup
+  const [successMessage, setSuccessMessage] = useState("");
 
+  // Mostrar el popup
+  const handleAddNewProduct = () => {
+    setShowNewProductPopup(true);
+  };
+
+  // Ocultar el popup
+  const handleClosePopup = () => {
+    setShowNewProductPopup(false);
+  };
+    
   const { items, sedes, categories, actividades } = useGlobalData();
 
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
+  const [categoria, setCategoria] = useState("");
   const [selectedSede, setSelectedSede] = useState("");
 
   const [errorMsg, setErrorMsg] = useState("");
@@ -29,7 +43,7 @@ export default function Inventario() {
 
   const MAX_OBS = 150; // limite de campo observaciones
   const [observaciones, setObservaciones] = useState("");
-
+    
   const normalize = (str) =>
     String(str ?? "")
       .normalize("NFD")
@@ -58,21 +72,21 @@ export default function Inventario() {
      FILTRADO
   ===================================*/
   const filteredItems = items.filter((item) => {
+  // Aquí comparamos el ID de la categoría de `item` con el valor de `categoryFilter`
+  const matchesCategory = categoryFilter
+    ? item.id_categoria === parseInt(categoryFilter) // Convertimos `categoryFilter` a número
+    : true;  // Si `categoryFilter` está vacío, no se aplica filtro
 
-    const matchesCategory = categoryFilter
-      ? item.nombre_categoria === categoryFilter
-      : true;
+  if (!search.trim()) return matchesCategory;
 
-    if (!search.trim()) return matchesCategory;
+  const rowString = normalize(`
+    ${item.id_item}
+    ${item.nombre_item}
+    ${item.descripcion}
+  `);
 
-    const rowString = normalize(`
-      ${item.id_item}
-      ${item.nombre_item}
-      ${item.descripcion}
-    `);
-
-    return matchesCategory && rowString.includes(normalize(search));
-  });
+  return matchesCategory && rowString.includes(normalize(search)); // Se aplica el filtro de búsqueda
+});
 
   /* ================================
      OBTENER STOCK SEGÚN SEDE
@@ -167,7 +181,7 @@ export default function Inventario() {
     } else {
       nuevoStock = currentStock + cantidad;
     }
-
+    
     try {
       const item = selectedItem;
       const payload = {
@@ -188,9 +202,10 @@ export default function Inventario() {
         observaciones: observaciones,
         activo: Number(item.activo ?? 1),
         id_admin: Number(item.id_admin),
+        tipo_movimiento: movementType,
         id_actividad: selectActividad ? Number(selectActividad) : null
       };
-
+      console.log("Payload enviado al servidor:", payload);  // Esto te permitirá ver todos los datos antes de enviarlos
       const update = await apiPost("items-actualizar", payload);
 
       if (!update.ok) throw new Error("Falló actualización");
@@ -251,6 +266,15 @@ export default function Inventario() {
     <div className="inventario">
       <h2>Inventario</h2>
 
+            {/* Mostrar mensaje de éxito */}
+          {successMessage && <div className="successMessage">{successMessage}</div>}
+
+
+          {/* Condicionalmente mostrar el popup */}
+          {showNewProductPopup && (
+            <NewProduct setShowPopup={setShowNewProductPopup} setShowSuccessMessage={setSuccessMessage} />
+          )}
+
       <div className="filters">
 
         <div className='input-field'>
@@ -263,18 +287,21 @@ export default function Inventario() {
           <label>Buscar en inventario</label>
         </div>
 
-        <div className='input-field'>
+        <div className="input-field">
           <select
-            onChange={(e) => setCategoryFilter(e.target.value)}
-            value={categoryFilter}
+            value={categoryFilter}  // El valor es el `id_categoria` seleccionado
+            onChange={(e) => setCategoryFilter(e.target.value)}  // Actualizamos el filtro de categoría
           >
-            <option value="">Todas las categorias</option>
-            {categories.map((category, index) => (
-              <option key={index} value={category}>{category}</option>
+            <option value="">Todas las categorías</option>
+            {categories.map((category) => (
+              <option key={category.id_categoria} value={category.id_categoria}>
+                {category.nombre_categoria}  {/* Mostramos el nombre de la categoría */}
+              </option>
             ))}
           </select>
           <label>Categoria</label>
         </div>
+        
 
         <div className='input-field'>
           <select
@@ -290,6 +317,11 @@ export default function Inventario() {
           </select>
           <label>Sede</label>
         </div>
+        {/* Botón para agregar un nuevo producto */}
+          <div className="btnAddProduct" onClick={handleAddNewProduct}>
+            <SVG.BoxAdd className="icon" /> Nuevo Producto
+          </div>
+
       </div>
 
       <div className="ctnTable">

@@ -3,9 +3,9 @@ import Inicio from "./Inicio";
 import Inventario from "./Inventario";
 import Historial from "./Historial";
 import Usuarios from "./Usuarios";
+import Loader from "./Loader";
 
 export default function Contenido({ activeView, loading }) {
-  // Renderizamos el componente correspondiente según la vista activa
   const renderView = () => {
     switch (activeView) {
       case "inicio":
@@ -13,11 +13,11 @@ export default function Contenido({ activeView, loading }) {
       case "inventario":
         return <Inventario />;
       case "añadirStock":
-        return <div>Nuevo Producto</div>; // Este es un ejemplo, puedes reemplazar con el componente real
+        return <div>Nuevo Producto</div>;
       case "historial":
-        return <Historial />; // Este es un ejemplo, puedes reemplazar con el componente real
+        return <Historial />;
       case "usuarios":
-        return <Usuarios />; // Este es un ejemplo, puedes reemplazar con el componente real
+        return <Usuarios />;
       default:
         return <Inicio />;
     }
@@ -25,17 +25,7 @@ export default function Contenido({ activeView, loading }) {
 
   return (
     <div className="ctnContenido">
-      {loading ? (
-        // Si estamos en estado de carga, mostramos el loader dentro del contenido
-        <div className="loader">
-          <div className="box1"></div>
-          <div className="box2"></div>
-          <div className="box3"></div>
-        </div>
-      ) : (
-        // Si no estamos en carga, mostramos el contenido correspondiente
-        renderView()
-      )}
+      {loading ? <Loader /> : renderView()}
     </div>
   );
 }

@@ -4,6 +4,7 @@
   border: 1px solid;
   border-radius: 1rem;
   font-size: 0.8rem;
+  padding: 2px 8px;
 }
 .tipoM.salida p{
   background-color: #FDECEC; /* fondo claro */
@@ -31,4 +32,20 @@
   flex-direction: column;
   height: 100%;
   gap: 1rem;
+}
+
+.clickable{
+  text-decoration: underline;
+  cursor: pointer;
+}
+/* POPUP */
+.historial .popup-item{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.7rem;
+  cursor: auto;
+}
+.historial  .double__form{
+  width: auto;
 }

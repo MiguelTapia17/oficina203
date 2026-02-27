@@ -225,6 +225,7 @@ input:-internal-autofill-selected {
 .input-field input:focus,
 /* .input-field input:valid, */
 .input-field input:not(:placeholder-shown),
+.input-field textarea:focus,
 .input-field select:focus,
 .input-field select:valid {
     outline: none;
@@ -237,6 +238,7 @@ input:-internal-autofill-selected {
 .input-field select:focus~label,
 .input-field select:valid~label,
 .input-field textarea:valid~label,
+.input-field textarea:focus~label,
 .input-field input:disabled~label,
 .input-field select:disabled~label{
     white-space: nowrap;
@@ -249,8 +251,6 @@ input:-internal-autofill-selected {
     color: var(--form-txt);
     font-weight: 600;
 }
-
-
 /* FORMULARIO INVALIDO */ 
 
 /* ❌ INPUT inválido (con texto ingresado pero no válido) */
@@ -270,8 +270,6 @@ input:-internal-autofill-selected {
     white-space: nowrap;
     border-radius: 0.5rem;
 }
-
-
 
 .input-field input.invalid,
 .input-field select.invalid{
