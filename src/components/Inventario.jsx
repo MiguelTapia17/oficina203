@@ -44,6 +44,7 @@ export default function Inventario() {
   const MAX_OBS = 150; // limite de campo observaciones
   const [observaciones, setObservaciones] = useState("");
     
+  const [stockFilter, setStockFilter] = useState("all"); 
   const normalize = (str) =>
     String(str ?? "")
       .normalize("NFD")
@@ -69,26 +70,6 @@ export default function Inventario() {
   }, []);
 
   /* ================================
-     FILTRADO
-  ===================================*/
-  const filteredItems = items.filter((item) => {
-  // Aquí comparamos el ID de la categoría de `item` con el valor de `categoryFilter`
-  const matchesCategory = categoryFilter
-    ? item.id_categoria === parseInt(categoryFilter) // Convertimos `categoryFilter` a número
-    : true;  // Si `categoryFilter` está vacío, no se aplica filtro
-
-  if (!search.trim()) return matchesCategory;
-
-  const rowString = normalize(`
-    ${item.id_item}
-    ${item.nombre_item}
-    ${item.descripcion}
-  `);
-
-  return matchesCategory && rowString.includes(normalize(search)); // Se aplica el filtro de búsqueda
-});
-
-  /* ================================
      OBTENER STOCK SEGÚN SEDE
   ===================================*/
   const getStock = (item) => {
@@ -112,6 +93,57 @@ export default function Inventario() {
 
     return stock ? Number(stock.cantidad_actual) : 0;
   };
+  /* ================================
+     FILTRADO
+  ===================================*/
+//   const filteredItems = items.filter((item) => {
+//   // Comparamos el ID de la categoría de `item` con el valor de `categoryFilter`
+//   const matchesCategory = categoryFilter
+//     ? item.id_categoria === parseInt(categoryFilter) // Convertimos `categoryFilter` a número
+//     : true;  // Si `categoryFilter` está vacío, no se aplica filtro
+
+//   if (!search.trim()) return matchesCategory;
+
+//   const rowString = normalize(`
+//     ${item.id_item}
+//     ${item.nombre_item}
+//     ${item.descripcion}
+//   `);
+
+//   return matchesCategory && rowString.includes(normalize(search)); // Se aplica el filtro de búsqueda
+// });
+  const filteredItems = items.filter((item) => {
+
+    const matchesCategory = categoryFilter
+      ? item.id_categoria === parseInt(categoryFilter)
+      : true;
+
+    const stock = getStock(item);
+
+    // 🔥 Filtro por stock
+    const matchesStock =
+      stockFilter === "all"
+        ? true
+        : stockFilter === "with"
+        ? stock > 0
+        : stock === 0;
+
+    if (!search.trim()) {
+      return matchesCategory && matchesStock;
+    }
+
+    const rowString = normalize(`
+      ${item.id_item}
+      ${item.nombre_item}
+      ${item.descripcion}
+    `);
+
+    return (
+      matchesCategory &&
+      matchesStock &&
+      rowString.includes(normalize(search))
+    );
+  });
 
   /* ================================
      EDITAR
@@ -284,9 +316,8 @@ export default function Inventario() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <label>Buscar en inventario</label>
+          <label>Buscar (id, nombre, desc.)</label>
         </div>
-
         <div className="input-field">
           <select
             value={categoryFilter}  // El valor es el `id_categoria` seleccionado
@@ -301,8 +332,6 @@ export default function Inventario() {
           </select>
           <label>Categoria</label>
         </div>
-        
-
         <div className='input-field'>
           <select
             value={selectedSede}
@@ -317,10 +346,33 @@ export default function Inventario() {
           </select>
           <label>Sede</label>
         </div>
-        {/* Botón para agregar un nuevo producto */}
-          <div className="btnAddProduct" onClick={handleAddNewProduct}>
-            <SVG.BoxAdd className="icon" /> Nuevo Producto
+        <div className="stockFilterButtons">
+          <div 
+            className={`filterBtn ${stockFilter === "all" ? "active" : ""}`}
+            onClick={() => setStockFilter("all")}
+          >
+            {/* <SVG.FilterOff className="icon" /> */}
           </div>
+
+          <div 
+            className={`filterBtn ${stockFilter === "with" ? "active" : ""}`}
+            onClick={() => setStockFilter("with")}
+          >
+            {/* <SVG.BoxCheck className="icon" /> */}
+          </div>
+
+          <div 
+            className={`filterBtn ${stockFilter === "without" ? "active" : ""}`}
+            onClick={() => setStockFilter("without")}
+          >
+            {/* <SVG.BoxX className="icon" /> */}
+          </div>
+
+        </div>
+        {/* Botón para agregar un nuevo producto */}
+        <div className="btnAddProduct" onClick={handleAddNewProduct}>
+          <SVG.BoxAdd className="icon" /> Nuevo Producto
+        </div>
 
       </div>
 
@@ -341,7 +393,7 @@ export default function Inventario() {
 
               const stock = getStock(item);
 
-              if (selectedSede && stock === 0) return null;
+              // if (selectedSede && stock === 0) return null;
 
               return (
                 <tr key={item.id_item}>
@@ -517,3 +569,4 @@ export default function Inventario() {
     </div>
   );
 }
+

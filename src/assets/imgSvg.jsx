@@ -1,9 +1,15 @@
+//INSTALAR VITE 
+//npm install vite-plugin-svgr
+
 import { ReactComponent as Login } from "./svg/login.svg";
 import { ReactComponent as Logout } from "./svg/logout.svg";
 import { ReactComponent as History } from "./svg/history.svg";
 import { ReactComponent as Box } from "./svg/box.svg";
 import { ReactComponent as BoxAdd } from "./svg/boxAdd.svg";
 import { ReactComponent as BoxEdit } from "./svg/boxEdit.svg";
+import { ReactComponent as BoxRemove } from "./svg/boxRemove.svg";
+import { ReactComponent as BoxSearch } from "./svg/boxSearch.svg";
+import { ReactComponent as BoxTick } from "./svg/boxTick.svg";
 import { ReactComponent as Dashboard } from "./svg/dashboard.svg";
 import { ReactComponent as Settings } from "./svg/settings.svg";
 import { ReactComponent as Tema } from "./svg/tema.svg";
@@ -20,6 +26,7 @@ import { ReactComponent as Close } from "./svg/close.svg";
 import logoBlanco from "./images/logoBlanco.webp";
 import logoNegro from "./images/logoNegro.webp";
 
+
 export const SVG = {
   Login,
   Logout,
@@ -27,6 +34,9 @@ export const SVG = {
   Box,
   BoxAdd,
   BoxEdit,
+  BoxRemove,
+  BoxSearch,
+  BoxTick,
   Dashboard,
   Settings,
   Tema,

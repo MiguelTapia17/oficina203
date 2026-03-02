@@ -185,3 +185,10 @@ input.cantidad{
 .btnAddProduct svg{
   fill: white;
 }
+
+.stockFilterButtons{
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid;
+  border-radius: 0.3rem;
+}
