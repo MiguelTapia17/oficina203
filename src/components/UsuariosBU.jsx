@@ -1,17 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { apiGet, apiPost } from "../services/api";
 import { SVG } from "../assets/imgSvg";
-import { useGlobalData } from "../context/GlobalDataContext";
 import "../styles/usuarios.css";
 
 const makeEmptyForm = () => ({
   usuario: "",
-  password: "",
+  password: "", // en editar: opcional, si va vacío no se envía
   nombre_completo: "",
   email: "",
   rol: "",
   estado: "activo",
-  id_sede: "",
+  id_sede: 1,
 });
 
 export default function Usuarios() {
@@ -31,7 +30,7 @@ export default function Usuarios() {
   // Form
   const [selectedUser, setSelectedUser] = useState(null); // el usuario de la fila
   const [form, setForm] = useState(makeEmptyForm());
-  const { sedes } = useGlobalData(); // [{id_sede, nombre_sede, ...}]
+
   const normalize = (str) =>
     String(str ?? "")
       .normalize("NFD")
@@ -72,17 +71,6 @@ export default function Usuarios() {
       return row.includes(q);
     });
   }, [usuarios, search]);
-    
-  /* SEDES */
-  const sedesById = useMemo(() => {
-    const m = new Map();
-    (sedes || []).forEach((s) => m.set(Number(s.id_sede), s.nombre_sede));
-    return m;
-  }, [sedes]);
-
-  const getSedeNombre = (id_sede) =>
-    sedesById.get(Number(id_sede)) || `Sede ${id_sede ?? "-"}`;
-  /* FIN DE SEDES */
 
   const openCreate = () => {
     setError("");
@@ -284,8 +272,7 @@ export default function Usuarios() {
                   <td>{u.email}</td>
                   <td>{u.rol}</td>
                   <td>{u.estado}</td>
-                  {/* <td>{u.id_sede}</td> */}
-                  <td>{getSedeNombre(u.id_sede)}</td>
+                  <td>{u.id_sede}</td>
                   <td>{u.ultimo_acceso ?? "-"}</td>
                   <td className="actionsCell">
                     <button className="btnSmall" onClick={() => openEdit(u)}>
@@ -358,7 +345,7 @@ export default function Usuarios() {
                 </div>
               </div>
 
-              <div className="double__form">
+              <div className="triple__form">
                 <div className="input-field">
                   <select
                     value={form.rol}
@@ -384,21 +371,16 @@ export default function Usuarios() {
                   <label>Estado</label>
                 </div>
 
-              </div>
-              <div className="input-field">
-                <select
-                  value={form.id_sede}
-                  onChange={(e) => setForm({ ...form, id_sede: Number(e.target.value) })}
-                  required
-                >
-                  <option value=""></option>
-                  {sedes?.map((s) => (
-                    <option key={s.id_sede} value={s.id_sede}>
-                      {s.nombre_sede}
-                    </option>
-                  ))}
-                </select>
-                <label>Sede</label>
+                <div className="input-field">
+                  <input
+                    type="number"
+                    min="1"
+                    value={form.id_sede}
+                    onChange={(e) => setForm({ ...form, id_sede: e.target.value })}
+                    placeholder=" "
+                  />
+                  <label>ID Sede</label>
+                </div>
               </div>
 
               {error && <p className="errorTxt">{error}</p>}
@@ -425,30 +407,6 @@ export default function Usuarios() {
             <h3>Editar usuario </h3>
 
             <form onSubmit={handleUpdate}>
-
-              {/* <div className="double__form">
-                <div className="input-field">
-                  <input
-                    type="text"
-                    value={form.usuario}
-                    onChange={(e) => setForm({ ...form, usuario: e.target.value })}
-                    placeholder=" "
-                    required
-                  />
-                  <label>Usuario</label>
-                </div> */}
-
-                  {/* <div className="input-field">
-                    <input
-                      type="password"
-                      value={form.password}
-                      onChange={(e) => setForm({ ...form, password: e.target.value })}
-                      placeholder=" "
-                    />
-                    <label>Nueva contraseña (opcional)</label>
-                  </div> */}
-              {/* </div> */}
-              
               <div className="double__form">
                 <div className="input-field">
                   <input
@@ -461,7 +419,24 @@ export default function Usuarios() {
                   />
                   <label>Id</label>
                 </div>
+
                 <div className="input-field">
+                  <input
+                    type="number"
+                    min="1"
+                    value={form.id_sede}
+                    onChange={(e) =>
+                      setForm({ ...form, id_sede: e.target.value })
+                    }
+                    placeholder=" "
+                  />
+                  <label>ID Sede</label>
+                </div>
+
+              </div>
+
+            <div className="double__form">
+              <div className="input-field">
                   <input
                     type="text"
                     value={form.usuario}
@@ -471,7 +446,18 @@ export default function Usuarios() {
                   />
                   <label>Usuario</label>
                 </div>
-              </div>
+
+                <div className="input-field">
+                  <input
+                    type="password"
+                    value={form.password}
+                    onChange={(e) => setForm({ ...form, password: e.target.value })}
+                    placeholder=" "
+                  />
+                  <label>Nueva contraseña (opcional)</label>
+                </div>
+            </div>
+
               <div className="double__form">
                 <div className="input-field">
                   <input
@@ -495,21 +481,7 @@ export default function Usuarios() {
                   <label>Email</label>
                 </div>
               </div>
-              <div className="input-field">
-                <select
-                  value={form.id_sede}
-                  onChange={(e) => setForm({ ...form, id_sede: Number(e.target.value) })}
-                  required
-                >
-                  <option value=""></option>
-                  {sedes?.map((s) => (
-                    <option key={s.id_sede} value={s.id_sede}>
-                      {s.nombre_sede}
-                    </option>
-                  ))}
-                </select>
-                <label>Sede</label>
-              </div>
+
               <div className="double__form">
                 <div className="input-field">
                   <select

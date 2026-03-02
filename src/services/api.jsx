@@ -1,7 +1,7 @@
 const API_BASE = "https://comerciald4.sg-host.com/api";
 const API_KEY = "UPCH2026";
 
-// Login
+// Endpoints Login
 export async function apiLogin(usuario, password) {
   const response = await fetch(`${API_BASE}/login`, {
     method: "POST",
@@ -44,6 +44,25 @@ export async function apiPost(endpoint, body) {
       ...(token && { Authorization: `Bearer ${token}` }),
     },
     body: JSON.stringify(body),
+  });
+
+  return response.json();
+}
+
+
+export async function apiUpload(endpoint, file) {
+  const token = localStorage.getItem("token");
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch(`${API_BASE}/${endpoint}`, {
+    method: "POST",
+    headers: {
+      "X-API-KEY": API_KEY,
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
+    body: formData,
   });
 
   return response.json();

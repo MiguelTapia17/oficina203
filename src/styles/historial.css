@@ -49,3 +49,10 @@
 .historial  .double__form{
   width: auto;
 }
+.historial .popup-item .input-field input, .historial .popup-item .input-field textarea {
+  border-color: var(--gray-two);
+}
+
+.historial .popup-item .input-field label{
+  color: rgb(0,0,0,0.5) !important;
+} 

@@ -22,6 +22,10 @@ import { ReactComponent as ArrowLeft } from "./svg/arrowLeft.svg";
 import { ReactComponent as ArrowRight } from "./svg/arrowRight.svg";
 import { ReactComponent as Resta } from "./svg/resta.svg";
 import { ReactComponent as Close } from "./svg/close.svg";
+import { ReactComponent as Importar } from "./svg/importar.svg";
+import { ReactComponent as StockAll } from "./svg/stockAll.svg";
+import { ReactComponent as StockWith } from "./svg/stockWith.svg";
+import { ReactComponent as StockWithout } from "./svg/stockWithout.svg";
 
 import logoBlanco from "./images/logoBlanco.webp";
 import logoNegro from "./images/logoNegro.webp";
@@ -49,6 +53,10 @@ export const SVG = {
   ArrowLeft,
   Resta,
   Close,
+  Importar,
+  StockAll,
+  StockWith,
+  StockWithout
 };
 
 export const IMAGES = {

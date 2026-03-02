@@ -112,6 +112,13 @@ export default function Inventario() {
 
 //   return matchesCategory && rowString.includes(normalize(search)); // Se aplica el filtro de búsqueda
 // });
+const handleStockFilterToggle = () => {
+  setStockFilter(prev => {
+    if (prev === "all") return "with";
+    if (prev === "with") return "without";
+    return "all";
+  });
+};
   const filteredItems = items.filter((item) => {
 
     const matchesCategory = categoryFilter
@@ -164,9 +171,12 @@ export default function Inventario() {
      GUARDAR STOCK
   ===================================*/
   const handleSaveStock = async () => {
+
     if (isSaving) return;
+
     setErrorMsg("");
     setSuccessMsg("");
+
     if (!movementType) {
       setErrorMsg("Seleccione tipo de movimiento");
       return;
@@ -195,16 +205,16 @@ export default function Inventario() {
       setErrorMsg("No puede transferir a la misma sede");
       return;
     }
-    
-    
-    const cantidad = Number(editStock);
+        
+    let cantidad = Number(editStock);
     // Movimientos que RESTAN
     const movimientosResta = ["salida", "merma", "transferencia"];
 
-    if (["salida", "merma", "transferencia"].includes(movementType) && cantidad > currentStock) {
+    if (["salida", "merma", "transferencia"].includes(movementType) && cantidad > currentStock) {      
       setErrorMsg("No puede restar más del stock actual");
       return;
     }
+
     setIsSaving(true);
     let nuevoStock = currentStock;
 
@@ -297,16 +307,13 @@ export default function Inventario() {
   return (
     <div className="inventario">
       <h2>Inventario</h2>
-
-            {/* Mostrar mensaje de éxito */}
+          {/* Mostrar mensaje de éxito */}
           {successMessage && <div className="successMessage">{successMessage}</div>}
-
 
           {/* Condicionalmente mostrar el popup */}
           {showNewProductPopup && (
             <NewProduct setShowPopup={setShowNewProductPopup} setShowSuccessMessage={setSuccessMessage} />
           )}
-
       <div className="filters">
 
         <div className='input-field'>
@@ -346,28 +353,38 @@ export default function Inventario() {
           </select>
           <label>Sede</label>
         </div>
-        <div className="stockFilterButtons">
+        {/* <div className="stockFilterButtons">
           <div 
             className={`filterBtn ${stockFilter === "all" ? "active" : ""}`}
             onClick={() => setStockFilter("all")}
           >
-            {/* <SVG.FilterOff className="icon" /> */}
+            all
           </div>
 
           <div 
             className={`filterBtn ${stockFilter === "with" ? "active" : ""}`}
             onClick={() => setStockFilter("with")}
           >
-            {/* <SVG.BoxCheck className="icon" /> */}
+            filter
           </div>
 
           <div 
             className={`filterBtn ${stockFilter === "without" ? "active" : ""}`}
             onClick={() => setStockFilter("without")}
           >
-            {/* <SVG.BoxX className="icon" /> */}
+            filter2
           </div>
 
+        </div> */}
+        <div className="stockFilterButtons">
+          <div 
+            className={`filterBtn ${stockFilter}`}
+            onClick={handleStockFilterToggle}
+          >
+            {stockFilter === "all" && <SVG.StockAll className="icon" />}
+            {stockFilter === "with" && <SVG.StockWith className="icon" />}
+            {stockFilter === "without" && <SVG.StockWithout className="icon" />}
+          </div>
         </div>
         {/* Botón para agregar un nuevo producto */}
         <div className="btnAddProduct" onClick={handleAddNewProduct}>

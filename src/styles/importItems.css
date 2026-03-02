@@ -1,0 +1,125 @@
+.ctnError{
+    height: 1.2rem;
+}
+.error{
+    color: var(--primary);
+    /* font-weight: 600; */
+}
+.ctnImport{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2.5rem;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+/* NUEVOS EFECTOS */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  width: 25rem;
+  max-width: 100%;
+  /* background: linear-gradient(135deg, #6dd5ed, #2193b0); */
+  border-radius: 15px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  
+  gap: 1rem;
+  /* position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); */
+  background-color: var(--menu1);
+  /* background: var(--secundary); */
+  box-shadow: 0 0 1rem var(--gray-two);
+  padding: 2rem;
+  border-radius: 1rem;
+}
+
+.container button{
+    /* background-color: var(--primary); */
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 1.2rem;
+    border-radius: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+.container button:hover{
+    background-color: var(--primary);
+}
+.folder {
+  position: relative;
+  animation: float 2.5s infinite ease-in-out;
+  transition: transform 0.3s ease;
+}
+
+.folder:hover {
+  transform: scale(1.05);
+}
+
+.folder .top {
+  background: linear-gradient(135deg, #ff9a56, #ff6f56);
+  width: 80px;
+  height: 20px;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 2;
+}
+
+.folder .bottom {
+  background: linear-gradient(135deg, #ffe563, #ffc663);
+  width: 120px;
+  height: 80px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  border-radius: 0 10px 10px 10px;
+  position: relative;
+  top: -10px;
+}
+
+.custom-file-upload {
+  font-size: 1rem;
+  color: #ffffff;
+  text-align: center;
+  margin-top: 20px;
+  padding: 15px 25px;
+  background: rgba(0, 0, 0, 0.4);
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background 0.3s ease;
+  display: inline-block;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.custom-file-upload:hover {
+  background: rgba(0, 0, 0, 1);
+}
+
+.custom-file-upload input[type="file"] {
+  display: none;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-15px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}

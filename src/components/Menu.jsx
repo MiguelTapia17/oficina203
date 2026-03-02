@@ -59,6 +59,9 @@ export default function Menu({ activeView, setActiveView }) {
         <button className={activeView === "usuarios" ? "active" : ""} onClick={() => handleViewChange("usuarios")}>
           <SVG.History className="icon" /> Gestión de Usuarios
         </button>
+        <button className={activeView === "importItems" ? "active" : ""} onClick={() => handleViewChange("importItems")}>
+          <SVG.Importar className="icon" /> Importar Items
+        </button>
         
         <button className="exit" onClick={logout}>
           <SVG.Logout className="icon" /> Cerrar sesión
