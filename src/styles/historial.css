@@ -39,7 +39,7 @@
   cursor: pointer;
 }
 /* POPUP */
-.historial .popup-item{
+.popup-content .popup-item{
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -49,7 +49,7 @@
 .historial  .double__form{
   width: auto;
 }
-.historial .popup-item .input-field input, .historial .popup-item .input-field textarea {
+.popup-content .popup-item .input-field input, .popup-content .popup-item .input-field textarea {
   border-color: var(--gray-two);
 }
 

@@ -15,6 +15,9 @@ import { ReactComponent as Settings } from "./svg/settings.svg";
 import { ReactComponent as Tema } from "./svg/tema.svg";
 import { ReactComponent as Guardar } from "./svg/guardar.svg";
 import { ReactComponent as User } from "./svg/user.svg";
+import { ReactComponent as UserSetting } from "./svg/userSetting.svg";
+import { ReactComponent as UserEdit } from "./svg/userEdit.svg";
+import { ReactComponent as UserAdd } from "./svg/userAdd.svg";
 import { ReactComponent as Vencimiento } from "./svg/vencimiento.svg";
 import { ReactComponent as ArrowTop } from "./svg/arrowTop.svg";
 import { ReactComponent as ArrowDown } from "./svg/arrowDown.svg";
@@ -26,6 +29,9 @@ import { ReactComponent as Importar } from "./svg/importar.svg";
 import { ReactComponent as StockAll } from "./svg/stockAll.svg";
 import { ReactComponent as StockWith } from "./svg/stockWith.svg";
 import { ReactComponent as StockWithout } from "./svg/stockWithout.svg";
+import { ReactComponent as Location } from "./svg/location.svg";
+import { ReactComponent as Activity } from "./svg/activity.svg";
+import { ReactComponent as ItemType } from "./svg/itemType.svg";
 
 import logoBlanco from "./images/logoBlanco.webp";
 import logoNegro from "./images/logoNegro.webp";
@@ -46,17 +52,23 @@ export const SVG = {
   Tema,
   Guardar,
   User,
+  UserEdit,
+  UserAdd,
+  UserSetting,
   Vencimiento,
   ArrowTop,
   ArrowDown,
   ArrowRight,
   ArrowLeft,
   Resta,
+  Location,
   Close,
   Importar,
   StockAll,
   StockWith,
-  StockWithout
+  StockWithout,
+  Activity,
+  ItemType
 };
 
 export const IMAGES = {

@@ -224,7 +224,7 @@ export default function Historial() {
       {/* Popup Detalles */}
       {selectedMovimiento && (
         <div className="popup">
-          <div className="popup-content">
+          <div className="popup-content detalles">
             <h3>Detalle del Movimiento</h3>
             <div className="popup-item">
               <div className="triple__form">

@@ -92,6 +92,16 @@ export const GlobalDataProvider = ({ children }) => {
     return map;
   }, [categories]);
 
+  const refreshActividades = async () => {
+    try {
+      const res = await apiGet("actividades");
+      if (res?.ok) {
+        setActividades(res.data ?? []);
+      }
+    } catch (error) {
+      console.error("Error refrescando actividades", error);
+    }
+  };
   return (
     <GlobalDataContext.Provider
       value={{
@@ -112,7 +122,8 @@ export const GlobalDataProvider = ({ children }) => {
         itemsMap,
         tiposMap,
         unidadesMap,
-        categoriesMap
+        categoriesMap,
+        refreshActividades
       }}
     >
       {children}

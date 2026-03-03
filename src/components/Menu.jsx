@@ -56,8 +56,11 @@ export default function Menu({ activeView, setActiveView }) {
           </span>
           Tema: Claro / Oscuro
         </button>
-        <button className={activeView === "usuarios" ? "active" : ""} onClick={() => handleViewChange("usuarios")}>
-          <SVG.History className="icon" /> Gestión de Usuarios
+        <button className={activeView === "gestion" ? "active" : ""} onClick={() => handleViewChange("gestion")}>
+          <SVG.History className="icon" /> Gestión
+        </button>
+        <button className={activeView === "gestionarUsuarios" ? "active" : ""} onClick={() => handleViewChange("gestionarUsuarios")}>
+          <SVG.UserSetting className="icon" /> Gestión de Usuarios
         </button>
         <button className={activeView === "importItems" ? "active" : ""} onClick={() => handleViewChange("importItems")}>
           <SVG.Importar className="icon" /> Importar Items

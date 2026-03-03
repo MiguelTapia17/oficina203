@@ -1,0 +1,17 @@
+.gestionUsuarios .btnItems{
+    height: 20rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    cursor: pointer;
+}
+.gestionUsuarios .btnItems svg{
+    fill: black;
+    width:  3rem;
+    height: 3rem;
+}
+.gestionUsuarios .btnItems p{
+    font-size: 1.1rem;
+    font-weight: 450;
+}

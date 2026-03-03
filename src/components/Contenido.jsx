@@ -1,8 +1,9 @@
 import "../styles/contenido.css";
 import Inicio from "./Inicio";
-import Inventario from "./Inventario";
+import Inventario from "./InventarioBU";
 import Historial from "./Historial";
-import Usuarios from "./Usuarios";
+import Gestion from "./Gestion";
+import GestionarUsuarios from "./GestionarUsuarios";
 import ImportItems from "./ImportItems";
 import Loader from "./Loader";
 
@@ -17,8 +18,10 @@ export default function Contenido({ activeView, loading }) {
         return <div>Nuevo Producto</div>;
       case "historial":
         return <Historial />;
-      case "usuarios":
-        return <Usuarios />;
+      case "gestion":
+        return <Gestion />;
+      case "gestionarUsuarios":
+        return <GestionarUsuarios />;
       case "importItems":
         return <ImportItems />;
       default:

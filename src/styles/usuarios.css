@@ -34,14 +34,23 @@ form {
   background-color: #ffffff;
   border-radius: 1rem;
 }
-.gestionUsuarios .actionsCell  button {
+.gestionUsuarios .actionsCell{
+  /* display: flex;
+  justify-content: center; */
+  text-align: center;
+}
+.gestionUsuarios .btnSmall{
+  border: none;
+  background: none;
+}
+/* .gestionUsuarios .actionsCell  button {
   background-color: #ff0000;
   color: white;
   border: none;
   cursor: pointer;
   padding: 5px 10px;
   border-radius: 1rem;
-}
+} */
 
 .filtersUsuarios{
   display: flex;
@@ -49,7 +58,7 @@ form {
   gap: 1rem;
 }
 .filtersUsuarios .input-field{
-  width: calc(100% - 11rem);
+  width: calc(100% - 12rem);
 }
 
 .btnPrimary{
@@ -69,7 +78,14 @@ form {
     user-select: none;
 }
 .filtersUsuarios .btnPrimary{
-  width: 9.5rem;
+  width: 11rem;
+  transition: scale 0.3s ease-in-out;
+}
+.filtersUsuarios .btnPrimary svg{
+  fill: white;
+}
+.filtersUsuarios .btnPrimary:hover{
+  scale: 1.1;
 }
 .popupActions .btnPrimary{
   padding: 10px;
@@ -80,4 +96,24 @@ form {
   border-radius: 5px;
   cursor: pointer;
   width: 100%;
+}
+
+
+.estado p{
+  text-align: center;
+  font-weight: 500;
+  border: 1px solid;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  padding: 2px 8px;
+}
+.estado.inactivo p{
+  background-color: #FDECEC; /* fondo claro */
+  border-color: #E4142C; /* borde */
+  color: #8B1D2C;
+}
+.estado.activo p{
+  background-color: #d4f5e6; /* fondo claro */
+  border-color:  #129b62; /* borde */
+  color: #1F5E46;
 }

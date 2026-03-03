@@ -3,9 +3,9 @@ import { apiPost, apiGet } from "../services/api";
 import { useGlobalData } from "../context/GlobalDataContext";
 import { SVG } from "../assets/imgSvg";
 import "../styles/inventario.css";
-import NewProduct from "../components/NewProduct"; // Importamos el componente
+import NewProduct from "./NewProduct"; // Importamos el componente
 
-export default function Inventario() {
+export default function InventarioBU() {
   const [showNewProductPopup, setShowNewProductPopup] = useState(false); // Controlamos la visibilidad del popup
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -44,6 +44,7 @@ export default function Inventario() {
   const MAX_OBS = 150; // limite de campo observaciones
   const [observaciones, setObservaciones] = useState("");
     
+  const [stockFilter, setStockFilter] = useState("all"); 
   const normalize = (str) =>
     String(str ?? "")
       .normalize("NFD")
@@ -69,26 +70,6 @@ export default function Inventario() {
   }, []);
 
   /* ================================
-     FILTRADO
-  ===================================*/
-  const filteredItems = items.filter((item) => {
-  // Aquí comparamos el ID de la categoría de `item` con el valor de `categoryFilter`
-  const matchesCategory = categoryFilter
-    ? item.id_categoria === parseInt(categoryFilter) // Convertimos `categoryFilter` a número
-    : true;  // Si `categoryFilter` está vacío, no se aplica filtro
-
-  if (!search.trim()) return matchesCategory;
-
-  const rowString = normalize(`
-    ${item.id_item}
-    ${item.nombre_item}
-    ${item.descripcion}
-  `);
-
-  return matchesCategory && rowString.includes(normalize(search)); // Se aplica el filtro de búsqueda
-});
-
-  /* ================================
      OBTENER STOCK SEGÚN SEDE
   ===================================*/
   const getStock = (item) => {
@@ -112,6 +93,64 @@ export default function Inventario() {
 
     return stock ? Number(stock.cantidad_actual) : 0;
   };
+  /* ================================
+     FILTRADO
+  ===================================*/
+//   const filteredItems = items.filter((item) => {
+//   // Comparamos el ID de la categoría de `item` con el valor de `categoryFilter`
+//   const matchesCategory = categoryFilter
+//     ? item.id_categoria === parseInt(categoryFilter) // Convertimos `categoryFilter` a número
+//     : true;  // Si `categoryFilter` está vacío, no se aplica filtro
+
+//   if (!search.trim()) return matchesCategory;
+
+//   const rowString = normalize(`
+//     ${item.id_item}
+//     ${item.nombre_item}
+//     ${item.descripcion}
+//   `);
+
+//   return matchesCategory && rowString.includes(normalize(search)); // Se aplica el filtro de búsqueda
+// });
+const handleStockFilterToggle = () => {
+  setStockFilter(prev => {
+    if (prev === "all") return "with";
+    if (prev === "with") return "without";
+    return "all";
+  });
+};
+  const filteredItems = items.filter((item) => {
+
+    const matchesCategory = categoryFilter
+      ? item.id_categoria === parseInt(categoryFilter)
+      : true;
+
+    const stock = getStock(item);
+
+    // 🔥 Filtro por stock
+    const matchesStock =
+      stockFilter === "all"
+        ? true
+        : stockFilter === "with"
+        ? stock > 0
+        : stock === 0;
+
+    if (!search.trim()) {
+      return matchesCategory && matchesStock;
+    }
+
+    const rowString = normalize(`
+      ${item.id_item}
+      ${item.nombre_item}
+      ${item.descripcion}
+    `);
+
+    return (
+      matchesCategory &&
+      matchesStock &&
+      rowString.includes(normalize(search))
+    );
+  });
 
   /* ================================
      EDITAR
@@ -132,9 +171,12 @@ export default function Inventario() {
      GUARDAR STOCK
   ===================================*/
   const handleSaveStock = async () => {
+
     if (isSaving) return;
+
     setErrorMsg("");
     setSuccessMsg("");
+
     if (!movementType) {
       setErrorMsg("Seleccione tipo de movimiento");
       return;
@@ -163,16 +205,16 @@ export default function Inventario() {
       setErrorMsg("No puede transferir a la misma sede");
       return;
     }
-    
-    
-    const cantidad = Number(editStock);
+        
+    let cantidad = Number(editStock);
     // Movimientos que RESTAN
     const movimientosResta = ["salida", "merma", "transferencia"];
 
-    if (["salida", "merma", "transferencia"].includes(movementType) && cantidad > currentStock) {
+    if (["salida", "merma", "transferencia"].includes(movementType) && cantidad > currentStock) {      
       setErrorMsg("No puede restar más del stock actual");
       return;
     }
+
     setIsSaving(true);
     let nuevoStock = currentStock;
 
@@ -265,16 +307,13 @@ export default function Inventario() {
   return (
     <div className="inventario">
       <h2>Inventario</h2>
-
-            {/* Mostrar mensaje de éxito */}
+          {/* Mostrar mensaje de éxito */}
           {successMessage && <div className="successMessage">{successMessage}</div>}
-
 
           {/* Condicionalmente mostrar el popup */}
           {showNewProductPopup && (
             <NewProduct setShowPopup={setShowNewProductPopup} setShowSuccessMessage={setSuccessMessage} />
           )}
-
       <div className="filters">
 
         <div className='input-field'>
@@ -286,7 +325,6 @@ export default function Inventario() {
           />
           <label>Buscar (id, nombre, desc.)</label>
         </div>
-
         <div className="input-field">
           <select
             value={categoryFilter}  // El valor es el `id_categoria` seleccionado
@@ -301,8 +339,6 @@ export default function Inventario() {
           </select>
           <label>Categoria</label>
         </div>
-        
-
         <div className='input-field'>
           <select
             value={selectedSede}
@@ -317,10 +353,43 @@ export default function Inventario() {
           </select>
           <label>Sede</label>
         </div>
-        {/* Botón para agregar un nuevo producto */}
-          <div className="btnAddProduct" onClick={handleAddNewProduct}>
-            <SVG.BoxAdd className="icon" /> Nuevo Producto
+        {/* <div className="stockFilterButtons">
+          <div 
+            className={`filterBtn ${stockFilter === "all" ? "active" : ""}`}
+            onClick={() => setStockFilter("all")}
+          >
+            all
           </div>
+
+          <div 
+            className={`filterBtn ${stockFilter === "with" ? "active" : ""}`}
+            onClick={() => setStockFilter("with")}
+          >
+            filter
+          </div>
+
+          <div 
+            className={`filterBtn ${stockFilter === "without" ? "active" : ""}`}
+            onClick={() => setStockFilter("without")}
+          >
+            filter2
+          </div>
+
+        </div> */}
+        <div className="stockFilterButtons">
+          <div 
+            className={`filterBtn ${stockFilter}`}
+            onClick={handleStockFilterToggle}
+          >
+            {stockFilter === "all" && <SVG.StockAll className="icon" />}
+            {stockFilter === "with" && <SVG.StockWith className="icon" />}
+            {stockFilter === "without" && <SVG.StockWithout className="icon" />}
+          </div>
+        </div>
+        {/* Botón para agregar un nuevo producto */}
+        <div className="btnAddProduct" onClick={handleAddNewProduct}>
+          <SVG.BoxAdd className="icon" /> Nuevo Producto
+        </div>
 
       </div>
 
@@ -517,3 +586,4 @@ export default function Inventario() {
     </div>
   );
 }
+

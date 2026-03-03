@@ -3,7 +3,7 @@ import { apiPost, apiGet } from "../services/api";
 import { useGlobalData } from "../context/GlobalDataContext";
 import { SVG } from "../assets/imgSvg";
 import "../styles/inventario.css";
-import NewProduct from "../components/NewProduct"; // Importamos el componente
+import NewProduct from "./NewProduct"; // Importamos el componente
 
 export default function Inventario() {
   const [showNewProductPopup, setShowNewProductPopup] = useState(false); // Controlamos la visibilidad del popup
@@ -40,6 +40,8 @@ export default function Inventario() {
 
   const [sedeTransferencia, setSedeTransferencia] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+
+  const [selectedItemDetalle, setSelectedItemDetalle] = useState(null);
 
   const MAX_OBS = 150; // limite de campo observaciones
   const [observaciones, setObservaciones] = useState("");
@@ -92,6 +94,24 @@ export default function Inventario() {
     );
 
     return stock ? Number(stock.cantidad_actual) : 0;
+  };
+  /* ================================
+     STOCK DETALLE
+  ===================================*/
+  const getStockPorSedeDetalle = (itemId) => {
+    return sedes.map((sede) => {
+      const stock = stockPorSede.find(
+        s =>
+          Number(s.id_item) === Number(itemId) &&
+          Number(s.id_sede) === Number(sede.id_sede)
+      );
+
+      return {
+        nombre_sede: sede.nombre_sede,
+        id_sede: sede.id_sede,
+        cantidad: stock ? Number(stock.cantidad_actual) : 0
+      };
+    });
   };
   /* ================================
      FILTRADO
@@ -414,7 +434,10 @@ const handleStockFilterToggle = () => {
 
               return (
                 <tr key={item.id_item}>
-                  <td>{item.id_item}</td>
+                  <td className="clickable" onClick={() => setSelectedItemDetalle(item)} >
+                    {item.id_item}
+                  </td>
+                  
                   <td>{item.nombre_item}</td>
                   <td>{item.nombre_categoria}</td>
                   <td>{item.descripcion}</td>
@@ -579,6 +602,96 @@ const handleStockFilterToggle = () => {
                 <SVG.Close className="icon" />
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {selectedItemDetalle && (
+        <div className="popup">
+          <div className="popup-content">
+            <h3>Detalle del Producto</h3>
+
+            <div className="popup-item">
+
+              <div className="double__form">
+                <div className="input-field">
+                  <input value={selectedItemDetalle.id_item} readOnly />
+                  <label>ID</label>
+                </div>
+
+                <div className="input-field">
+                  <input value={selectedItemDetalle.nombre_item} readOnly />
+                  <label>Nombre</label>
+                </div>
+              </div>
+
+              <div className="double__form">
+                <div className="input-field">
+                  <input value={selectedItemDetalle.nombre_categoria} readOnly />
+                  <label>Categoría</label>
+                </div>
+
+                <div className="input-field">
+                  <input value={selectedItemDetalle.descripcion || "—"} readOnly />
+                  <label>Descripción</label>
+                </div>
+              </div>
+
+              {/* STOCK + SEDE */}
+              <div className="double__form">
+
+                <div className="input-field">
+                  <input
+                    value={
+                      selectedSede
+                        ? sedes.find(s => Number(s.id_sede) === Number(selectedSede))?.nombre_sede || ""
+                        : "Todas las sedes"
+                    }
+                    readOnly
+                  />
+                  <label>Sede</label>
+                </div>
+
+                <div className="input-field">
+                  <input value={getStock(selectedItemDetalle)} readOnly />
+                  <label>Stock</label>
+                </div>
+
+
+              </div>
+
+              {/* SOLO MOSTRAR STOCK POR SEDE SI ES ALL */}
+              {!selectedSede && (
+                <>
+                  <h4 style={{ marginTop: "20px" }}>Stock por sede</h4>
+
+                  {getStockPorSedeDetalle(selectedItemDetalle.id_item).map((sede) => (
+                    <div
+                      key={sede.id_sede}
+                      className="double__form"
+                    >
+                      <div className="input-field">
+                        <input value={sede.nombre_sede} readOnly />
+                        <label>Sede</label>
+                      </div>
+
+                      <div className="input-field">
+                        <input value={sede.cantidad} readOnly />
+                        <label>Cantidad</label>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+
+            </div>
+
+            <button
+              className="closeForm"
+              onClick={() => setSelectedItemDetalle(null)}
+            >
+              <SVG.Close className="icon" />
+            </button>
           </div>
         </div>
       )}
