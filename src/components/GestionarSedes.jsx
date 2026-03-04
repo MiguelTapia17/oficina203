@@ -51,17 +51,33 @@ export default function GestionarSedes() {
   // =========================
   // FILTRO
   // =========================
+  // const filteredSedes = useMemo(() => {
+  //   if (!search.trim()) return sedes || [];
+
+  //   const q = normalize(search);
+
+  //   return (sedes || []).filter((s) =>
+  //     normalize(
+  //       `${s.id_sede} ${s.nombre_sede} ${s.tipo_sede} ${s.direccion} ${s.distrito} ${s.provincia} ${s.departamento} ${s.activo}`
+  //     ).includes(q)
+  //   );
+  // }, [sedes, search]);
   const filteredSedes = useMemo(() => {
-    if (!search.trim()) return sedes || [];
+  const base = Array.isArray(sedes) ? [...sedes] : [];
 
-    const q = normalize(search);
+  // 🔹 Ordenar por ID ascendente
+  base.sort((a, b) => Number(a.id_sede) - Number(b.id_sede));
 
-    return (sedes || []).filter((s) =>
-      normalize(
-        `${s.id_sede} ${s.nombre_sede} ${s.tipo_sede} ${s.direccion} ${s.distrito} ${s.provincia} ${s.departamento} ${s.activo}`
-      ).includes(q)
-    );
-  }, [sedes, search]);
+  if (!search.trim()) return base;
+
+  const q = normalize(search);
+
+  return base.filter((s) =>
+    normalize(
+      `${s.id_sede} ${s.nombre_sede} ${s.tipo_sede} ${s.direccion} ${s.distrito} ${s.provincia} ${s.departamento} ${s.activo}`
+    ).includes(q)
+  );
+}, [sedes, search]);
 
   // =========================
   // FECHA/HORA (igual estilo)
@@ -230,10 +246,10 @@ export default function GestionarSedes() {
   };
 
   return (
-    <div className="gestionUsuarios">
+    <div className="ctnGestion">
       <h2>Gestionar Sedes</h2>
 
-      <div className="filtersUsuarios">
+      <div className="ctnAllFilters">
         <div className="input-field">
           <input
             type="text"
@@ -244,8 +260,8 @@ export default function GestionarSedes() {
           <label>Buscar sede...</label>
         </div>
 
-        <button className="btnPrimary" onClick={openCreate}>
-          <SVG.UserAdd />
+        <button className="btnAdd" onClick={openCreate}>
+          <SVG.LocationAdd />
           Nueva sede
         </button>
       </div>
@@ -261,7 +277,7 @@ export default function GestionarSedes() {
               <th>Nombre</th>
               <th>Tipo</th>
               <th>Distrito</th>
-              <th>Provincia</th>
+              {/* <th>Provincia</th> */}
               <th>Activo</th>
               <th>Editar</th>
             </tr>
@@ -285,15 +301,15 @@ export default function GestionarSedes() {
                   <td>{s.nombre_sede}</td>
                   <td>{s.tipo_sede}</td>
                   <td>{s.distrito}</td>
-                  <td>{s.provincia}</td>
+                  {/* <td>{s.provincia}</td> */}
                   <td>{Number(s.activo) === 1 ? "Sí" : "No"}</td>
                   <td className="actionsCell">
-                    <button className="btnSmall" onClick={() => openEdit(s)}>
-                      <SVG.UserEdit />
-                    </button>
-                    <button className="btnSmall" onClick={() => handleDelete(s.id_sede)}>
+                    <div className="btnSmall" onClick={() => openEdit(s)}>
+                      <SVG.LocationEdit />
+                    </div>
+                    {/* <button className="btnSmall" onClick={() => handleDelete(s.id_sede)}>
                       ❌
-                    </button>
+                    </button> */}
                   </td>
                 </tr>
               ))

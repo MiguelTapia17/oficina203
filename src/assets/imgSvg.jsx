@@ -30,8 +30,14 @@ import { ReactComponent as StockAll } from "./svg/stockAll.svg";
 import { ReactComponent as StockWith } from "./svg/stockWith.svg";
 import { ReactComponent as StockWithout } from "./svg/stockWithout.svg";
 import { ReactComponent as Location } from "./svg/location.svg";
+import { ReactComponent as LocationEdit } from "./svg/locationEdit.svg";
+import { ReactComponent as LocationAdd } from "./svg/locationAdd.svg";
 import { ReactComponent as Activity } from "./svg/activity.svg";
 import { ReactComponent as ItemType } from "./svg/itemType.svg";
+import { ReactComponent as Balance } from "./svg/balance.svg";
+import { ReactComponent as Category } from "./svg/category.svg";
+import { ReactComponent as Filter } from "./svg/filter.svg";
+import { ReactComponent as Edit } from "./svg/edit.svg";
 
 import logoBlanco from "./images/logoBlanco.webp";
 import logoNegro from "./images/logoNegro.webp";
@@ -62,13 +68,19 @@ export const SVG = {
   ArrowLeft,
   Resta,
   Location,
+  LocationEdit,
+  LocationAdd,
   Close,
   Importar,
   StockAll,
   StockWith,
   StockWithout,
   Activity,
-  ItemType
+  ItemType,
+  Balance,
+  Category,
+  Filter,
+  Edit
 };
 
 export const IMAGES = {

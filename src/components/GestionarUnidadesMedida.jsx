@@ -205,10 +205,10 @@ export default function GestionarUnidadesMedida() {
   };
 
   return (
-    <div className="gestionUsuarios">
+    <div className="ctnGestion">
       <h2>Gestionar Unidades de Medida</h2>
 
-      <div className="filtersUsuarios">
+      <div className="ctnAllFilters">
         <div className="input-field">
           <input
             type="text"
@@ -219,7 +219,7 @@ export default function GestionarUnidadesMedida() {
           <label>Buscar unidad de medida...</label>
         </div>
 
-        <button className="btnPrimary" onClick={openCreate}>
+        <button className="btnAdd" onClick={openCreate}>
           <SVG.UserAdd />
           Nueva unidad de medida
         </button>
@@ -259,12 +259,12 @@ export default function GestionarUnidadesMedida() {
                   <td>{u.abreviatura}</td>
                   <td>{Number(u.activo) === 1 ? "Sí" : "No"}</td>
                   <td className="actionsCell">
-                    <button className="btnSmall" onClick={() => openEdit(u)}>
+                    <div className="btnSmall" onClick={() => openEdit(u)}>
                       <SVG.UserEdit />
-                    </button>
-                    <button className="btnSmall" onClick={() => handleDelete(u.id_unidad)}>
+                    </div>
+                    {/* <button className="btnSmall" onClick={() => handleDelete(u.id_unidad)}>
                       ❌
-                    </button>
+                    </button> */}
                   </td>
                 </tr>
               ))

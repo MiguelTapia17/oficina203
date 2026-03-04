@@ -3,7 +3,7 @@ import Inicio from "./Inicio";
 import Inventario from "./Inventario";
 import Historial from "./Historial";
 import Gestion from "./Gestion";
-import GestionarUsuarios from "./GestionarUsuarios";
+// import GestionarUsuarios from "./GestionarUsuarios";
 import ImportItems from "./ImportItems";
 import Loader from "./Loader";
 
@@ -20,8 +20,8 @@ export default function Contenido({ activeView, loading }) {
         return <Historial />;
       case "gestion":
         return <Gestion />;
-      case "gestionarUsuarios":
-        return <GestionarUsuarios />;
+      // case "gestionarUsuarios":
+      //   return <GestionarUsuarios />;
       case "importItems":
         return <ImportItems />;
       default:

@@ -18,6 +18,9 @@ export default function Historial() {
   const [fechaInicio, setFechaInicio] = useState(""); // Filtro de fecha inicio
   const [fechaFin, setFechaFin] = useState(""); // Filtro de fecha fin
 
+  //FILTROS
+  const [showFilters, setShowFilters] = useState(false);
+
   // Traes maps desde el contexto
   const { actividadesMap, usuariosMap, itemsMap, sedes, loading: globalLoading } = useGlobalData(); // Traemos sedes desde el contexto
 
@@ -132,7 +135,7 @@ export default function Historial() {
     <div className="historial">
       <h2>Historial</h2>
 
-      <div className="filters">
+      <div className="ctnAllFilters">
         <div className="input-field">
           <input
             type="text"
@@ -142,51 +145,57 @@ export default function Historial() {
           />
           <label>Buscar</label>
         </div>
-
-        <div className="input-field">
-          <select value={tipoFilter} onChange={(e) => setTipoFilter(e.target.value)}>
-            <option value="">Todos los tipos</option>
-            {tiposUnicos.map((t, idx) => (
-              <option key={idx} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
-          <label>Tipo</label>
-        </div>
-
-        {/* Filtro de usuario */}
-        <div className="input-field">
-          <select value={usuarioFilter} onChange={(e) => setUsuarioFilter(e.target.value)}>
-            <option value="">Filtrar por usuario</option>
-            {usuarios.map((usuario, idx) => (
-              <option key={idx} value={usuario}>
-                {usuario}
-              </option>
-            ))}
-          </select>
-          <label>Usuario</label>
-        </div>
-
-        {/* Filtro de fecha */}
-        <div className="double__form">
-          <div className="input-field">
-            <input
-              type="date"
-              value={fechaInicio}
-              onChange={(e) => setFechaInicio(e.target.value)}
-            />
-            <label>Fecha Inicio</label>
+        <div className="filters">
+          <div className="filtersCTA" onClick={() => setShowFilters(!showFilters)} style={{ cursor: "pointer" }}>
+            <SVG.Filter className="icon" />
+            <p>Filtros</p>
           </div>
-          <div className="input-field">
-            <input
-              type="date"
-              value={fechaFin}
-              onChange={(e) => setFechaFin(e.target.value)}
-            />
-            <label>Fecha Fin</label>
-          </div>
+          {showFilters && (
+            <div className="ctnFilters" >
+              <div className="input-field">
+                <select value={tipoFilter} onChange={(e) => setTipoFilter(e.target.value)}>
+                  <option value="">Todos los Tipos</option>
+                  {tiposUnicos.map((t, idx) => (
+                    <option key={idx} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+                <label>Tipo</label>
+              </div>
+              {/* Filtro de usuario */}
+              <div className="input-field">
+                <select value={usuarioFilter} onChange={(e) => setUsuarioFilter(e.target.value)}>
+                  <option value="">Todos los Usuario</option>
+                  {usuarios.map((usuario, idx) => (
+                    <option key={idx} value={usuario}>
+                      {usuario}
+                    </option>
+                  ))}
+                </select>
+                <label>Usuario</label>
+              </div>
+              {/* Filtro de fecha */}
+              <div className="input-field">
+                <input
+                  type="date"
+                  value={fechaInicio}
+                  onChange={(e) => setFechaInicio(e.target.value)}
+                />
+                <label>Fecha Inicio</label>
+              </div>
+              <div className="input-field">
+                <input
+                  type="date"
+                  value={fechaFin}
+                  onChange={(e) => setFechaFin(e.target.value)}
+                />
+                <label>Fecha Fin</label>
+              </div>
+            </div>
+          )}
         </div>
+
         </div>
 
       <div className="ctnTable">
@@ -200,9 +209,8 @@ export default function Historial() {
               <th>Tipo</th>
               <th>Cantidad</th>
               <th>Fecha</th>
-            </tr>
+          </tr>
           </thead>
-
           <tbody>
             {filteredItems.map((m) => (
               <tr key={m.id_movimiento}>

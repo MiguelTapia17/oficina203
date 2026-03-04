@@ -18,7 +18,7 @@ export default function Gestion() {
 
   // Header con volver cuando estás dentro de un submódulo
   const Header = ({ title }) => (
-    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, width: "100%" }}>
       <button className="btnPrimary" type="button" onClick={goBack}>
         {/* Si no tienes Back, usa uno que exista */}
         {/* {SVG.Close ? <SVG.Close className="icon" /> : null} */}
@@ -30,7 +30,7 @@ export default function Gestion() {
 
   if (subView === "usuarios") {
     return (
-      <div className="gestionUsuarios">
+      <div className="ctnGestion">
         <Header title="Gestión de Usuarios" />
         <GestionarUsuarios />
       </div>
@@ -39,7 +39,7 @@ export default function Gestion() {
 
   if (subView === "actividades") {
     return (
-      <div className="gestionUsuarios">
+      <div className="ctnGestion">
         <Header title="Gestión de Actividades" />
         <GestionarActividades />
       </div>
@@ -48,7 +48,7 @@ export default function Gestion() {
 
   if (subView === "sedes") {
     return (
-      <div className="gestionUsuarios">
+      <div className="ctnGestion">
         <Header title="Gestión de Sedes" />
         <GestionarSedes />
       </div>
@@ -57,7 +57,7 @@ export default function Gestion() {
 
   if (subView === "tipos") {
     return (
-      <div className="gestionUsuarios">
+      <div className="ctnGestion">
         <Header title="Gestión de Tipos de Ítem" />
         <GestionarTiposItem />
       </div>
@@ -66,7 +66,7 @@ export default function Gestion() {
 
   if (subView === "unidades") {
     return (
-      <div className="gestionUsuarios">
+      <div className="ctnGestion">
         <Header title="Gestión de Unidades de Medida" />
         <GestionarUnidadesMedida />
       </div>
@@ -75,7 +75,7 @@ export default function Gestion() {
 
   if (subView === "categorias") {
     return (
-      <div className="gestionUsuarios">
+      <div className="ctnGestion">
         <Header title="Gestión de Categorías" />
         <GestionarCategorias />
       </div>
@@ -84,16 +84,10 @@ export default function Gestion() {
 
   // Selector / Vista previa
   return (
-    <div className="gestionUsuarios">
+    <div className="ctnGestionGeneral">
       <h2>Gestión</h2>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-            gap: 12,
-          }}
-        >
+        <div className="ctnItems">
           <button className="btnItems" type="button" onClick={() => setSubView("usuarios")}>
             <SVG.User className="icon" />
             <p>Usuarios</p>
@@ -115,12 +109,12 @@ export default function Gestion() {
           </button>
 
           <button className="btnItems" type="button" onClick={() => setSubView("unidades")}>
-            {/* <SVG.Ruler className="icon" /> */}
+            <SVG.Balance className="icon" />
             <p>Unidades de medida</p>
           </button>
 
           <button className="btnItems" type="button" onClick={() => setSubView("categorias")}>
-            {/* <SVG.Folder className="icon" /> */}
+            <SVG.Category className="icon" />
             <p>Categorías</p>
           </button>
         </div>

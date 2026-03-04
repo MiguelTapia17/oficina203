@@ -205,10 +205,10 @@ export default function GestionarCategoriasItem() {
   };
 
   return (
-    <div className="gestionUsuarios">
+    <div className="ctnGestion">
       <h2>Gestionar Categorías de Ítem</h2>
 
-      <div className="filtersUsuarios">
+      <div className="ctnAllFilters">
         <div className="input-field">
           <input
             type="text"
@@ -219,7 +219,7 @@ export default function GestionarCategoriasItem() {
           <label>Buscar categoría...</label>
         </div>
 
-        <button className="btnPrimary" onClick={openCreate}>
+        <button className="btnAdd" onClick={openCreate}>
           <SVG.UserAdd />
           Nueva categoría
         </button>
@@ -259,12 +259,12 @@ export default function GestionarCategoriasItem() {
                   <td>{c.descripcion}</td>
                   <td>{Number(c.activo) === 1 ? "Sí" : "No"}</td>
                   <td className="actionsCell">
-                    <button className="btnSmall" onClick={() => openEdit(c)}>
+                    <div className="btnSmall" onClick={() => openEdit(c)}>
                       <SVG.UserEdit />
-                    </button>
-                    <button className="btnSmall" onClick={() => handleDelete(c.id_categoria)}>
+                    </div>
+                    {/* <button className="btnSmall" onClick={() => handleDelete(c.id_categoria)}>
                       ❌
-                    </button>
+                    </button> */}
                   </td>
                 </tr>
               ))
@@ -391,7 +391,8 @@ export default function GestionarCategoriasItem() {
             <h3>Detalle de Categoría</h3>
 
             <div className="popup-item">
-              <div className="triple__form">
+              {/* <div className="triple__form"> */}
+              <div className="double__form">
                 <div className="input-field">
                   <input type="text" value={selectedCategoriaDetalle.id_categoria} readOnly />
                   <label>ID Categoría</label>
@@ -404,11 +405,7 @@ export default function GestionarCategoriasItem() {
               </div>
 
               <div className="double__form">
-                <div className="input-field">
-                  <input type="text" value={selectedCategoriaDetalle.descripcion} readOnly />
-                  <label>Descripción</label>
-                </div>
-
+                
                 <div className="input-field">
                   <input
                     type="text"
@@ -417,9 +414,7 @@ export default function GestionarCategoriasItem() {
                   />
                   <label>Activo</label>
                 </div>
-              </div>
 
-              <div className="double__form">
                 <div className="input-field">
                   <input
                     type="text"
@@ -429,6 +424,7 @@ export default function GestionarCategoriasItem() {
                   <label>Responsable</label>
                 </div>
               </div>
+
 
               <div className="double__form">
                 <div className="input-field">
@@ -452,6 +448,11 @@ export default function GestionarCategoriasItem() {
                   <input type="text" value={getHora(selectedCategoriaDetalle.updated_at)} readOnly />
                   <label>Hora actualización</label>
                 </div>
+              </div>
+              
+              <div className="input-field">
+                <input type="text" value={selectedCategoriaDetalle.descripcion} readOnly />
+                <label>Descripción</label>
               </div>
             </div>
 

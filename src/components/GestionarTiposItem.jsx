@@ -213,10 +213,10 @@ export default function GestionarTiposItem() {
   };
 
   return (
-    <div className="gestionUsuarios">
+    <div className="ctnGestion">
       <h2>Gestionar Tipos de Ítem</h2>
 
-      <div className="filtersUsuarios">
+      <div className="ctnAllFilters">
         <div className="input-field">
           <input
             type="text"
@@ -227,7 +227,7 @@ export default function GestionarTiposItem() {
           <label>Buscar tipo de ítem...</label>
         </div>
 
-        <button className="btnPrimary" onClick={openCreate}>
+        <button className="btnAdd" onClick={openCreate}>
           <SVG.UserAdd />
           Nuevo tipo de ítem
         </button>
@@ -269,12 +269,12 @@ export default function GestionarTiposItem() {
                   <td>{t.es_perecible === 1 ? "Sí" : "No"}</td>
                   <td>{t.activo === 1 ? "Sí" : "No"}</td>
                   <td className="actionsCell">
-                    <button className="btnSmall" onClick={() => openEdit(t)}>
-                      <SVG.UserEdit />
-                    </button>
-                    <button className="btnSmall" onClick={() => handleDelete(t.id_tipo)}>
+                    <div className="btnSmall" onClick={() => openEdit(t)}>
+                      <SVG.Edit />
+                    </div>
+                    {/* <button className="btnSmall" onClick={() => handleDelete(t.id_tipo)}>
                       ❌
-                    </button>
+                    </button> */}
                   </td>
                 </tr>
               ))

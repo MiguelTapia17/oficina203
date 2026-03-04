@@ -190,10 +190,10 @@ export default function GestionarActividades() {
       return `${hours}:${minutes}`;
     };
   return (
-    <div className="gestionUsuarios">
+    <div className="ctnGestion">
       <h2>Gestionar Actividades</h2>
 
-      <div className="filtersUsuarios">
+      <div className="ctnAllFilters">
         <div className="input-field">
           <input
             type="text"
@@ -204,7 +204,7 @@ export default function GestionarActividades() {
           <label>Buscar actividad...</label>
         </div>
 
-        <button className="btnPrimary" onClick={openCreate}>
+        <button className="btnAdd" onClick={openCreate}>
           <SVG.UserAdd />
           Nueva actividad
         </button>
@@ -248,18 +248,15 @@ export default function GestionarActividades() {
                   <td>{getFecha(a.fecha_inicio)}</td>
                   <td>{getFecha(a.fecha_fin)}</td>
                   <td className="actionsCell">
-                    <button
-                      className="btnSmall"
-                      onClick={() => openEdit(a)}
-                    >
+                    <div className="btnSmall" onClick={() => openEdit(a)} >
                       <SVG.UserEdit />
-                    </button>
-                    <button
+                    </div>
+                    {/* <button
                       className="btnSmall"
                       onClick={() => handleDelete(a.id_actividad)}
                     >
                       ❌
-                    </button>
+                    </button> */}
                   </td>
                 </tr>
               ))

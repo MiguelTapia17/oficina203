@@ -82,17 +82,6 @@ thead, thead tr{
 tr:hover {
   background-color: #eaeaea;
 }
-.filters button{
-  background-color: var(--primary);
-  height: 100%;
-  width: 8rem;
-  color: white;
-  border: none;
-  font-weight: 600;
-  border-radius: 1rem;
-  height: 2.4rem;
-  cursor: pointer;
-}
 .disclaimer{
   color: var(--primary);
   font-size: 0.8rem;
@@ -170,30 +159,10 @@ input.cantidad{
   cursor: pointer;
   border: none;
 }
-
-.btnAddProduct{
-  background-color: var(--primary);
-  padding: 0.5rem 1rem;
-  border-radius: 1rem;
-  color: white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  /* EVITAR SOMBREAR */
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none;     /* IE 10+ y Edge */
-  user-select: none;         /* Estándar (Chrome, Firefox, Opera) */
-}
-.btnAddProduct svg{
-  fill: white;
-}
-
 .stockFilterButtons{
-  width: 2.4rem;
+  min-width: 2.4rem;
   height: 2.4rem;
-  border: 1px solid;
+  border: 1px solid var(--form-border-sinfocus);
   border-radius: 0.3rem;
 }
 .filterBtn{

@@ -334,7 +334,7 @@ const handleStockFilterToggle = () => {
           {showNewProductPopup && (
             <NewProduct setShowPopup={setShowNewProductPopup} setShowSuccessMessage={setSuccessMessage} />
           )}
-      <div className="filters">
+      <div className="ctnAllFilters">
 
         <div className='input-field'>
           <input
@@ -407,7 +407,7 @@ const handleStockFilterToggle = () => {
           </div>
         </div>
         {/* Botón para agregar un nuevo producto */}
-        <div className="btnAddProduct" onClick={handleAddNewProduct}>
+        <div className="btnAdd" onClick={handleAddNewProduct}>
           <SVG.BoxAdd className="icon" /> Nuevo Producto
         </div>
 

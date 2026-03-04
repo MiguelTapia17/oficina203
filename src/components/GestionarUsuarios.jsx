@@ -266,10 +266,10 @@ export default function GestionarUsuarios() {
   };
 
   return (
-    <div className="gestionUsuarios">
+    <div className="ctnGestion">
       <h2>Gestionar Usuarios</h2>
 
-      <div className="filtersUsuarios">
+      <div className="ctnAllFilters">
         <div className="input-field">
           <input
             type="text"
@@ -280,7 +280,7 @@ export default function GestionarUsuarios() {
           <label>Buscar (id, usuario, nombre, email, rol...)</label>
         </div>
 
-        <button className="btnPrimary" onClick={openCreate}>
+        <button className="btnAdd" onClick={openCreate}>
           <SVG.UserAdd />
           Nuevo usuario
         </button>
@@ -332,9 +332,9 @@ export default function GestionarUsuarios() {
                   <td>{getSedeNombre(u.id_sede)}</td>
                   <td>{u.ultimo_acceso ?? "-"}</td>
                   <td className="actionsCell">
-                    <button className="btnSmall" onClick={() => openEdit(u)}>
+                    <div className="btnSmall" onClick={() => openEdit(u)}>
                       <SVG.UserEdit />
-                    </button>
+                    </div>
                   </td>
                 </tr>
               ))
