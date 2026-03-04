@@ -1,6 +1,6 @@
 import "../styles/contenido.css";
 import Inicio from "./Inicio";
-import Inventario from "./InventarioBU";
+import Inventario from "./Inventario";
 import Historial from "./Historial";
 import Gestion from "./Gestion";
 import GestionarUsuarios from "./GestionarUsuarios";

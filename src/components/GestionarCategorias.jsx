@@ -12,7 +12,7 @@ const makeEmptyForm = () => ({
 
 export default function GestionarCategoriasItem() {
   const {
-    categorias = [],
+    categories = [],
     refreshGlobalData,  // o usa refreshCategorias si existe
     usuariosMap,
     loading: globalLoading,
@@ -40,16 +40,16 @@ export default function GestionarCategoriasItem() {
   // FILTRO
   // =========================
   const filteredCategorias = useMemo(() => {
-    if (!search.trim()) return categorias;
+    if (!search.trim()) return categories;
 
     const q = normalize(search);
 
-    return categorias.filter((c) =>
+    return categories.filter((c) =>
       normalize(
         `${c.id_categoria} ${c.nombre_categoria} ${c.descripcion} ${c.activo}`
       ).includes(q)
     );
-  }, [categorias, search]);
+  }, [categories, search]);
 
   // =========================
   // FECHA/HORA (igual estilo)
