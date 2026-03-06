@@ -46,6 +46,10 @@ export default function Inventario() {
   const MAX_OBS = 150; // limite de campo observaciones
   const [observaciones, setObservaciones] = useState("");
     
+  //FILTROS
+  const [showFilters, setShowFilters] = useState(false);
+
+
   const [stockFilter, setStockFilter] = useState("all"); 
   const normalize = (str) =>
     String(str ?? "")
@@ -149,11 +153,11 @@ const handleStockFilterToggle = () => {
 
     // 🔥 Filtro por stock
     const matchesStock =
-      stockFilter === "all"
-        ? true
-        : stockFilter === "with"
+      stockFilter === "with"
         ? stock > 0
-        : stock === 0;
+        : stockFilter === "without"
+        ? stock === 0
+        : true;
 
     if (!search.trim()) {
       return matchesCategory && matchesStock;
@@ -345,67 +349,68 @@ const handleStockFilterToggle = () => {
           />
           <label>Buscar (id, nombre, desc.)</label>
         </div>
-        <div className="input-field">
-          <select
-            value={categoryFilter}  // El valor es el `id_categoria` seleccionado
-            onChange={(e) => setCategoryFilter(e.target.value)}  // Actualizamos el filtro de categoría
-          >
-            <option value="">Todas las categorías</option>
-            {categories.map((category) => (
-              <option key={category.id_categoria} value={category.id_categoria}>
-                {category.nombre_categoria}  {/* Mostramos el nombre de la categoría */}
-              </option>
-            ))}
-          </select>
-          <label>Categoria</label>
-        </div>
-        <div className='input-field'>
-          <select
-            value={selectedSede}
-            onChange={(e) => setSelectedSede(e.target.value)}
-          >
-            <option value="">Todas</option>
-            {sedes.map((sede) => (
-              <option key={sede.id_sede} value={sede.id_sede}>
-                {sede.nombre_sede}
-              </option>
-            ))}
-          </select>
-          <label>Sede</label>
-        </div>
-        {/* <div className="stockFilterButtons">
-          <div 
-            className={`filterBtn ${stockFilter === "all" ? "active" : ""}`}
-            onClick={() => setStockFilter("all")}
-          >
-            all
+        <div className="filters">
+          <div className="filtersCTA" onClick={() => setShowFilters(!showFilters)} style={{ cursor: "pointer" }}>
+            <SVG.Filter className="icon" />
+            <p>Filtros</p>
           </div>
+          {showFilters && (
+            <div className="ctnFilters">
+              <div className="input-field">
+                <select
+                  value={categoryFilter}  // El valor es el `id_categoria` seleccionado
+                  onChange={(e) => setCategoryFilter(e.target.value)}  // Actualizamos el filtro de categoría
+                >
+                  <option value="">Todas las categorías</option>
+                  {categories.map((category) => (
+                    <option key={category.id_categoria} value={category.id_categoria}>
+                      {category.nombre_categoria}  {/* Mostramos el nombre de la categoría */}
+                    </option>
+                  ))}
+                </select>
+                <label>Categoria</label>
+              </div>
+              <div className='input-field'>
+                <select
+                  value={selectedSede}
+                  onChange={(e) => setSelectedSede(e.target.value)}
+                >
+                  <option value="">Todas</option>
+                  {sedes.map((sede) => (
+                    <option key={sede.id_sede} value={sede.id_sede}>
+                      {sede.nombre_sede}
+                    </option>
+                  ))}
+                </select>
+                <label>Sede</label>
+              </div>
+              <div className='input-field'>
+                <select 
+                  value={stockFilter}
+                  onChange={(e) => setStockFilter(e.target.value)}
+                >
+                  <option value="all">Todos</option>
+                  <option value="with">Con Stock</option>
+                  <option value="without">Sin stock</option>
 
-          <div 
-            className={`filterBtn ${stockFilter === "with" ? "active" : ""}`}
-            onClick={() => setStockFilter("with")}
-          >
-            filter
-          </div>
+                </select>
+                <label>Stock</label>
+              </div>
 
-          <div 
-            className={`filterBtn ${stockFilter === "without" ? "active" : ""}`}
-            onClick={() => setStockFilter("without")}
-          >
-            filter2
-          </div>
+              {/* <div className="stockFilterButtons">
+                <div 
+                  className={`filterBtn ${stockFilter}`}
+                  onClick={handleStockFilterToggle}
+                >
+                  {stockFilter === "all" && "Todos"}
+                  {stockFilter === "with" && "Con Stock"}
+                  {stockFilter === "without" && "Sin Stock"}
+                </div>
+              </div> */}
+            </div>)}
 
-        </div> */}
-        <div className="stockFilterButtons">
-          <div 
-            className={`filterBtn ${stockFilter}`}
-            onClick={handleStockFilterToggle}
-          >
-            {stockFilter === "all" && <SVG.StockAll className="icon" />}
-            {stockFilter === "with" && <SVG.StockWith className="icon" />}
-            {stockFilter === "without" && <SVG.StockWithout className="icon" />}
-          </div>
         </div>
+        
         {/* Botón para agregar un nuevo producto */}
         <div className="btnAdd" onClick={handleAddNewProduct}>
           <SVG.BoxAdd className="icon" /> Nuevo Producto

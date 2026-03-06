@@ -1,19 +1,19 @@
 import { useMemo, useState } from "react";
-import { apiPost } from "../services/api";
-import { useGlobalData } from "../context/GlobalDataContext";
-import { SVG } from "../assets/imgSvg";
-import "../styles/usuarios.css";
+import { apiPost } from "../../services/api";
+import { useGlobalData } from "../../context/GlobalDataContext";
+import { SVG } from "../../assets/imgSvg";
+import "../../styles/usuarios.css";
 
 const makeEmptyForm = () => ({
-  nombre_unidad: "",
-  abreviatura: "",
+  nombre_categoria: "",
+  descripcion: "",
   activo: 1,
 });
 
-export default function GestionarUnidadesMedida() {
+export default function GestionarCategoriasItem() {
   const {
-    unidades,
-    refreshGlobalData,  // o usa refreshUnidades si existe
+    categories = [],
+    refreshGlobalData,  // o usa refreshCategorias si existe
     usuariosMap,
     loading: globalLoading,
   } = useGlobalData();
@@ -25,9 +25,9 @@ export default function GestionarUnidadesMedida() {
 
   const [showCreate, setShowCreate] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
-  const [selectedUnidadDetalle, setSelectedUnidadDetalle] = useState(null);
+  const [selectedCategoriaDetalle, setSelectedCategoriaDetalle] = useState(null);
 
-  const [selectedUnidad, setSelectedUnidad] = useState(null);
+  const [selectedCategoria, setSelectedCategoria] = useState(null);
   const [form, setForm] = useState(makeEmptyForm());
 
   const normalize = (str) =>
@@ -39,17 +39,17 @@ export default function GestionarUnidadesMedida() {
   // =========================
   // FILTRO
   // =========================
-  const filteredUnidades = useMemo(() => {
-    if (!search.trim()) return unidades;
+  const filteredCategorias = useMemo(() => {
+    if (!search.trim()) return categories;
 
     const q = normalize(search);
 
-    return unidades.filter((u) =>
+    return categories.filter((c) =>
       normalize(
-        `${u.id_unidad} ${u.nombre_unidad} ${u.abreviatura} ${u.activo}`
+        `${c.id_categoria} ${c.nombre_categoria} ${c.descripcion} ${c.activo}`
       ).includes(q)
     );
-  }, [unidades, search]);
+  }, [categories, search]);
 
   // =========================
   // FECHA/HORA (igual estilo)
@@ -76,23 +76,23 @@ export default function GestionarUnidadesMedida() {
   // =========================
   const openCreate = () => {
     setForm(makeEmptyForm());
-    setSelectedUnidad(null);
-    setSelectedUnidadDetalle(null);
+    setSelectedCategoria(null);
+    setSelectedCategoriaDetalle(null);
     setError("");
     setSuccess("");
     setShowCreate(true);
   };
 
-  const openEdit = (unidad) => {
-    setSelectedUnidad(unidad);
-    setSelectedUnidadDetalle(null);
+  const openEdit = (categoria) => {
+    setSelectedCategoria(categoria);
+    setSelectedCategoriaDetalle(null);
     setError("");
     setSuccess("");
 
     setForm({
-      nombre_unidad: unidad.nombre_unidad ?? "",
-      abreviatura: unidad.abreviatura ?? "",
-      activo: unidad.activo ?? 1,
+      nombre_categoria: categoria.nombre_categoria ?? "",
+      descripcion: categoria.descripcion ?? "",
+      activo: categoria.activo ?? 1,
     });
 
     setShowEdit(true);
@@ -101,7 +101,7 @@ export default function GestionarUnidadesMedida() {
   const closePopups = () => {
     setShowCreate(false);
     setShowEdit(false);
-    setSelectedUnidad(null);
+    setSelectedCategoria(null);
     setForm(makeEmptyForm());
     setError("");
   };
@@ -112,8 +112,8 @@ export default function GestionarUnidadesMedida() {
   const handleCreate = async (e) => {
     e.preventDefault();
 
-    if (!form.nombre_unidad.trim()) {
-      setError("El nombre de la unidad es obligatorio");
+    if (!form.nombre_categoria.trim()) {
+      setError("El nombre de categoría es obligatorio");
       return;
     }
 
@@ -123,19 +123,19 @@ export default function GestionarUnidadesMedida() {
 
     try {
       const payload = {
-        nombre_unidad: form.nombre_unidad.trim(),
-        abreviatura: form.abreviatura.trim(),
+        nombre_categoria: form.nombre_categoria.trim(),
+        descripcion: form.descripcion.trim(),
         activo: Number(form.activo ?? 1),
       };
 
-      const res = await apiPost("unidades-medida-crear", payload);
+      const res = await apiPost("categorias-item-crear", payload);
 
       if (res?.ok) {
-        setSuccess("✅ Unidad de medida creada correctamente");
+        setSuccess("✅ Categoría creada correctamente");
         await refreshGlobalData(); // Refrescar datos globales
         setShowCreate(false);
       } else {
-        setError(res?.message || "Error creando unidad de medida");
+        setError(res?.message || "Error creando categoría");
       }
     } catch {
       setError("Error de servidor");
@@ -149,7 +149,7 @@ export default function GestionarUnidadesMedida() {
   // =========================
   const handleUpdate = async (e) => {
     e.preventDefault();
-    if (!selectedUnidad) return;
+    if (!selectedCategoria) return;
 
     setSaving(true);
     setError("");
@@ -157,23 +157,23 @@ export default function GestionarUnidadesMedida() {
 
     try {
       const payload = {
-        id_unidad: selectedUnidad.id_unidad,
+        id_categoria: selectedCategoria.id_categoria,
         ...form,
-        nombre_unidad: form.nombre_unidad.trim(),
-        abreviatura: form.abreviatura.trim(),
+        nombre_categoria: form.nombre_categoria.trim(),
+        descripcion: form.descripcion.trim(),
         activo: Number(form.activo ?? 1),
       };
 
-      const res = await apiPost("unidades-medida-actualizar", payload);
+      const res = await apiPost("categorias-item-actualizar", payload);
 
       if (res?.ok) {
-        setSuccess("✅ Unidad de medida actualizada");
+        setSuccess("✅ Categoría actualizada");
         await refreshGlobalData();
         setShowEdit(false);
-        setSelectedUnidad(null);
+        setSelectedCategoria(null);
         setForm(makeEmptyForm());
       } else {
-        setError(res?.message || "Error actualizando unidad de medida");
+        setError(res?.message || "Error actualizando categoría");
       }
     } catch {
       setError("Error de servidor");
@@ -186,27 +186,27 @@ export default function GestionarUnidadesMedida() {
   // ELIMINAR (desactivación lógica)
   // =========================
   const handleDelete = async (id) => {
-    if (!window.confirm("¿Eliminar unidad de medida? (desactivación lógica)")) return;
+    if (!window.confirm("¿Eliminar categoría? (desactivación lógica)")) return;
 
     setError("");
     setSuccess("");
 
     try {
-      const res = await apiPost(`unidades-medida-eliminar/${id}`, {});
+      const res = await apiPost(`categorias-item-eliminar/${id}`, {});
       if (res?.ok) {
-        setSuccess("✅ Unidad de medida desactivada");
+        setSuccess("✅ Categoría desactivada");
         await refreshGlobalData();
       } else {
-        setError(res?.message || "No se pudo desactivar la unidad de medida");
+        setError(res?.message || "No se pudo desactivar la categoría");
       }
     } catch {
-      setError("Error eliminando unidad de medida");
+      setError("Error eliminando categoría");
     }
   };
 
   return (
     <div className="ctnGestion">
-      <h2>Gestionar Unidades de Medida</h2>
+      <h2>Gestionar Categorías de Ítem</h2>
 
       <div className="ctnAllFilters">
         <div className="input-field">
@@ -216,12 +216,12 @@ export default function GestionarUnidadesMedida() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <label>Buscar unidad de medida...</label>
+          <label>Buscar categoría...</label>
         </div>
 
         <button className="btnAdd" onClick={openCreate}>
           <SVG.UserAdd />
-          Nueva unidad de medida
+          Nueva categoría
         </button>
       </div>
 
@@ -234,7 +234,7 @@ export default function GestionarUnidadesMedida() {
             <tr>
               <th>ID</th>
               <th>Nombre</th>
-              <th>Abreviatura</th>
+              <th>Descripción</th>
               <th>Activo</th>
               <th>Editar</th>
             </tr>
@@ -245,24 +245,24 @@ export default function GestionarUnidadesMedida() {
               <tr>
                 <td colSpan="5">Cargando...</td>
               </tr>
-            ) : filteredUnidades.length === 0 ? (
+            ) : filteredCategorias.length === 0 ? (
               <tr>
-                <td colSpan="5">No hay unidades de medida</td>
+                <td colSpan="5">No hay categorías</td>
               </tr>
             ) : (
-              filteredUnidades.map((u) => (
-                <tr key={u.id_unidad}>
-                  <td className="clickable" onClick={() => setSelectedUnidadDetalle(u)}>
-                    {u.id_unidad}
+              filteredCategorias.map((c) => (
+                <tr key={c.id_categoria}>
+                  <td className="clickable" onClick={() => setSelectedCategoriaDetalle(c)}>
+                    {c.id_categoria}
                   </td>
-                  <td>{u.nombre_unidad}</td>
-                  <td>{u.abreviatura}</td>
-                  <td>{Number(u.activo) === 1 ? "Sí" : "No"}</td>
+                  <td>{c.nombre_categoria}</td>
+                  <td>{c.descripcion}</td>
+                  <td>{Number(c.activo) === 1 ? "Sí" : "No"}</td>
                   <td className="actionsCell">
-                    <div className="btnSmall" onClick={() => openEdit(u)}>
+                    <div className="btnSmall" onClick={() => openEdit(c)}>
                       <SVG.UserEdit />
                     </div>
-                    {/* <button className="btnSmall" onClick={() => handleDelete(u.id_unidad)}>
+                    {/* <button className="btnSmall" onClick={() => handleDelete(c.id_categoria)}>
                       ❌
                     </button> */}
                   </td>
@@ -277,28 +277,28 @@ export default function GestionarUnidadesMedida() {
       {showCreate && (
         <div className="popup">
           <div className="popup-content">
-            <h3>Crear Unidad de Medida</h3>
+            <h3>Crear Categoría</h3>
 
             <form onSubmit={handleCreate} autoComplete="off">
               <div className="input-field">
                 <input
                   type="text"
-                  value={form.nombre_unidad}
-                  onChange={(e) => setForm({ ...form, nombre_unidad: e.target.value })}
+                  value={form.nombre_categoria}
+                  onChange={(e) => setForm({ ...form, nombre_categoria: e.target.value })}
                   placeholder=" "
                   required
                 />
-                <label>Nombre unidad</label>
+                <label>Nombre categoría</label>
               </div>
 
               <div className="input-field">
                 <input
                   type="text"
-                  value={form.abreviatura}
-                  onChange={(e) => setForm({ ...form, abreviatura: e.target.value })}
+                  value={form.descripcion}
+                  onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
                   placeholder=" "
                 />
-                <label>Abreviatura</label>
+                <label>Descripción</label>
               </div>
 
               <div className="input-field">
@@ -327,36 +327,36 @@ export default function GestionarUnidadesMedida() {
       )}
 
       {/* ===================== POPUP EDITAR ===================== */}
-      {showEdit && selectedUnidad && (
+      {showEdit && selectedCategoria && (
         <div className="popup">
           <div className="popup-content">
-            <h3>Editar Unidad de Medida</h3>
+            <h3>Editar Categoría</h3>
 
             <form onSubmit={handleUpdate} autoComplete="off">
               <div className="input-field">
-                <input type="text" value={selectedUnidad.id_unidad} disabled placeholder=" " />
-                <label>ID Unidad</label>
+                <input type="text" value={selectedCategoria.id_categoria} disabled placeholder=" " />
+                <label>ID Categoría</label>
               </div>
 
               <div className="input-field">
                 <input
                   type="text"
-                  value={form.nombre_unidad}
-                  onChange={(e) => setForm({ ...form, nombre_unidad: e.target.value })}
+                  value={form.nombre_categoria}
+                  onChange={(e) => setForm({ ...form, nombre_categoria: e.target.value })}
                   placeholder=" "
                   required
                 />
-                <label>Nombre unidad</label>
+                <label>Nombre categoría</label>
               </div>
 
               <div className="input-field">
                 <input
                   type="text"
-                  value={form.abreviatura}
-                  onChange={(e) => setForm({ ...form, abreviatura: e.target.value })}
+                  value={form.descripcion}
+                  onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
                   placeholder=" "
                 />
-                <label>Abreviatura</label>
+                <label>Descripción</label>
               </div>
 
               <div className="input-field">
@@ -385,66 +385,78 @@ export default function GestionarUnidadesMedida() {
       )}
 
       {/* ===================== POPUP DETALLE ===================== */}
-      {selectedUnidadDetalle && (
+      {selectedCategoriaDetalle && (
         <div className="popup">
           <div className="popup-content">
-            <h3>Detalle de Unidad de Medida</h3>
+            <h3>Detalle de Categoría</h3>
 
             <div className="popup-item">
+              {/* <div className="triple__form"> */}
               <div className="double__form">
                 <div className="input-field">
-                  <input type="text" value={selectedUnidadDetalle.id_unidad} readOnly />
-                  <label>ID Unidad</label>
+                  <input type="text" value={selectedCategoriaDetalle.id_categoria} readOnly />
+                  <label>ID Categoría</label>
                 </div>
 
                 <div className="input-field">
-                  <input type="text" value={selectedUnidadDetalle.nombre_unidad} readOnly />
+                  <input type="text" value={selectedCategoriaDetalle.nombre_categoria} readOnly />
                   <label>Nombre</label>
                 </div>
               </div>
 
               <div className="double__form">
+                
                 <div className="input-field">
-                  <input type="text" value={selectedUnidadDetalle.abreviatura} readOnly />
-                  <label>Abreviatura</label>
+                  <input
+                    type="text"
+                    value={selectedCategoriaDetalle.activo === 1 ? "Sí" : "No"}
+                    readOnly
+                  />
+                  <label>Activo</label>
                 </div>
 
                 <div className="input-field">
                   <input
                     type="text"
-                    value={selectedUnidadDetalle.activo === 1 ? "Sí" : "No"}
+                    value={usuariosMap?.[selectedCategoriaDetalle.id_admin] ?? selectedCategoriaDetalle.id_admin ?? "—"}
                     readOnly
                   />
-                  <label>Activo</label>
+                  <label>Responsable</label>
                 </div>
               </div>
 
+
               <div className="double__form">
                 <div className="input-field">
-                  <input type="text" value={getFecha(selectedUnidadDetalle.created_at)} readOnly />
+                  <input type="text" value={getFecha(selectedCategoriaDetalle.created_at)} readOnly />
                   <label>Fecha creación</label>
                 </div>
 
                 <div className="input-field">
-                  <input type="text" value={getHora(selectedUnidadDetalle.created_at)} readOnly />
+                  <input type="text" value={getHora(selectedCategoriaDetalle.created_at)} readOnly />
                   <label>Hora creación</label>
                 </div>
               </div>
 
               <div className="double__form">
                 <div className="input-field">
-                  <input type="text" value={getFecha(selectedUnidadDetalle.updated_at)} readOnly />
+                  <input type="text" value={getFecha(selectedCategoriaDetalle.updated_at)} readOnly />
                   <label>Última actualización</label>
                 </div>
 
                 <div className="input-field">
-                  <input type="text" value={getHora(selectedUnidadDetalle.updated_at)} readOnly />
+                  <input type="text" value={getHora(selectedCategoriaDetalle.updated_at)} readOnly />
                   <label>Hora actualización</label>
                 </div>
               </div>
+              
+              <div className="input-field">
+                <input type="text" value={selectedCategoriaDetalle.descripcion} readOnly />
+                <label>Descripción</label>
+              </div>
             </div>
 
-            <button className="closeForm" onClick={() => setSelectedUnidadDetalle(null)}>
+            <button className="closeForm" onClick={() => setSelectedCategoriaDetalle(null)}>
               <SVG.Close className="icon" />
             </button>
           </div>

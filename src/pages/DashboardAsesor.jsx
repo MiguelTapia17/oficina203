@@ -1,9 +1,9 @@
 import "../styles/dashboard.css";
 import { useState } from "react";  // Usar useState para manejar la vista activa
-import MenuUser from "../components/MenuUser";
+import MenuAsesor from "../components/asesor/MenuAsesor";
 import Contenido from "../components/Contenido";
 
-export default function Dashboard() {
+export default function DashboardAsesor() {
   // Estado para manejar la vista activa
   const [activeView, setActiveView] = useState("inventario");  // Por defecto, la vista activa es "Inicio"
   const [loading, setLoading] = useState(false);  // Estado para manejar el loading
@@ -19,7 +19,7 @@ export default function Dashboard() {
   return (
     <div className="ctnDashboard">
       <div className="dashboard">
-        <MenuUser activeView={activeView} setActiveView={handleViewChange} />
+        <MenuAsesor activeView={activeView} setActiveView={handleViewChange} />
         <Contenido activeView={activeView} loading={loading} /> {/* Aquí también pasamos loading */}
       </div>
     </div>

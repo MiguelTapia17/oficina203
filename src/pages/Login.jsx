@@ -36,9 +36,26 @@ export default function Login() {
       login(token, userData);
 
       // Redirección por rol
+      // const role = String(userData?.rol || "").toLowerCase();
+      // if (role === "superadmin") navigate("/dashboard", { replace: true });
+      // else navigate("/dashboard-counter", { replace: true });
       const role = String(userData?.rol || "").toLowerCase();
-      if (role === "superadmin") navigate("/dashboard", { replace: true });
-      else navigate("/dashboard-counter", { replace: true });
+      switch (role) {
+        case "superadmin":
+          navigate("/dashboard", { replace: true });
+          break;
+
+        case "admin":
+          navigate("/dashboardAdmin", { replace: true });
+          break;
+
+        case "asesor":
+          navigate("/dashboardAsesor", { replace: true });
+          break;
+                    
+        default:
+          navigate("/dashboardViewer", { replace: true });
+      }
 
     } catch (e) {
       setError("Error de servidor. Intenta de nuevo.");

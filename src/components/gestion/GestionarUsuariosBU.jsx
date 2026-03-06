@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { apiGet, apiPost } from "../services/api";
-import { SVG } from "../assets/imgSvg";
-import { useGlobalData } from "../context/GlobalDataContext";
+import { apiGet, apiPost } from "../../services/api";
+import { SVG } from "../../assets/imgSvg";
+import { useGlobalData } from "../../context/GlobalDataContext";
 import "../styles/usuarios.css";
 
 const makeEmptyForm = () => ({

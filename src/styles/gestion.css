@@ -58,9 +58,11 @@
   display: flex;
   justify-content: space-between;
   gap: 1rem;
+  width: 100%;
 }
 .ctnAllFilters .input-field{
-  width: calc(100% - 12rem);
+  /* width: calc(100% - 12rem); */
+  width: 100%;
 }
 .ctnAllFilters .btnPrimary{
   width: 11rem;
@@ -145,12 +147,12 @@
 /* CTN FILTROS */
 .ctnAllFilters .filters{
   position: relative;
-  width: 15rem;
-  /* background-color: var(--gray-one); */
+  /* width: 16rem;
+  min-width: 16rem; */
+  width: 7rem;
+  min-width: 7rem;
   background-color: white;
-  /* box-shadow: 0 0 0.8rem #ddd; */
   border-radius: 5px;
-  /* background-color: #ddd; */
   background-color: #eee;
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
@@ -170,8 +172,10 @@
 .ctnAllFilters .filters .ctnFilters{
   position: absolute;
   top: calc(100% + 0.5rem);
-  left: 0;
-  width: 100%;
+  right: 0;
+  /* left: 50%;
+  transform: translateX(-50%); */
+  width: 20rem;
   display: flex;
   flex-direction: column;
   gap: 0.8rem;

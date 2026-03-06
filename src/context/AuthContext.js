@@ -1,8 +1,3 @@
-/**
- * Contexto de autenticación.
- * Guarda si el usuario está logueado y el user (rol).
- */
-
 import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext();

@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { apiGet, apiPost } from "../services/api";
-import { SVG } from "../assets/imgSvg";
-import { useGlobalData } from "../context/GlobalDataContext";
-import "../styles/usuarios.css";
+import { apiGet, apiPost } from "../../services/api";
+import { SVG } from "../../assets/imgSvg";
+import { useGlobalData } from "../../context/GlobalDataContext";
+import "../../styles/usuarios.css";
 
 const makeEmptyForm = () => ({
   usuario: "",
@@ -411,7 +411,7 @@ export default function GestionarUsuarios() {
                   >
                     <option value=""></option>
                     <option value="admin">Administrador</option>
-                    <option value="usuario">Usuario</option>
+                    <option value="asesor">Asesor</option>
                     <option value="superadmin">Superadmin</option>
                   </select>
                   <label>Rol</label>

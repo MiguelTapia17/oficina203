@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
-import { apiPost } from "../services/api";
-import { useGlobalData } from "../context/GlobalDataContext";
-import { SVG } from "../assets/imgSvg";
-import "../styles/usuarios.css";
+import { apiPost } from "../../services/api";
+import { useGlobalData } from "../../context/GlobalDataContext";
+import { SVG } from "../../assets/imgSvg";
+import "../../styles/usuarios.css";
 
 const makeEmptyForm = () => ({
   nombre_actividad: "",

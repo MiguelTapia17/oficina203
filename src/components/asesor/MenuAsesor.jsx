@@ -1,12 +1,12 @@
-import { SVG, IMAGES } from "../assets/imgSvg";
-import '../styles/menu.css';
-import { useAuth } from "../context/AuthContext";
+import { SVG, IMAGES } from "../../assets/imgSvg";
+import '../../styles/menu.css';
+import { useAuth } from "../../context/AuthContext";
 import { useState, useEffect } from "react";
 
-export default function MenuUser({ activeView, setActiveView }) {
+export default function Menu({ activeView, setActiveView }) {
   const [isDark, setIsDark] = useState(false);
   const { logout } = useAuth();
- 
+
   const handleViewChange = (view) => {
     setActiveView(view);  // Cambia la vista activa cuando se hace clic en un botón
   };
@@ -26,12 +26,15 @@ export default function MenuUser({ activeView, setActiveView }) {
     <div className="ctnMenu">
       <img src={IMAGES.logoNegro} className="logo" />
       <div className="ctnBotones">
+        {/* <button className={activeView === "inicio" ? "active" : ""} onClick={() => handleViewChange("inicio")}>
+          <SVG.Dashboard className="icon" /> Dashboard
+        </button> */}
         <button className={activeView === "inventario" ? "active" : ""} onClick={() => handleViewChange("inventario")}>
           <SVG.Box className="icon" /> Inventario
         </button>
-        <button className={activeView === "añadirStock" ? "active" : ""} onClick={() => handleViewChange("añadirStock")}>
-          <SVG.BoxAdd className="icon" /> Nuevo Producto
-        </button>
+        {/* <button className={activeView === "historial" ? "active" : ""} onClick={() => handleViewChange("historial")}>
+          <SVG.History className="icon" /> Historial de movimientos
+        </button> */}
         <button id="btnTheme" type="button" onClick={toggleTheme}>
           <span className="themeToggle st-sunMoonThemeToggleBtn">
             <input id="themeToggle" className="themeToggleInput" type="checkbox" checked={isDark} readOnly />
@@ -52,6 +55,15 @@ export default function MenuUser({ activeView, setActiveView }) {
             </svg>
           </span>
           Tema: Claro / Oscuro
+        </button>
+        {/* <button className={activeView === "gestionAdmin" ? "active" : ""} onClick={() => handleViewChange("gestionAdmin")}>
+          <SVG.History className="icon" /> Gestión
+        </button> */}
+        {/* <button className={activeView === "gestionarUsuarios" ? "active" : ""} onClick={() => handleViewChange("gestionarUsuarios")}>
+          <SVG.UserSetting className="icon" /> Gestión de Usuarios
+        </button> */}
+        <button className={activeView === "importItems" ? "active" : ""} onClick={() => handleViewChange("importItems")}>
+          <SVG.Importar className="icon" /> Importar Items
         </button>
         
         <button className="exit" onClick={logout}>

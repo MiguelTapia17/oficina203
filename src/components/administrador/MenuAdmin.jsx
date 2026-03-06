@@ -1,11 +1,11 @@
-import { SVG, IMAGES } from "../assets/imgSvg";
-import '../styles/menu.css';
-import { useAuth } from "../context/AuthContext";
+import { SVG, IMAGES } from "../../assets/imgSvg";
+import '../../styles/menu.css';
+import { useAuth } from "../../context/AuthContext";
 import { useState, useEffect } from "react";
 
 export default function Menu({ activeView, setActiveView }) {
   const [isDark, setIsDark] = useState(false);
-  const { logout, user } = useAuth();
+  const { logout } = useAuth();
 
   const handleViewChange = (view) => {
     setActiveView(view);  // Cambia la vista activa cuando se hace clic en un botón
@@ -56,7 +56,7 @@ export default function Menu({ activeView, setActiveView }) {
           </span>
           Tema: Claro / Oscuro
         </button>
-        <button className={activeView === "gestion" ? "active" : ""} onClick={() => handleViewChange("gestion")}>
+        <button className={activeView === "gestionAdmin" ? "active" : ""} onClick={() => handleViewChange("gestionAdmin")}>
           <SVG.History className="icon" /> Gestión
         </button>
         {/* <button className={activeView === "gestionarUsuarios" ? "active" : ""} onClick={() => handleViewChange("gestionarUsuarios")}>
@@ -74,8 +74,8 @@ export default function Menu({ activeView, setActiveView }) {
         <div className="ctnUsuario">
           <SVG.User className="iconUser"/>
           <div className="ctnTxt">
-            <p className="name">{user?.usuario || "Usuario"}</p>
-            <p className="rol">{user?.rol || "Rol"}</p>
+            <p className="name">Usuario Principal</p>
+            <p className="rol">Cargo</p>
           </div>
         </div>
       </div>

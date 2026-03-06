@@ -5,7 +5,7 @@ import { SVG } from "../assets/imgSvg";
 import "../styles/inventario.css";
 import NewProduct from "./NewProduct"; // Importamos el componente
 
-export default function InventarioBU() {
+export default function Inventario() {
   const [showNewProductPopup, setShowNewProductPopup] = useState(false); // Controlamos la visibilidad del popup
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -41,9 +41,15 @@ export default function InventarioBU() {
   const [sedeTransferencia, setSedeTransferencia] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
+  const [selectedItemDetalle, setSelectedItemDetalle] = useState(null);
+
   const MAX_OBS = 150; // limite de campo observaciones
   const [observaciones, setObservaciones] = useState("");
     
+  //FILTROS
+  const [showFilters, setShowFilters] = useState(false);
+
+
   const [stockFilter, setStockFilter] = useState("all"); 
   const normalize = (str) =>
     String(str ?? "")
@@ -92,6 +98,24 @@ export default function InventarioBU() {
     );
 
     return stock ? Number(stock.cantidad_actual) : 0;
+  };
+  /* ================================
+     STOCK DETALLE
+  ===================================*/
+  const getStockPorSedeDetalle = (itemId) => {
+    return sedes.map((sede) => {
+      const stock = stockPorSede.find(
+        s =>
+          Number(s.id_item) === Number(itemId) &&
+          Number(s.id_sede) === Number(sede.id_sede)
+      );
+
+      return {
+        nombre_sede: sede.nombre_sede,
+        id_sede: sede.id_sede,
+        cantidad: stock ? Number(stock.cantidad_actual) : 0
+      };
+    });
   };
   /* ================================
      FILTRADO
@@ -314,7 +338,7 @@ const handleStockFilterToggle = () => {
           {showNewProductPopup && (
             <NewProduct setShowPopup={setShowNewProductPopup} setShowSuccessMessage={setSuccessMessage} />
           )}
-      <div className="filters">
+      <div className="ctnAllFilters">
 
         <div className='input-field'>
           <input
@@ -325,69 +349,61 @@ const handleStockFilterToggle = () => {
           />
           <label>Buscar (id, nombre, desc.)</label>
         </div>
-        <div className="input-field">
-          <select
-            value={categoryFilter}  // El valor es el `id_categoria` seleccionado
-            onChange={(e) => setCategoryFilter(e.target.value)}  // Actualizamos el filtro de categoría
-          >
-            <option value="">Todas las categorías</option>
-            {categories.map((category) => (
-              <option key={category.id_categoria} value={category.id_categoria}>
-                {category.nombre_categoria}  {/* Mostramos el nombre de la categoría */}
-              </option>
-            ))}
-          </select>
-          <label>Categoria</label>
-        </div>
-        <div className='input-field'>
-          <select
-            value={selectedSede}
-            onChange={(e) => setSelectedSede(e.target.value)}
-          >
-            <option value="">Todas</option>
-            {sedes.map((sede) => (
-              <option key={sede.id_sede} value={sede.id_sede}>
-                {sede.nombre_sede}
-              </option>
-            ))}
-          </select>
-          <label>Sede</label>
-        </div>
-        {/* <div className="stockFilterButtons">
-          <div 
-            className={`filterBtn ${stockFilter === "all" ? "active" : ""}`}
-            onClick={() => setStockFilter("all")}
-          >
-            all
+        <div className="filters">
+          <div className="filtersCTA" onClick={() => setShowFilters(!showFilters)} style={{ cursor: "pointer" }}>
+            <SVG.Filter className="icon" />
+            <p>Filtros</p>
           </div>
+          {showFilters && (
+            <div className="ctnFilters">
+              <div className="input-field">
+                <select
+                  value={categoryFilter}  // El valor es el `id_categoria` seleccionado
+                  onChange={(e) => setCategoryFilter(e.target.value)}  // Actualizamos el filtro de categoría
+                >
+                  <option value="">Todas las categorías</option>
+                  {categories.map((category) => (
+                    <option key={category.id_categoria} value={category.id_categoria}>
+                      {category.nombre_categoria}  {/* Mostramos el nombre de la categoría */}
+                    </option>
+                  ))}
+                </select>
+                <label>Categoria</label>
+              </div>
+              <div className='input-field'>
+                <select
+                  value={selectedSede}
+                  onChange={(e) => setSelectedSede(e.target.value)}
+                >
+                  <option value="">Todas</option>
+                  {sedes.map((sede) => (
+                    <option key={sede.id_sede} value={sede.id_sede}>
+                      {sede.nombre_sede}
+                    </option>
+                  ))}
+                </select>
+                <label>Sede</label>
+              </div>
 
-          <div 
-            className={`filterBtn ${stockFilter === "with" ? "active" : ""}`}
-            onClick={() => setStockFilter("with")}
-          >
-            filter
-          </div>
+              <div className="stockFilterButtons">
+                <div 
+                  className={`filterBtn ${stockFilter}`}
+                  onClick={handleStockFilterToggle}
+                >
+                  {/* {stockFilter === "all" && <SVG.StockAll className="icon" />}
+                  {stockFilter === "with" && <SVG.StockWith className="icon" />}
+                  {stockFilter === "without" && <SVG.StockWithout className="icon" />} */}
+                  {stockFilter === "all" && "Todos"}
+                  {stockFilter === "with" && "Con Stock"}
+                  {stockFilter === "without" && "Sin Stock"}
+                </div>
+              </div>
+            </div>)}
 
-          <div 
-            className={`filterBtn ${stockFilter === "without" ? "active" : ""}`}
-            onClick={() => setStockFilter("without")}
-          >
-            filter2
-          </div>
-
-        </div> */}
-        <div className="stockFilterButtons">
-          <div 
-            className={`filterBtn ${stockFilter}`}
-            onClick={handleStockFilterToggle}
-          >
-            {stockFilter === "all" && <SVG.StockAll className="icon" />}
-            {stockFilter === "with" && <SVG.StockWith className="icon" />}
-            {stockFilter === "without" && <SVG.StockWithout className="icon" />}
-          </div>
         </div>
+        
         {/* Botón para agregar un nuevo producto */}
-        <div className="btnAddProduct" onClick={handleAddNewProduct}>
+        <div className="btnAdd" onClick={handleAddNewProduct}>
           <SVG.BoxAdd className="icon" /> Nuevo Producto
         </div>
 
@@ -414,7 +430,10 @@ const handleStockFilterToggle = () => {
 
               return (
                 <tr key={item.id_item}>
-                  <td>{item.id_item}</td>
+                  <td className="clickable" onClick={() => setSelectedItemDetalle(item)} >
+                    {item.id_item}
+                  </td>
+                  
                   <td>{item.nombre_item}</td>
                   <td>{item.nombre_categoria}</td>
                   <td>{item.descripcion}</td>
@@ -579,6 +598,96 @@ const handleStockFilterToggle = () => {
                 <SVG.Close className="icon" />
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {selectedItemDetalle && (
+        <div className="popup">
+          <div className="popup-content">
+            <h3>Detalle del Producto</h3>
+
+            <div className="popup-item">
+
+              <div className="double__form">
+                <div className="input-field">
+                  <input value={selectedItemDetalle.id_item} readOnly />
+                  <label>ID</label>
+                </div>
+
+                <div className="input-field">
+                  <input value={selectedItemDetalle.nombre_item} readOnly />
+                  <label>Nombre</label>
+                </div>
+              </div>
+
+              <div className="double__form">
+                <div className="input-field">
+                  <input value={selectedItemDetalle.nombre_categoria} readOnly />
+                  <label>Categoría</label>
+                </div>
+
+                <div className="input-field">
+                  <input value={selectedItemDetalle.descripcion || "—"} readOnly />
+                  <label>Descripción</label>
+                </div>
+              </div>
+
+              {/* STOCK + SEDE */}
+              <div className="double__form">
+
+                <div className="input-field">
+                  <input
+                    value={
+                      selectedSede
+                        ? sedes.find(s => Number(s.id_sede) === Number(selectedSede))?.nombre_sede || ""
+                        : "Todas las sedes"
+                    }
+                    readOnly
+                  />
+                  <label>Sede</label>
+                </div>
+
+                <div className="input-field">
+                  <input value={getStock(selectedItemDetalle)} readOnly />
+                  <label>Stock</label>
+                </div>
+
+
+              </div>
+
+              {/* SOLO MOSTRAR STOCK POR SEDE SI ES ALL */}
+              {!selectedSede && (
+                <>
+                  <h4 style={{ marginTop: "20px" }}>Stock por sede</h4>
+
+                  {getStockPorSedeDetalle(selectedItemDetalle.id_item).map((sede) => (
+                    <div
+                      key={sede.id_sede}
+                      className="double__form"
+                    >
+                      <div className="input-field">
+                        <input value={sede.nombre_sede} readOnly />
+                        <label>Sede</label>
+                      </div>
+
+                      <div className="input-field">
+                        <input value={sede.cantidad} readOnly />
+                        <label>Cantidad</label>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+
+            </div>
+
+            <button
+              className="closeForm"
+              onClick={() => setSelectedItemDetalle(null)}
+            >
+              <SVG.Close className="icon" />
+            </button>
           </div>
         </div>
       )}

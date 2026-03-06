@@ -164,12 +164,14 @@ input.cantidad{
   height: 2.4rem;
   border: 1px solid var(--form-border-sinfocus);
   border-radius: 0.3rem;
+  background-color: white;
+  text-align: start;
 }
 .filterBtn{
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */
   cursor: pointer;
 }

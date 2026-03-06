@@ -1,16 +1,16 @@
 import { useState } from "react";
-import { SVG } from "../assets/imgSvg";
-import GestionarUsuarios from "./gestion/GestionarUsuarios";
-import GestionarActividades from "./gestion/GestionarActividades";
-import GestionarSedes from "./gestion/GestionarSedes";
-import GestionarTiposItem from "./gestion/GestionarTiposItem";
-import GestionarUnidadesMedida from "./gestion/GestionarUnidadesMedida";
-import GestionarCategorias from "./gestion/GestionarCategorias";
+import { SVG } from "../../assets/imgSvg";
+import GestionarUsuarios from "../gestion/GestionarUsuarios";
+import GestionarActividades from "../gestion/GestionarActividades";
+import GestionarSedes from "../gestion/GestionarSedes";
+import GestionarTiposItem from "../gestion/GestionarTiposItem";
+import GestionarUnidadesMedida from "../gestion/GestionarUnidadesMedida";
+import GestionarCategorias from "../gestion/GestionarCategorias";
 
 
-import "../styles/gestion.css";
+import "../../styles/gestion.css";
 
-export default function Gestion() {
+export default function GestionAdmin() {
   // null = selector / preview
   const [subView, setSubView] = useState(null);
 
@@ -46,41 +46,41 @@ export default function Gestion() {
     );
   }
 
-  if (subView === "sedes") {
-    return (
-      <div className="ctnGestion">
-        <Header title="Gestión de Sedes" />
-        <GestionarSedes />
-      </div>
-    );
-  }
+  // if (subView === "sedes") {
+  //   return (
+  //     <div className="ctnGestion">
+  //       <Header title="Gestión de Sedes" />
+  //       <GestionarSedes />
+  //     </div>
+  //   );
+  // }
 
-  if (subView === "tipos") {
-    return (
-      <div className="ctnGestion">
-        <Header title="Gestión de Tipos de Ítem" />
-        <GestionarTiposItem />
-      </div>
-    );
-  }
+  // if (subView === "tipos") {
+  //   return (
+  //     <div className="ctnGestion">
+  //       <Header title="Gestión de Tipos de Ítem" />
+  //       <GestionarTiposItem />
+  //     </div>
+  //   );
+  // }
 
-  if (subView === "unidades") {
-    return (
-      <div className="ctnGestion">
-        <Header title="Gestión de Unidades de Medida" />
-        <GestionarUnidadesMedida />
-      </div>
-    );
-  }
+  // if (subView === "unidades") {
+  //   return (
+  //     <div className="ctnGestion">
+  //       <Header title="Gestión de Unidades de Medida" />
+  //       <GestionarUnidadesMedida />
+  //     </div>
+  //   );
+  // }
 
-  if (subView === "categorias") {
-    return (
-      <div className="ctnGestion">
-        <Header title="Gestión de Categorías" />
-        <GestionarCategorias />
-      </div>
-    );
-  }
+  // if (subView === "categorias") {
+  //   return (
+  //     <div className="ctnGestion">
+  //       <Header title="Gestión de Categorías" />
+  //       <GestionarCategorias />
+  //     </div>
+  //   );
+  // }
 
   // Selector / Vista previa
   return (
@@ -98,7 +98,7 @@ export default function Gestion() {
             <p>Actividades</p>
           </button>
 
-          <button className="btnItems" type="button" onClick={() => setSubView("sedes")}>
+          {/* <button className="btnItems" type="button" onClick={() => setSubView("sedes")}>
             <SVG.Location className="icon" />
             <p>Sedes</p>
           </button>
@@ -116,7 +116,7 @@ export default function Gestion() {
           <button className="btnItems" type="button" onClick={() => setSubView("categorias")}>
             <SVG.Category className="icon" />
             <p>Categorías</p>
-          </button>
+          </button> */}
         </div>
       {/* <div className="ctnTable" style={{ padding: 0, background: "transparent" }}>
       </div> */}

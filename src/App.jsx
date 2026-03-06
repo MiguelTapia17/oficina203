@@ -1,7 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-import DashboardCounter from "./pages/DashboardCounter";
+import DashboardAdmin from "./pages/DashboardAdmin";
+import DashboardAsesor from "./pages/DashboardAsesor";
+import DashboardViewer from "./pages/DashboardViewer";
+
 import { useAuth } from "./context/AuthContext";
 import RequireRole from "./components/RequireRole";
 
@@ -10,25 +13,14 @@ function PrivateRoute({ children }) {
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 }
 
-function HomeRedirect() {
-  const { isAuthenticated, user } = useAuth();
-
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
-
-  const role = String(user?.rol || "").toLowerCase();
-  if (role === "superadmin") return <Navigate to="/dashboard" replace />;
-
-  return <Navigate to="/dashboard-counter" replace />;
-}
-
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HomeRedirect />} />
 
         <Route path="/login" element={<Login />} />
 
+        {/* SUPER ADMIN */}
         <Route
           path="/dashboard"
           element={
@@ -40,18 +32,44 @@ export default function App() {
           }
         />
 
+        {/* ADMIN */}
         <Route
-          path="/dashboard-counter"
+          path="/dashboardAdmin"
           element={
             <PrivateRoute>
-              <RequireRole allow={["counter", "usuario", "user"]}>
-                <DashboardCounter />
+              <RequireRole allow={["admin"]}>
+                <DashboardAdmin />
               </RequireRole>
             </PrivateRoute>
           }
         />
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* ASESOR */}
+        <Route
+          path="/dashboardAsesor"
+          element={
+            <PrivateRoute>
+              <RequireRole allow={["asesor"]}>
+                <DashboardAsesor />
+              </RequireRole>
+            </PrivateRoute>
+          }
+        />
+
+        {/* VIEWER */}
+        <Route
+          path="/dashboardViewer"
+          element={
+            <PrivateRoute>
+              <RequireRole allow={["asesor"]}>
+                <DashboardViewer />
+              </RequireRole>
+            </PrivateRoute>
+          }
+        />
+
+        <Route path="*" element={<Navigate to="/login" replace />} />
+
       </Routes>
     </BrowserRouter>
   );
