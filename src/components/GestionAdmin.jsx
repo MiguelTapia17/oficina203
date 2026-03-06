@@ -1,16 +1,16 @@
 import { useState } from "react";
-import { SVG } from "../../assets/imgSvg";
-import GestionarUsuarios from "../gestion/GestionarUsuarios";
-import GestionarActividades from "../gestion/GestionarActividades";
-import GestionarSedes from "../gestion/GestionarSedes";
-import GestionarTiposItem from "../gestion/GestionarTiposItem";
-import GestionarUnidadesMedida from "../gestion/GestionarUnidadesMedida";
-import GestionarCategorias from "../gestion/GestionarCategorias";
+import { SVG } from "../assets/imgSvg";
+import GestionarUsuarios from "./gestion/GestionarUsuarios";
+import GestionarActividades from "./gestion/GestionarActividades";
+import GestionarSedes from "./gestion/GestionarSedes";
+import GestionarTiposItem from "./gestion/GestionarTiposItem";
+import GestionarUnidadesMedida from "./gestion/GestionarUnidadesMedida";
+import GestionarCategorias from "./gestion/GestionarCategorias";
 
 
-import "../../styles/gestion.css";
+import "../styles/gestion.css";
 
-export default function GestionAsesor() {
+export default function GestionAdmin() {
   // null = selector / preview
   const [subView, setSubView] = useState(null);
 
@@ -28,14 +28,14 @@ export default function GestionAsesor() {
     </div>
   );
 
-  // if (subView === "usuarios") {
-  //   return (
-  //     <div className="ctnGestion">
-  //       <Header title="Gestión de Usuarios" />
-  //       <GestionarUsuarios />
-  //     </div>
-  //   );
-  // }
+  if (subView === "usuarios") {
+    return (
+      <div className="ctnGestion">
+        <Header title="Gestión de Usuarios" />
+        <GestionarUsuarios />
+      </div>
+    );
+  }
 
   if (subView === "actividades") {
     return (
@@ -88,16 +88,14 @@ export default function GestionAsesor() {
       <h2>Gestión</h2>
 
         <div className="ctnItems">
-          {/* <button className="btnItems" type="button" onClick={() => setSubView("usuarios")}>
+          <button className="btnItems" type="button" onClick={() => setSubView("usuarios")}>
             <SVG.User className="icon" />
             <p>Usuarios</p>
-          </button> */}
-
+          </button>
           <button className="btnItems" type="button" onClick={() => setSubView("actividades")}>
             <SVG.Activity className="icon" />
             <p>Actividades</p>
           </button>
-
           {/* <button className="btnItems" type="button" onClick={() => setSubView("sedes")}>
             <SVG.Location className="icon" />
             <p>Sedes</p>

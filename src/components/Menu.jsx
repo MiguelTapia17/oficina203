@@ -1,40 +1,43 @@
 import { SVG, IMAGES } from "../assets/imgSvg";
-import '../styles/menu.css';
+import "../styles/menu.css";
 import { useAuth } from "../context/AuthContext";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { menuConfig } from "../config/menuConfig";
 
 export default function Menu({ activeView, setActiveView }) {
+
   const [isDark, setIsDark] = useState(false);
   const { logout, user } = useAuth();
 
-  const handleViewChange = (view) => {
-    setActiveView(view);  // Cambia la vista activa cuando se hace clic en un botón
-  };
+  const role = user?.rol?.toLowerCase();
+  const menuItems = menuConfig[role] || [];
 
   const toggleTheme = () => {
     setIsDark(prev => {
       const next = !prev;
-
-      // Cambia el "root" sin romper tu app
       document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
-
       return next;
     });
   };
 
   return (
     <div className="ctnMenu">
+
       <img src={IMAGES.logoNegro} className="logo" />
+
       <div className="ctnBotones">
-        <button className={activeView === "inicio" ? "active" : ""} onClick={() => handleViewChange("inicio")}>
-          <SVG.Dashboard className="icon" /> Dashboard
-        </button>
-        <button className={activeView === "inventario" ? "active" : ""} onClick={() => handleViewChange("inventario")}>
-          <SVG.Box className="icon" /> Inventario
-        </button>
-        <button className={activeView === "historial" ? "active" : ""} onClick={() => handleViewChange("historial")}>
-          <SVG.History className="icon" /> Historial de movimientos
-        </button>
+        {menuItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <button
+              key={item.key}
+              className={activeView === item.key ? "active" : ""}
+              onClick={() => setActiveView(item.key)}
+            >
+              <Icon className="icon" /> {item.label}
+            </button>
+          );
+        })}
         <button id="btnTheme" type="button" onClick={toggleTheme}>
           <span className="themeToggle st-sunMoonThemeToggleBtn">
             <input id="themeToggle" className="themeToggleInput" type="checkbox" checked={isDark} readOnly />
@@ -56,29 +59,23 @@ export default function Menu({ activeView, setActiveView }) {
           </span>
           Tema: Claro / Oscuro
         </button>
-        <button className={activeView === "gestion" ? "active" : ""} onClick={() => handleViewChange("gestion")}>
-          <SVG.History className="icon" /> Gestión
-        </button>
-        {/* <button className={activeView === "gestionarUsuarios" ? "active" : ""} onClick={() => handleViewChange("gestionarUsuarios")}>
-          <SVG.UserSetting className="icon" /> Gestión de Usuarios
-        </button> */}
-        <button className={activeView === "importItems" ? "active" : ""} onClick={() => handleViewChange("importItems")}>
-          <SVG.Importar className="icon" /> Importar Items
-        </button>
-        
         <button className="exit" onClick={logout}>
           <SVG.Logout className="icon" /> Cerrar sesión
         </button>
       </div>
+
       <div className="ctnBotones dos">
         <div className="ctnUsuario">
           <SVG.User className="iconUser"/>
           <div className="ctnTxt">
-            <p className="name">{user?.usuario || "Usuario"}</p>
-            <p className="rol">{user?.rol || "Rol"}</p>
+            <p className="name">{user?.usuario}</p>
+            <p className="rol">{user?.rol}</p>
+            {/* <p className="sede">{user?.id_sede}</p> */}
           </div>
+
         </div>
       </div>
+
     </div>
   );
 }

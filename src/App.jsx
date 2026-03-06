@@ -1,9 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-import DashboardAdmin from "./pages/DashboardAdmin";
-import DashboardAsesor from "./pages/DashboardAsesor";
-import DashboardViewer from "./pages/DashboardViewer";
 
 import { useAuth } from "./context/AuthContext";
 import RequireRole from "./components/RequireRole";
@@ -20,49 +17,13 @@ export default function App() {
 
         <Route path="/login" element={<Login />} />
 
-        {/* SUPER ADMIN */}
+        {/* DASHBOARD PARA TODOS LOS ROLES */}
         <Route
           path="/dashboard"
           element={
             <PrivateRoute>
-              <RequireRole allow={["superadmin"]}>
+              <RequireRole allow={["superadmin", "admin", "asesor", "viewer"]}>
                 <Dashboard />
-              </RequireRole>
-            </PrivateRoute>
-          }
-        />
-
-        {/* ADMIN */}
-        <Route
-          path="/dashboardAdmin"
-          element={
-            <PrivateRoute>
-              <RequireRole allow={["admin"]}>
-                <DashboardAdmin />
-              </RequireRole>
-            </PrivateRoute>
-          }
-        />
-
-        {/* ASESOR */}
-        <Route
-          path="/dashboardAsesor"
-          element={
-            <PrivateRoute>
-              <RequireRole allow={["asesor"]}>
-                <DashboardAsesor />
-              </RequireRole>
-            </PrivateRoute>
-          }
-        />
-
-        {/* VIEWER */}
-        <Route
-          path="/dashboardViewer"
-          element={
-            <PrivateRoute>
-              <RequireRole allow={["asesor"]}>
-                <DashboardViewer />
               </RequireRole>
             </PrivateRoute>
           }
