@@ -60,7 +60,7 @@ export default function Inventario() {
 
 
   /* ================================
-     FILTRAR POR SEDE
+     FILTRAR SEDE POR USUARIO
   ===================================*/
 
   /* usuarios */
@@ -386,7 +386,7 @@ const handleStockFilterToggle = () => {
                 </select>
                 <label>Categoria</label>
               </div>
-              <div className='input-field'>
+              {/* <div className='input-field'>
                 <select
                   value={selectedSede}
                   onChange={(e) => setSelectedSede(e.target.value)}
@@ -399,7 +399,23 @@ const handleStockFilterToggle = () => {
                   ))}
                 </select>
                 <label>Sede</label>
-              </div>
+              </div> */}
+              {userRole === "superadmin" && (
+                <div className='input-field'>
+                  <select
+                    value={selectedSede}
+                    onChange={(e) => setSelectedSede(e.target.value)}
+                  >
+                    <option value="">Todas</option>
+                    {sedes.map((sede) => (
+                      <option key={sede.id_sede} value={sede.id_sede}>
+                        {sede.nombre_sede}
+                      </option>
+                    ))}
+                  </select>
+                  <label>Sede</label>
+                </div>
+              )}
               <div className='input-field'>
                 <select 
                   value={stockFilter}
@@ -495,6 +511,20 @@ const handleStockFilterToggle = () => {
                 <label className="active">Nombre</label>
               </div>
             </div>
+            {/* SEDE */}
+            <div className='input-field'>
+              {/* <input value={selectedItem.sede} readOnly disabled /> */}
+              <input
+                value={
+                  selectedSede
+                    ? sedes.find(s => Number(s.id_sede) === Number(selectedSede))?.nombre_sede || ""
+                    : "Todas las sedes"
+                }
+                readOnly
+                disabled
+              />
+              <label className="active">Sede</label>
+            </div>
             {/* TIPO DE MOVIMIENTO */}
             <div className='input-field'>
               <select
@@ -583,7 +613,6 @@ const handleStockFilterToggle = () => {
                 <label className="active">Cantidad</label>
               </div>
             </div>
-
             {/* OBSERVACIONES */}
             <div className='input-field ctnTextArea'>
               <textarea
