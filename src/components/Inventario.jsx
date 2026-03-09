@@ -28,6 +28,7 @@ export default function Inventario() {
   const [selectedSede, setSelectedSede] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [toast, setToast] = useState(null);
   
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -45,6 +46,7 @@ export default function Inventario() {
   
   const MAX_OBS = 150; // limite de campo observaciones
   const [observaciones, setObservaciones] = useState("");
+  
   
   //FILTROS
   const [showFilters, setShowFilters] = useState(false);
@@ -238,7 +240,7 @@ const handleStockFilterToggle = () => {
     }
 
     if (!editStock || Number(editStock) <= 0) {
-      setErrorMsg("La cantidad debe ser mayor o igual a 0.");
+      setErrorMsg("La cantidad debe ser mayor a 0.");
       return;
     }
     if (movementType === "transferencia" && selectedSede === sedeTransferencia) {
@@ -283,7 +285,8 @@ const handleStockFilterToggle = () => {
           : "",
         observaciones: observaciones,
         activo: Number(item.activo ?? 1),
-        id_admin: Number(item.id_admin),
+        // id_admin: Number(item.id_admin),
+        id_admin: Number(user.id_admin),
         tipo_movimiento: movementType,
         id_actividad: selectActividad ? Number(selectActividad) : null
       };
@@ -318,18 +321,16 @@ const handleStockFilterToggle = () => {
           }
         ];
       });
-      const detalleMovimiento = `
-        Movimiento: ${movementType}
-        Cantidad: ${cantidad}
-        Nuevo stock: ${nuevoStock}
-        `;
+      setToast({
+        from: currentStock,
+        to: nuevoStock,
+        cantidad: cantidad,
+        tipo: movementType
+      });
 
-        setSuccessMsg(`Actualización exitosa. ${detalleMovimiento}`);
-        setErrorMsg("");
-
-        setTimeout(() => {
-          setSuccessMsg("");
-        }, 5000);
+      setTimeout(() => {
+        setToast(null);
+      }, 4000);
       // setShowEditPopup(false);
       setTimeout(() => {
         setShowEditPopup(false);
@@ -343,10 +344,67 @@ const handleStockFilterToggle = () => {
       setIsSaving(false);
     }
   };
+  const futureStock = (() => {
+      const cantidad = Number(editStock) || 0;
+      if (!movementType) return currentStock;
+      if (["salida", "merma", "transferencia"].includes(movementType)) {
+        return currentStock - cantidad;
+      }
+      return currentStock + cantidad;
+  })();
+  
+  const cantidadLabel = (() => {
+    if (!movementType) return "Cantidad";
+    if (["entrada", "sobrante"].includes(movementType)) {
+      return "Cantidad a aumentar";
+    }
+    if (["salida", "merma"].includes(movementType)) {
+      return "Cantidad a restar";
+    }
+    if (movementType === "transferencia") {
+      return "Cantidad a transferir";
+    }
+    return "Cantidad";
 
+  })();
+  const maxCantidad = (() => {
+    if (["salida", "merma", "transferencia"].includes(movementType)) {
+      return currentStock;
+    }
+    
+    return undefined;
+  })();
+  
   return (
     <div className="inventario">
       <h2>Inventario</h2>
+      
+        <div className="toastSuccess">
+          <div className="toastBox">
+            <div className="ctnCheck">
+              <label class="checkbox-wrapper">
+                <input checked type="checkbox" id="check" hidden />
+              {/* <input checked="" type="checkbox" id="check" hidden=""> */}
+              <label for="check" class="checkmark"></label>
+              </label>
+              <p className="title">Actualización correcta</p>
+            </div>
+            <div></div>
+            <p>
+              Se realizó el cambio de <b>200</b> a <b>2000</b>
+            </p>
+          </div>
+        </div>
+      {toast && (
+        <div className="toastSuccess">
+          <div className="toastBox">
+            <p className="title">Actualización correcta</p>
+            <p>
+              Se realizó el cambio de <b>{toast.from}</b> a <b>{toast.to}</b>
+            </p>
+          </div>
+        </div>
+      )}
           {/* Mostrar mensaje de éxito */}
           {successMessage && <div className="successMessage">{successMessage}</div>}
 
@@ -499,18 +557,6 @@ const handleStockFilterToggle = () => {
         <div className="popup">
           <div className="popup-content editStock">
             <h3>Editar Stock</h3>
-            {/* ID Y NOMBRE */}
-            <div className="double__form2">
-              <div className='input-field'>
-                <input value={selectedItem.id_item} readOnly disabled />
-                <label className="active">ID</label>
-              </div>
-
-              <div className='input-field'>
-                <input value={selectedItem.nombre_item} readOnly disabled />
-                <label className="active">Nombre</label>
-              </div>
-            </div>
             {/* SEDE */}
             <div className='input-field'>
               {/* <input value={selectedItem.sede} readOnly disabled /> */}
@@ -524,6 +570,18 @@ const handleStockFilterToggle = () => {
                 disabled
               />
               <label className="active">Sede</label>
+            </div>
+            {/* ID Y NOMBRE */}
+            <div className="double__form2">
+              <div className='input-field'>
+                <input value={selectedItem.id_item} readOnly disabled />
+                <label className="active">ID</label>
+              </div>
+
+              <div className='input-field'>
+                <input value={selectedItem.nombre_item} readOnly disabled />
+                <label className="active">Nombre</label>
+              </div>
             </div>
             {/* TIPO DE MOVIMIENTO */}
             <div className='input-field'>
@@ -590,27 +648,26 @@ const handleStockFilterToggle = () => {
               </div>
             )}
             {/* STOCK ACTUAL Y NUEVO */}
-            <div className="double__form">
+            <div className="triple__form">
               <div className='input-field'>
                 <input type="number" value={currentStock} disabled />
                 <label className="active">Stock actual</label>
               </div>
               <div className='input-field'>
-                <input
-                  type="number"
-                  min="1"
-                  step="1"
-                  max={
-                    ["salida", "merma", "transferencia"].includes(movementType)
-                      ? currentStock
-                      : undefined
-                  }
-                  value={editStock}
-                  onChange={(e) => setEditStock(e.target.value)}
-                  required
-                  placeholder=""
+                <input type="number" min="1" step="1" value={editStock} max={maxCantidad}
+                  onChange={(e) => {
+                    let value = Number(e.target.value);
+                    if (maxCantidad && value > maxCantidad) {
+                      value = maxCantidad;
+                    }
+                    setEditStock(value);
+                  }}
                 />
-                <label className="active">Cantidad</label>
+                <label className="active">{cantidadLabel}</label>
+              </div>
+              <div className='input-field'>
+                <input type="number" value={futureStock} disabled />
+                <label className="active">Futuro Stock</label>
               </div>
             </div>
             {/* OBSERVACIONES */}

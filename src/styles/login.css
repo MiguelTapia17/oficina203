@@ -26,7 +26,9 @@
     --form-text: white;
     --form-text-alter: #323639;
     --form-txt-disabled: #8d8d8d;
-    --form-border-sinfocus: #ddd;
+    --form-border-disabled: #ddd;
+    /* --form-border-sinfocus: #ddd; */
+    --form-border-sinfocus: #969696;
     --form-txt: #323639;
     --input-bg: rgb(255,255,255,0.15);
     --input-txt: white;
@@ -168,13 +170,13 @@ input:-internal-autofill-selected {
 }
 .input-field .char-counter{
     position: absolute;
-    bottom: 1rem;
-    right: 1rem;
+    bottom: 5px;
+    right: 10px;
     font-size: 0.8rem;
 
 }
 .input-field input:disabled, .input-field select:disabled{
-    border: 1px solid var(--form-txt-disabled) !important;
+    border: 1px solid var(--form-border-disabled) !important;
     color: var(--form-txt-disabled) !important;
 }
 .input-field input:disabled~label,.input-field select:disabled~label{

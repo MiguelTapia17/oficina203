@@ -3,6 +3,7 @@ import { apiGet } from "../services/api";
 import { SVG } from "../assets/imgSvg";
 import { useGlobalData } from "../context/GlobalDataContext";
 import Loader from "../components/Loader"; // Cargamos el loader
+import { useAuth } from "../context/AuthContext";
 import "../styles/inventario.css";
 import "../styles/historial.css";
 
@@ -43,6 +44,13 @@ export default function Historial() {
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase();
 
+  /* USUARIOS */
+  const { user } = useAuth();
+  const userRole = user?.rol?.toLowerCase();
+  const userSede = user?.id_sede;
+  const userId = user?.id_admin;
+  /* FIN DE USUARIOS */
+
   const enriched = useMemo(() => {
     return movimientos.map((m) => ({
       ...m,
@@ -59,36 +67,53 @@ export default function Historial() {
 
   // Filtrado de elementos (incluyendo por usuario y rango de fechas)
   const filteredItems = useMemo(() => {
-    const q = normalize(search);
+  const q = normalize(search);
 
-    return enriched.filter((m) => {
-      // Filtro por tipo
-      const matchesTipo = tipoFilter ? m.tipo_movimiento === tipoFilter : true;
+  return enriched.filter((m) => {
 
-      // Filtro por usuario
-      const matchesUsuario = usuarioFilter ? m.nombre_admin === usuarioFilter : true;
+    // const matchesSede =
+    //   userRole === "superadmin"
+    //     ? true
+    //     : Number(m.id_sede) === Number(userSede);
+    let matchesPermiso = true;
+    if (userRole === "admin") {
+      matchesPermiso = Number(m.id_sede) === Number(userSede);
+    }
+    if (userRole === "asesor") {
+      matchesPermiso = Number(m.id_admin) === Number(userId);
+    }
 
-      // Filtro por fecha
-      const matchesFecha =
-        (!fechaInicio || new Date(m.fecha_movimiento) >= new Date(fechaInicio)) &&
-        (!fechaFin || new Date(m.fecha_movimiento) <= new Date(fechaFin));
+    const matchesTipo = tipoFilter ? m.tipo_movimiento === tipoFilter : true;
 
-      // Si la búsqueda está vacía, retornamos el tipo de movimiento y el filtro de usuario
-      if (!q) return matchesTipo && matchesUsuario && matchesFecha;
+    const matchesUsuario = usuarioFilter
+      ? m.nombre_admin === usuarioFilter
+      : true;
 
-      const fechaSolo = String(m.fecha_movimiento ?? "").split(" ")[0].split("T")[0];
+    const matchesFecha =
+      (!fechaInicio || new Date(m.fecha_movimiento) >= new Date(fechaInicio)) &&
+      (!fechaFin || new Date(m.fecha_movimiento) <= new Date(fechaFin));
 
-      const rowString = normalize(`
-        ${m.id_movimiento}
-        ${m.nombre_actividad}
-        ${m.nombre_admin}
-        ${m.nombre_item}
-        ${fechaSolo}
-      `);
+    if (!q) return matchesPermiso && matchesTipo && matchesUsuario && matchesFecha;
 
-      return matchesTipo && matchesUsuario && matchesFecha && rowString.includes(q);
-    });
-  }, [enriched, search, tipoFilter, usuarioFilter, fechaInicio, fechaFin]);
+    const fechaSolo = String(m.fecha_movimiento ?? "").split(" ")[0].split("T")[0];
+
+    const rowString = normalize(`
+      ${m.id_movimiento}
+      ${m.nombre_actividad}
+      ${m.nombre_admin}
+      ${m.nombre_item}
+      ${fechaSolo}
+    `);
+
+    return (
+      matchesPermiso &&
+      matchesTipo &&
+      matchesUsuario &&
+      matchesFecha &&
+      rowString.includes(q)
+    );
+  });
+}, [enriched, search, tipoFilter, usuarioFilter, fechaInicio, fechaFin, userRole, userSede]);
 
   // Si los datos globales están cargando, mostramos el loader
   if (globalLoading) return <Loader />;
@@ -129,7 +154,7 @@ export default function Historial() {
   };
 
   // Obtener lista de usuarios
-  const usuarios = Array.from(new Set(enriched.map((m) => m.nombre_admin)));
+  const usuarios = Array.from(new Set(filteredItems.map((m) => m.nombre_admin)));
 
   return (
     <div className="historial">

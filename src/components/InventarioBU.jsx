@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { apiPost, apiGet } from "../services/api";
+import { useAuth } from "../context/AuthContext";
 import { useGlobalData } from "../context/GlobalDataContext";
 import { SVG } from "../assets/imgSvg";
 import "../styles/inventario.css";
@@ -25,27 +26,26 @@ export default function Inventario() {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [categoria, setCategoria] = useState("");
   const [selectedSede, setSelectedSede] = useState("");
-
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
-
+  
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [editStock, setEditStock] = useState("");
   const [movementType, setMovementType] = useState("");
   const [selectActividad, setSelectActividad] =useState(""); 
-
+  
   const [currentStock, setCurrentStock] = useState(0);
   const [stockPorSede, setStockPorSede] = useState([]);
-
+  
   const [sedeTransferencia, setSedeTransferencia] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-
+  
   const [selectedItemDetalle, setSelectedItemDetalle] = useState(null);
-
+  
   const MAX_OBS = 150; // limite de campo observaciones
   const [observaciones, setObservaciones] = useState("");
-    
+  
   //FILTROS
   const [showFilters, setShowFilters] = useState(false);
 
@@ -56,6 +56,22 @@ export default function Inventario() {
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase();
+
+
+
+  /* ================================
+     FILTRAR SEDE POR USUARIO
+  ===================================*/
+
+  /* usuarios */
+  const { user } = useAuth();
+  const userRole = user?.rol?.toLowerCase();
+  const userSede = user?.id_sede;
+  useEffect(() => {
+    if (userRole === "admin" || userRole === "asesor") {
+      setSelectedSede(userSede);
+    }
+  }, [userRole, userSede]);
 
   /* ================================
      CARGAR STOCK POR SEDE
@@ -153,11 +169,11 @@ const handleStockFilterToggle = () => {
 
     // 🔥 Filtro por stock
     const matchesStock =
-      stockFilter === "all"
-        ? true
-        : stockFilter === "with"
+      stockFilter === "with"
         ? stock > 0
-        : stock === 0;
+        : stockFilter === "without"
+        ? stock === 0
+        : true;
 
     if (!search.trim()) {
       return matchesCategory && matchesStock;
@@ -222,7 +238,7 @@ const handleStockFilterToggle = () => {
     }
 
     if (!editStock || Number(editStock) <= 0) {
-      setErrorMsg("La cantidad debe ser mayor o igual a 0.");
+      setErrorMsg("La cantidad debe ser mayor a 0.");
       return;
     }
     if (movementType === "transferencia" && selectedSede === sedeTransferencia) {
@@ -327,7 +343,35 @@ const handleStockFilterToggle = () => {
       setIsSaving(false);
     }
   };
+  const futureStock = (() => {
+      const cantidad = Number(editStock) || 0;
+      if (!movementType) return currentStock;
+      if (["salida", "merma", "transferencia"].includes(movementType)) {
+        return currentStock - cantidad;
+      }
+      return currentStock + cantidad;
+  })();
+  
+  const cantidadLabel = (() => {
+    if (!movementType) return "Cantidad";
+    if (["entrada", "sobrante"].includes(movementType)) {
+      return "Cantidad a aumentar";
+    }
+    if (["salida", "merma"].includes(movementType)) {
+      return "Cantidad a restar";
+    }
+    if (movementType === "transferencia") {
+      return "Cantidad a transferir";
+    }
+    return "Cantidad";
 
+  })();
+  const maxCantidad = (() => {
+    if (["salida", "merma", "transferencia"].includes(movementType)) {
+      return currentStock;
+    }
+    return undefined;
+  })();
   return (
     <div className="inventario">
       <h2>Inventario</h2>
@@ -370,7 +414,7 @@ const handleStockFilterToggle = () => {
                 </select>
                 <label>Categoria</label>
               </div>
-              <div className='input-field'>
+              {/* <div className='input-field'>
                 <select
                   value={selectedSede}
                   onChange={(e) => setSelectedSede(e.target.value)}
@@ -383,21 +427,46 @@ const handleStockFilterToggle = () => {
                   ))}
                 </select>
                 <label>Sede</label>
+              </div> */}
+              {userRole === "superadmin" && (
+                <div className='input-field'>
+                  <select
+                    value={selectedSede}
+                    onChange={(e) => setSelectedSede(e.target.value)}
+                  >
+                    <option value="">Todas</option>
+                    {sedes.map((sede) => (
+                      <option key={sede.id_sede} value={sede.id_sede}>
+                        {sede.nombre_sede}
+                      </option>
+                    ))}
+                  </select>
+                  <label>Sede</label>
+                </div>
+              )}
+              <div className='input-field'>
+                <select 
+                  value={stockFilter}
+                  onChange={(e) => setStockFilter(e.target.value)}
+                >
+                  <option value="all">Todos</option>
+                  <option value="with">Con Stock</option>
+                  <option value="without">Sin stock</option>
+
+                </select>
+                <label>Stock</label>
               </div>
 
-              <div className="stockFilterButtons">
+              {/* <div className="stockFilterButtons">
                 <div 
                   className={`filterBtn ${stockFilter}`}
                   onClick={handleStockFilterToggle}
                 >
-                  {/* {stockFilter === "all" && <SVG.StockAll className="icon" />}
-                  {stockFilter === "with" && <SVG.StockWith className="icon" />}
-                  {stockFilter === "without" && <SVG.StockWithout className="icon" />} */}
                   {stockFilter === "all" && "Todos"}
                   {stockFilter === "with" && "Con Stock"}
                   {stockFilter === "without" && "Sin Stock"}
                 </div>
-              </div>
+              </div> */}
             </div>)}
 
         </div>
@@ -458,6 +527,20 @@ const handleStockFilterToggle = () => {
         <div className="popup">
           <div className="popup-content editStock">
             <h3>Editar Stock</h3>
+            {/* SEDE */}
+            <div className='input-field'>
+              {/* <input value={selectedItem.sede} readOnly disabled /> */}
+              <input
+                value={
+                  selectedSede
+                    ? sedes.find(s => Number(s.id_sede) === Number(selectedSede))?.nombre_sede || ""
+                    : "Todas las sedes"
+                }
+                readOnly
+                disabled
+              />
+              <label className="active">Sede</label>
+            </div>
             {/* ID Y NOMBRE */}
             <div className="double__form2">
               <div className='input-field'>
@@ -535,30 +618,27 @@ const handleStockFilterToggle = () => {
               </div>
             )}
             {/* STOCK ACTUAL Y NUEVO */}
-            <div className="double__form">
+            <div className="triple__form">
               <div className='input-field'>
                 <input type="number" value={currentStock} disabled />
                 <label className="active">Stock actual</label>
               </div>
               <div className='input-field'>
-                <input
-                  type="number"
-                  min="1"
-                  step="1"
+                <input type="number" min="1" step="1" value={editStock} placeholder="" required 
                   max={
                     ["salida", "merma", "transferencia"].includes(movementType)
                       ? currentStock
                       : undefined
                   }
-                  value={editStock}
                   onChange={(e) => setEditStock(e.target.value)}
-                  required
-                  placeholder=""
                 />
-                <label className="active">Cantidad</label>
+                <label className="active">{cantidadLabel}</label>
+              </div>
+              <div className='input-field'>
+                <input type="number" value={futureStock} disabled />
+                <label className="active">Futuro Stock</label>
               </div>
             </div>
-
             {/* OBSERVACIONES */}
             <div className='input-field ctnTextArea'>
               <textarea

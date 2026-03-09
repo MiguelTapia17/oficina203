@@ -175,3 +175,86 @@ input.cantidad{
   /* justify-content: center; */
   cursor: pointer;
 }
+
+/* TOAST */
+.toastSuccess{
+  position: fixed;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  animation: toastDrop 0.5s ease forwards;
+}
+
+.toastBox{
+  background: white;
+  color: black;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 1rem rgba(0,0,0,0.5);
+  text-align: center;
+  min-width: 260px;
+}
+
+.toastBox .title{
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+@keyframes toastDrop{
+  from{
+    top:-100px;
+    opacity:0;
+  }
+  to{
+    top:1rem;
+    opacity:1;
+  }
+}
+/* FIN DE TOAST */
+
+/* CHECK */
+.checkmark {
+ display: block;
+ width: 25px;
+ height: 25px;
+ background-color: #ddd;
+ border-radius: 50%;
+ position: relative;
+ transition: background-color 0.4s;
+ overflow: hidden;
+ cursor: pointer;
+ /* display: flex;
+ align-items: center;
+ justify-content: center; */
+}
+
+#check:checked ~ .checkmark {
+ background-color: #08bb68;
+}
+
+.checkmark::after {
+ content: "";
+ position: absolute;
+ width: 3px;
+ height: 6px;
+ border-right: 3px solid #fff;
+ border-bottom: 3px solid #fff;
+ top: 44%;
+ left: 50%;
+ transform: translate(-50%, -50%) rotateZ(40deg) scale(10);
+ opacity: 0;
+ transition: all 0.4s;
+}
+
+#check:checked ~ .checkmark::after {
+ opacity: 1;
+ transform: translate(-50%, -50%) rotateZ(40deg) scale(1);
+}
+.ctnCheck{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+/* FIN DE CHECK */

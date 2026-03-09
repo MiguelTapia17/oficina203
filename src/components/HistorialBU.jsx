@@ -13,6 +13,14 @@ export default function Historial() {
   const [tipoFilter, setTipoFilter] = useState("");
   const [selectedMovimiento, setSelectedMovimiento] = useState(null); // Estado para el popup
 
+  // Filtros adicionales
+  const [usuarioFilter, setUsuarioFilter] = useState(""); // Filtro de usuario
+  const [fechaInicio, setFechaInicio] = useState(""); // Filtro de fecha inicio
+  const [fechaFin, setFechaFin] = useState(""); // Filtro de fecha fin
+
+  //FILTROS
+  const [showFilters, setShowFilters] = useState(false);
+
   // Traes maps desde el contexto
   const { actividadesMap, usuariosMap, itemsMap, sedes, loading: globalLoading } = useGlobalData(); // Traemos sedes desde el contexto
 
@@ -49,12 +57,24 @@ export default function Historial() {
     return Array.from(set);
   }, [enriched]);
 
+  // Filtrado de elementos (incluyendo por usuario y rango de fechas)
   const filteredItems = useMemo(() => {
     const q = normalize(search);
 
     return enriched.filter((m) => {
+      // Filtro por tipo
       const matchesTipo = tipoFilter ? m.tipo_movimiento === tipoFilter : true;
-      if (!q) return matchesTipo;
+
+      // Filtro por usuario
+      const matchesUsuario = usuarioFilter ? m.nombre_admin === usuarioFilter : true;
+
+      // Filtro por fecha
+      const matchesFecha =
+        (!fechaInicio || new Date(m.fecha_movimiento) >= new Date(fechaInicio)) &&
+        (!fechaFin || new Date(m.fecha_movimiento) <= new Date(fechaFin));
+
+      // Si la búsqueda está vacía, retornamos el tipo de movimiento y el filtro de usuario
+      if (!q) return matchesTipo && matchesUsuario && matchesFecha;
 
       const fechaSolo = String(m.fecha_movimiento ?? "").split(" ")[0].split("T")[0];
 
@@ -66,9 +86,9 @@ export default function Historial() {
         ${fechaSolo}
       `);
 
-      return matchesTipo && rowString.includes(q);
+      return matchesTipo && matchesUsuario && matchesFecha && rowString.includes(q);
     });
-  }, [enriched, search, tipoFilter]);
+  }, [enriched, search, tipoFilter, usuarioFilter, fechaInicio, fechaFin]);
 
   // Si los datos globales están cargando, mostramos el loader
   if (globalLoading) return <Loader />;
@@ -96,24 +116,26 @@ export default function Historial() {
     const date = new Date(fecha); // Convertimos la cadena en un objeto Date
     const hours = date.getHours().toString().padStart(2, '0'); // Obtiene las horas y lo formatea a dos dígitos
     const minutes = date.getMinutes().toString().padStart(2, '0'); // Obtiene los minutos y lo formatea a dos dígitos
-
-    
     return `${hours}:${minutes}`; // Retorna la hora en formato "HH:mm"
   };
+
+  // Función para formatear la fecha
   const getFecha = (fecha) => {
-      const date = new Date(fecha);
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Los meses van de 0 a 11
-      const year = date.getFullYear();
-      
-      return `${day}-${month}-${year}`;
+    const date = new Date(fecha);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
   };
+
+  // Obtener lista de usuarios
+  const usuarios = Array.from(new Set(enriched.map((m) => m.nombre_admin)));
 
   return (
     <div className="historial">
       <h2>Historial</h2>
 
-      <div className="filters">
+      <div className="ctnAllFilters">
         <div className="input-field">
           <input
             type="text"
@@ -121,21 +143,60 @@ export default function Historial() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <label>Buscar en historial</label>
+          <label>Buscar</label>
+        </div>
+        <div className="filters">
+          <div className="filtersCTA" onClick={() => setShowFilters(!showFilters)} style={{ cursor: "pointer" }}>
+            <SVG.Filter className="icon" />
+            <p>Filtros</p>
+          </div>
+          {showFilters && (
+            <div className="ctnFilters" >
+              <div className="input-field">
+                <select value={tipoFilter} onChange={(e) => setTipoFilter(e.target.value)}>
+                  <option value="">Todos los Tipos</option>
+                  {tiposUnicos.map((t, idx) => (
+                    <option key={idx} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+                <label>Tipo</label>
+              </div>
+              {/* Filtro de usuario */}
+              <div className="input-field">
+                <select value={usuarioFilter} onChange={(e) => setUsuarioFilter(e.target.value)}>
+                  <option value="">Todos los Usuario</option>
+                  {usuarios.map((usuario, idx) => (
+                    <option key={idx} value={usuario}>
+                      {usuario}
+                    </option>
+                  ))}
+                </select>
+                <label>Usuario</label>
+              </div>
+              {/* Filtro de fecha */}
+              <div className="input-field">
+                <input
+                  type="date"
+                  value={fechaInicio}
+                  onChange={(e) => setFechaInicio(e.target.value)}
+                />
+                <label>Fecha Inicio</label>
+              </div>
+              <div className="input-field">
+                <input
+                  type="date"
+                  value={fechaFin}
+                  onChange={(e) => setFechaFin(e.target.value)}
+                />
+                <label>Fecha Fin</label>
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="input-field">
-          <select value={tipoFilter} onChange={(e) => setTipoFilter(e.target.value)}>
-            <option value="">Todos los tipos</option>
-            {tiposUnicos.map((t, idx) => (
-              <option key={idx} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
-          <label>Tipo</label>
         </div>
-      </div>
 
       <div className="ctnTable">
         <table>
@@ -144,27 +205,24 @@ export default function Historial() {
               <th>N°</th>
               <th>Admin</th>
               <th>Actividad</th>
-              {/* <th>Comentario</th> */}
               <th>Ítem</th>
               <th>Tipo</th>
               <th>Cantidad</th>
               <th>Fecha</th>
-            </tr>
+          </tr>
           </thead>
-
           <tbody>
             {filteredItems.map((m) => (
               <tr key={m.id_movimiento}>
-                <td onClick={() => handleMovimientoClick(m)} className="clickable">{m.id_movimiento}</td> {/* Hacemos clickable */}
+                <td onClick={() => handleMovimientoClick(m)} className="clickable">{m.id_movimiento}</td>
                 <td>{m.nombre_admin}</td>
                 <td>{m.nombre_actividad}</td>
-                {/* <td>{m.observaciones}</td> */}
                 <td>{m.nombre_item}</td>
                 <td className={`tipoM ${String(m.tipo_movimiento || "").toLowerCase()}`}>
                   <p>{m.tipo_movimiento}</p>
                 </td>
                 <td>{parseInt(m.cantidad)}</td>
-                <td>{m.fecha_movimiento}</td>
+                <td>{getFecha(m.fecha_movimiento)}</td> {/* Fecha formateada */}
               </tr>
             ))}
           </tbody>
@@ -174,7 +232,7 @@ export default function Historial() {
       {/* Popup Detalles */}
       {selectedMovimiento && (
         <div className="popup">
-          <div className="popup-content">
+          <div className="popup-content detalles">
             <h3>Detalle del Movimiento</h3>
             <div className="popup-item">
               <div className="triple__form">
@@ -223,7 +281,7 @@ export default function Historial() {
                 </div>
               </div>
               <div className="input-field">
-                <textarea value={selectedMovimiento.observaciones} ></textarea>
+                <textarea value={selectedMovimiento.observaciones}></textarea>
                 <label>Comentario</label>
               </div>
             </div>
