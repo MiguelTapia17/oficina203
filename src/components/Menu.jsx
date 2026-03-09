@@ -3,12 +3,13 @@ import "../styles/menu.css";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 import { menuConfig } from "../config/menuConfig";
+import { useGlobalData } from "../context/GlobalDataContext";
 
 export default function Menu({ activeView, setActiveView }) {
 
   const [isDark, setIsDark] = useState(false);
   const { logout, user } = useAuth();
-
+  const { sedesMap } = useGlobalData();
   const role = user?.rol?.toLowerCase();
   const menuItems = menuConfig[role] || [];
 
@@ -70,7 +71,7 @@ export default function Menu({ activeView, setActiveView }) {
           <div className="ctnTxt">
             <p className="name">{user?.usuario}</p>
             <p className="rol">{user?.rol}</p>
-            {/* <p className="sede">{user?.id_sede}</p> */}
+            <p className="sede">{sedesMap[user?.id_sede]}</p>
           </div>
 
         </div>

@@ -102,6 +102,13 @@ export const GlobalDataProvider = ({ children }) => {
       console.error("Error refrescando actividades", error);
     }
   };
+  const sedesMap = useMemo(() => {
+    const map = {};
+    (sedes ?? []).forEach(s => {
+      map[s.id_sede] = s.nombre_sede;
+    });
+    return map;
+  }, [sedes]);
   return (
     <GlobalDataContext.Provider
       value={{
@@ -117,6 +124,7 @@ export const GlobalDataProvider = ({ children }) => {
         loading,
         refreshGlobalData: fetchGlobalData,
         // Nuevos maps
+        sedesMap,
         actividadesMap,
         usuariosMap,
         itemsMap,

@@ -66,6 +66,12 @@
   font-size: 0.8rem;
   line-height: 1.1;
 }
+.ctnUsuario .ctnTxt .sede{
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
 .ctnMenu button.active{
     background: var(--primary);
     color: #fff;

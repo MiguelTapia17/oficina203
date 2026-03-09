@@ -14,79 +14,9 @@ export default function NewProduct({ setShowPopup, setShowSuccessMessage }) {
   const [peresible, setPeresible] = useState("Sí");
   const [fechaCaducidad, setFechaCaducidad] = useState("");
   const [cantidad, setCantidad] = useState("0.00");
-
   const [errorMsg, setErrorMsg] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-
-  const { categories, tipos, unidades } = useGlobalData();  // Traemos los datos de tipos, unidades y categorías
-  // console.log("Categories in NewProduct:", categories);  // Verifica qué datos tenemos aquí
-
-  // const handleSaveProduct = async () => {
-  //   if (isSaving) return;
-  //   setErrorMsg("");
-
-  //   if (!nombreItem) {
-  //     setErrorMsg("Por favor ingresa un nombre.");
-  //     return;
-  //   }
-
-  //   if (!categoria) {
-  //     return "Seleccione tipo de categoria";
-  //   }
-
-  //   if (!tipo) {
-  //     return "Debe seleccionar una sede";
-  //   }
-
-  //   if (!unidad) {
-  //     return "Debe seleccionar sede destino";
-  //   }
-
-  //   if (!peresible) {
-  //     return "Debe seleccionar una actividad";
-  //   }
-
-  //   if (!fechaCaducidad) {
-  //     return "Debe seleccionar una fecha de caducidad";
-  //   }
-
-  //   if (!cantidad || Number(cantidad) <= 0) {
-  //     return "La cantidad debe ser mayor a 0.";
-  //   }
-
-  //   setIsSaving(true);
-
-  //   const payload = {
-  //     nombre_item: nombreItem,
-  //     id_categoria: categoria,
-  //     id_tipo: tipo,
-  //     id_unidad: unidad,
-  //     descripcion: descripcion,
-  //     estado: "disponible",
-  //     peresible: peresible,
-  //     fecha_caducidad: peresible === "Sí" ? fechaCaducidad : null,
-  //     cantidad: cantidad,
-  //     activo: 1,
-  //     id_admin: 5,
-  //   };
-  //   console.log("Payload enviado al servidor:", payload);  // Verifica qué datos estás enviando al backend
-
-  //   try {
-  //     const response = await apiPost("items-crear", payload);
-
-  //     if (response.ok) {
-  //       setShowSuccessMessage("Producto creado correctamente.");
-  //       setShowPopup(false);
-  //     } else {
-  //       setErrorMsg("Hubo un error al crear el producto.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error creando el producto", error);
-  //     setErrorMsg("Error de servidor.");
-  //   } finally {
-  //     setIsSaving(false);
-  //   }
-  // };
+  const { categories, tipos, unidades } = useGlobalData(); 
 
   const handleSaveProduct = async () => {
     if (isSaving) return;

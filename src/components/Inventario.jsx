@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { apiPost, apiGet } from "../services/api";
+import { useAuth } from "../context/AuthContext";
 import { useGlobalData } from "../context/GlobalDataContext";
 import { SVG } from "../assets/imgSvg";
 import "../styles/inventario.css";
@@ -25,27 +26,26 @@ export default function Inventario() {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [categoria, setCategoria] = useState("");
   const [selectedSede, setSelectedSede] = useState("");
-
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
-
+  
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [editStock, setEditStock] = useState("");
   const [movementType, setMovementType] = useState("");
   const [selectActividad, setSelectActividad] =useState(""); 
-
+  
   const [currentStock, setCurrentStock] = useState(0);
   const [stockPorSede, setStockPorSede] = useState([]);
-
+  
   const [sedeTransferencia, setSedeTransferencia] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-
+  
   const [selectedItemDetalle, setSelectedItemDetalle] = useState(null);
-
+  
   const MAX_OBS = 150; // limite de campo observaciones
   const [observaciones, setObservaciones] = useState("");
-    
+  
   //FILTROS
   const [showFilters, setShowFilters] = useState(false);
 
@@ -56,6 +56,22 @@ export default function Inventario() {
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase();
+
+
+
+  /* ================================
+     FILTRAR POR SEDE
+  ===================================*/
+
+  /* usuarios */
+  const { user } = useAuth();
+  const userRole = user?.rol?.toLowerCase();
+  const userSede = user?.id_sede;
+  useEffect(() => {
+    if (userRole === "admin" || userRole === "asesor") {
+      setSelectedSede(userSede);
+    }
+  }, [userRole, userSede]);
 
   /* ================================
      CARGAR STOCK POR SEDE
