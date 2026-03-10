@@ -1,0 +1,238 @@
+
+/* user desactivado */
+.toastSuccess{
+  position: fixed;
+  top:-120px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:9999;
+}
+.toastSuccess.hide{
+  animation: toastUp .35s ease forwards;
+}
+.toastSuccess.show{
+  animation: toastDrop .5s ease forwards;
+}
+.toastBox{
+  background:white;
+  padding:1.5rem;
+  border-radius:10px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.6);
+  width: 380px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align:center;
+  gap: 0.5rem;
+}
+.ctnCheck{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+}
+.toastBox p{
+    font-size: 0.95rem;
+}
+.toastSuccess .title{
+  font-weight:700;
+  font-size:1.2rem;
+  color: var(--primary);
+}
+.advanced-checkbox.success ~ .title{
+    color: green;
+}
+
+.toastMessage{
+  color:#555;
+}
+
+.toastBtn{
+  padding:8px 20px;
+  border:none;
+  background:#333;
+  color:white;
+  border-radius:6px;
+  cursor:pointer;
+  transition:.2s;
+  width: fit-content;
+}
+
+.toastBtn:hover{
+  background:#000;
+}
+
+@keyframes toastDrop{
+  from{
+    top:-120px;
+    opacity:0;
+  }
+  to{
+    top:1rem;
+    opacity:1;
+  }
+}
+/* user desactivado */
+
+@keyframes toastUp{
+  from{
+    top:1rem;
+    opacity:1;
+  }
+  to{
+    top:-120px;
+    opacity:0;
+  }
+}
+/* Contenedor del cubo para el Toast */
+.ctnCheck .advanced-checkbox {
+  display: inline-block;
+  perspective: 1000px;
+}
+
+.advanced-checkbox input {
+  display: none;
+}
+
+.advanced-checkbox label {
+  position: relative;
+  display: inline-block;
+  --size:30px;
+  width: var(--size); /* Tamaño ligeramente reducido para el toast */
+  height: var(--size);
+  cursor: pointer;
+}
+
+.box {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform: rotateX(0deg) rotateY(0deg);
+  transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+/* El check del login dispara la rotación */
+.advanced-checkbox input:checked + label .box {
+  transform: rotateX(360deg) rotateY(360deg);
+}
+
+.box > div {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  /* background: linear-gradient(145deg, #ff4d4d, #971A36);  */
+  background: linear-gradient(145deg, var(--primary), var(--secundary)); 
+  border-radius: 8px;
+  /* box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2); */
+}
+
+.advanced-checkbox.success .box > div {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, var(--ingenieria), var(--black)); 
+  border-radius: 8px;
+}
+
+
+
+/* Posicionamiento de las caras del cubo */
+.front  { transform: translateZ(calc(var(--size) / 2)); }
+.back   { transform: rotateY(180deg) translateZ(calc(var(--size) / 2)); }
+.left   { transform: rotateY(-90deg) translateZ(calc(var(--size) / 2)); }
+.right  { transform: rotateY(90deg) translateZ(calc(var(--size) / 2)); }
+.top    { transform: rotateX(90deg) translateZ(calc(var(--size) / 2)); }
+.bottom { transform: rotateX(-90deg) translateZ(calc(var(--size) / 2)); }
+
+/* La marca de verificación (Checkmark) ahora BLANCA sobre fondo ROJO */
+/* Sustituye el antiguo .checkmark-3d por este */
+.checkmark-3d {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1.5em; /* Ajustado al tamaño del cubo */
+  height: 1.5em;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+/* Primera línea de la X */
+.checkmark-3d::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1.2em;
+  height: 0.2em;
+  background: transparent;
+  border-radius: 2em;
+  transform: translate(-50%, -50%) scale(0) rotate(45deg); /* Inicia invisible */
+  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55), background 0.2s ease;
+}
+
+/* Segunda línea de la X */
+.checkmark-3d::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.2em;
+  height: 1.2em;
+  background: transparent;
+  border-radius: 2em;
+  transform: translate(-50%, -50%) scale(0) rotate(45deg); /* Inicia invisible */
+  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55), background 0.2s ease;
+}
+
+/* Cuando se activa la animación (input checked) */
+.advanced-checkbox input:checked + label .checkmark-3d::before {
+  background: #ffffff;
+  transform: translate(-50%, -50%) scale(1) rotate(45deg);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+  transition-delay: 0.8s; /* Aparece después del giro */
+}
+
+.advanced-checkbox input:checked + label .checkmark-3d::after {
+  background: #ffffff;
+  transform: translate(-50%, -50%) scale(1) rotate(45deg);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+  transition-delay: 0.9s; /* Un poco después que la primera línea */
+}
+
+/* Animación de rebote para el cubo cuando aparece la X */
+.advanced-checkbox input:checked + label .box {
+  animation: bounceIn 0.5s ease-out forwards;
+  animation-delay: 0.7s; /* Sincronizado con el final del giro */
+}
+
+@keyframes bounceIn {
+  0% { transform: rotateX(360deg) rotateY(360deg) scale(0.7); }
+  50% { transform: rotateX(360deg) rotateY(360deg) scale(1.1); }
+  100% { transform: rotateX(360deg) rotateY(360deg) scale(1); }
+}
+
+
+.checkmark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: translate(-50%, -50%) rotate(45deg);
+  opacity: 0;
+  transition:
+    width 0.3s ease,
+    height 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.advanced-checkbox input:checked + label .checkmark {
+  width: 8px;
+  height: 16px;
+  opacity: 1;
+  transition-delay: 1s;
+}

@@ -3,6 +3,7 @@ import { apiGet, apiPost } from "../../services/api";
 import { SVG } from "../../assets/imgSvg";
 import { useGlobalData } from "../../context/GlobalDataContext";
 import "../../styles/usuarios.css";
+import Toast from "../../components/Toast";
 
 const makeEmptyForm = () => ({
   usuario: "",
@@ -34,6 +35,9 @@ export default function GestionarUsuarios() {
   const [selectedUser, setSelectedUser] = useState(null); // el usuario de la fila
   const [form, setForm] = useState(makeEmptyForm());
   const { sedes } = useGlobalData(); // [{id_sede, nombre_sede, ...}]
+
+  const [toast, setToast] = useState(null);
+  
   const normalize = (str) =>
     String(str ?? "")
       .normalize("NFD")
@@ -158,16 +162,30 @@ export default function GestionarUsuarios() {
       const res = await apiPost("usuarios-crear", payload);
 
       if (res?.ok) {
-        setSuccess("✅ Usuario creado correctamente");
+        setToast({
+          type: "success",
+          title: "Usuario creado",
+          message: "El usuario fue creado correctamente"
+        });
         // lo más confiable: recargar lista
         await fetchUsuarios();
         setShowCreate(false);
         setForm(makeEmptyForm());
       } else {
-        setError(res?.message || "Error creando el usuario");
+        // setError(res?.message || "Error creando el usuario");
+        setToast({
+          type: "error",
+          title: "Error",
+          message: res?.message || "Error creando el usuario"
+        });
       }
     } catch (err) {
-      setError("Error de servidor creando el usuario");
+      // setError("Error de servidor creando el usuario");
+      setToast({
+        type: "error",
+        title: "Error de servidor",
+        message: "No se pudo crear el usuario"
+      });
     } finally {
       setSaving(false);
     }
@@ -197,7 +215,12 @@ export default function GestionarUsuarios() {
       const res = await apiPost("usuarios-actualizar", payload);
 
       if (res?.ok) {
-        setSuccess("✅ Usuario actualizado");
+        // setSuccess("✅ Usuario actualizado");
+        setToast({
+          type: "success",
+          title: "Usuario actualizado",
+          message: "El usuario fue actualizado correctamente"
+        });
         await fetchUsuarios();
         setShowEdit(false);
         setSelectedUser(null);
@@ -255,10 +278,20 @@ export default function GestionarUsuarios() {
     try {
       const res = await apiPost(`usuarios-eliminar/${id_admin}`, {});
       if (res?.ok) {
-        setSuccess("✅ Usuario desactivado");
+        // setSuccess("✅ Usuario desactivado");
+        setToast({
+          type: "success",
+          title: "Usuario deshabilitado",
+          message: "El usuario fue deshabilitado correctamente"
+        });
         await fetchUsuarios();
       } else {
-        setError(res?.message || "No se pudo desactivar el usuario");
+        // setError(res?.message || "No se pudo desactivar el usuario");
+        setToast({
+          type: "error",
+          title: "Error",
+          message: res?.message || "No se pudo desactivar el usuario"
+        });
       }
     } catch (err) {
       setError("Error desactivando el usuario");
@@ -677,6 +710,14 @@ export default function GestionarUsuarios() {
             </button>
           </div>
         </div>
+      )}
+      {toast && (
+        <Toast
+          type={toast.type}
+          title={toast.title}
+          message={toast.message}
+          onClose={() => setToast(null)}
+        />
       )}
     </div>
   );

@@ -5,6 +5,7 @@ import { useGlobalData } from "../context/GlobalDataContext";
 import { SVG } from "../assets/imgSvg";
 import "../styles/inventario.css";
 import NewProduct from "./NewProduct"; // Importamos el componente
+import Toast from "../components/Toast";
 
 export default function Inventario() {
   const [showNewProductPopup, setShowNewProductPopup] = useState(false); // Controlamos la visibilidad del popup
@@ -322,20 +323,19 @@ const handleStockFilterToggle = () => {
         ];
       });
       setToast({
-        from: currentStock,
-        to: nuevoStock,
-        cantidad: cantidad,
-        tipo: movementType
+        type: "success",
+        title: "Actualización correcta",
+        message: `Stock actualizado correctamente`
       });
 
       setTimeout(() => {
         setToast(null);
       }, 4000);
-      // setShowEditPopup(false);
-      setTimeout(() => {
-        setShowEditPopup(false);
-        setSelectedItem(null);
-      }, 5000);
+      
+      setShowEditPopup(false);
+      setSelectedItem(null);
+      // setTimeout(() => {
+      // }, 5000);
 
     } catch (error) {
       console.error(error);
@@ -378,40 +378,13 @@ const handleStockFilterToggle = () => {
   return (
     <div className="inventario">
       <h2>Inventario</h2>
-      
-        <div className="toastSuccess">
-          <div className="toastBox">
-            <div className="ctnCheck">
-              <label class="checkbox-wrapper">
-                <input checked type="checkbox" id="check" hidden />
-              {/* <input checked="" type="checkbox" id="check" hidden=""> */}
-              <label for="check" class="checkmark"></label>
-              </label>
-              <p className="title">Actualización correcta</p>
-            </div>
-            <div></div>
-            <p>
-              Se realizó el cambio de <b>200</b> a <b>2000</b>
-            </p>
-          </div>
-        </div>
-      {toast && (
-        <div className="toastSuccess">
-          <div className="toastBox">
-            <p className="title">Actualización correcta</p>
-            <p>
-              Se realizó el cambio de <b>{toast.from}</b> a <b>{toast.to}</b>
-            </p>
-          </div>
-        </div>
-      )}
-          {/* Mostrar mensaje de éxito */}
-          {successMessage && <div className="successMessage">{successMessage}</div>}
+        {/* Mostrar mensaje de éxito */}
+        {successMessage && <div className="successMessage">{successMessage}</div>}
 
-          {/* Condicionalmente mostrar el popup */}
-          {showNewProductPopup && (
-            <NewProduct setShowPopup={setShowNewProductPopup} setShowSuccessMessage={setSuccessMessage} />
-          )}
+        {/* Condicionalmente mostrar el popup */}
+        {showNewProductPopup && (
+          <NewProduct setShowPopup={setShowNewProductPopup} setShowSuccessMessage={setSuccessMessage} />
+        )}
       <div className="ctnAllFilters">
 
         <div className='input-field'>
@@ -802,7 +775,14 @@ const handleStockFilterToggle = () => {
           </div>
         </div>
       )}
-
+      {toast && (
+        <Toast
+          type={toast.type}
+          title={toast.title}
+          message={toast.message}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }

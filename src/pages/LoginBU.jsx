@@ -1,30 +1,17 @@
 import "../styles/login.css";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiLogin } from "../services/api";
 import { useAuth } from "../context/AuthContext";
-import Toast from "../components/Toast";
-
 
 export default function Login() {
 
   const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [toast, setToast] = useState(null);
   const navigate = useNavigate();
   const { login } = useAuth();
-
-  const [toast, setToast] = useState(null);
-  const [isAnimating, setIsAnimating] = useState(false);
-  // Cuando el toast cambia, esperamos un poco y activamos la animación
-  useEffect(() => {
-    if (toast) {
-      const timer = setTimeout(() => setIsAnimating(true), 50);
-      return () => clearTimeout(timer);
-    } else {
-      setIsAnimating(false);
-    }
-  }, [toast]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -71,12 +58,31 @@ export default function Login() {
         {error && <p className="errorTxt">{error}</p>}
       </form>
       {toast && (
-        <Toast
-          type="error"
-          title="Acceso denegado"
-          message={toast.message}
-          onClose={() => setToast(null)}
-        />
+        <div className="toastSuccess">
+          <div className="toastBox">
+
+            <div className="ctnCheck">
+              <label className="checkbox-wrapper">
+                <input checked type="checkbox" id="check" hidden readOnly />
+                <label htmlFor="check" className="checkmark"></label>
+              </label>
+
+              <p className="title">Acceso denegado</p>
+            </div>
+
+            <p className="toastMessage">
+              {toast.message}
+            </p>
+
+            <button
+              className="toastBtn"
+              onClick={() => setToast(null)}
+            >
+              Entendido
+            </button>
+
+          </div>
+        </div>
       )}
     </div>
   );

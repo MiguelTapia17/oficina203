@@ -1,0 +1,432 @@
+*{
+    font-family: 'poppins', sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    text-decoration: none;
+    padding: 0;
+    line-height: 1.25;
+}
+:root {
+    --primary:#FF0C29;
+    --secundary: #971A36;
+    --azul: #2663D9;
+    --rojo: #FF0C29;
+    --vino: #971A36;
+    --black: #000;
+    --white: #fff;
+    --txt: #323639;
+    --gray: #323639;    
+    --gray-one: #474747;
+    --gray-two: #cfcccc;
+    --formulario-primario: #8d8d8d;
+    --formulario-borde: black;
+    
+    /* FOMRULARIO */
+    --formBg: trasparent;
+    --form-text: white;
+    --form-text-alter: #323639;
+    --form-txt-disabled: #8d8d8d;
+    --form-border-disabled: #ddd;
+    /* --form-border-sinfocus: #ddd; */
+    --form-border-sinfocus: #969696;
+    --form-txt: #323639;
+    --input-bg: rgb(255,255,255,0.15);
+    --input-txt: white;
+    --input-txt-option: black;
+    --input-border: white;
+    
+    /* COLORES CLUSTER */
+    --gestion: #2663D9;
+    --salud: #d73dff;
+    --ingenieria: #35ef6a;
+    --educacion: #00c99c;
+    --ciencia: #4ac0ff;
+
+    /* COLORES CARRERAS SALUD */
+    --medicina: #8B33C9;
+    --enfermeria: #00B5C4;
+    --estomatologia: #174AE3;
+    --psicologia: #FFBB17;
+    --veterinaria: #FF5B1F;
+
+    /* tema white */
+    --menu1: #efefef;
+    --contenido: #fff;
+    --menuTxt: black;
+    --primarySVG: #FF0C29;
+    --bgItemDashboard: white;
+    --txtItemDashboard: #323639;
+}
+html[data-theme="dark"]{
+    /* TEMA DARK */
+    --primarySVG: #FF0C29;
+    /* MENU IZQUIERDA */
+    /* --menu1: linear-gradient( -90deg, #971A36 0%, #7A1F33 100%); */
+    --menu1: linear-gradient( 180deg, #B1122A 0%, #971A36 38%, #6F1628 70%, #2A0B13 100%);
+    --menuTxt: #fff;
+    /* --contenido: linear-gradient( 90deg, #7A1F33 0%, #2B0F16 100%); */
+    --contenido: #1E1216;
+    --bgItemDashboard: radial-gradient(circle,rgba(255, 12, 41, 0.5) 0%, rgba(151, 26, 54, 0.5) 90%);
+    --txtItemDashboard: white;
+    --txt: white;
+}
+.ctnLogin{
+    height: 100vh;
+    width: 100%;
+    position: relative;
+    /* ELIMINAR SI NO SIRVE */
+    --s: 200px; /* control the size */
+    --c1: #1d1d1d;
+    --c2: #4e4f51;
+    --c3: #3c3c3c;
+
+    background: repeating-conic-gradient(
+        from 30deg,
+        #0000 0 120deg,
+        var(--c3) 0 180deg
+        )
+        calc(0.5 * var(--s)) calc(0.5 * var(--s) * 0.577),
+    repeating-conic-gradient(
+        from 30deg,
+        var(--c1) 0 60deg,
+        var(--c2) 0 120deg,
+        var(--c3) 0 180deg
+    );
+    background-size: var(--s) calc(var(--s) * 0.577);
+}
+
+
+.login{
+    background-color: white;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    width: 22rem;
+    max-width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 0 0.8rem #ddd;
+    border-radius: 1rem;
+}
+
+input:focus {
+  outline: none;
+}
+input:-internal-autofill-selected {
+    background-color: white !important;
+}
+.login button{
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    border: none;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+}
+.errorTxt{
+    color: var(--primary) !important;
+    position: absolute;
+    bottom: -2.5rem;
+}
+/* FORMULARIO */
+.triple__form {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+}
+.double__form {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+.double__form2{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 20% 1fr;
+    gap: 0.5rem;
+}
+
+.input-field {
+    position: relative;
+    width: 100%;
+}
+
+.input-field textarea{
+    width: 100% !important;
+    height: 5rem  !important;
+    overflow: auto;
+    border-radius: 0.3rem;
+    padding: 0.5rem 0.8rem;
+}
+.ctnTextArea{
+    height: 5rem;
+}
+.input-field .char-counter{
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    font-size: 0.8rem;
+
+}
+.input-field input:disabled, .input-field select:disabled{
+    border: 1px solid var(--form-border-disabled) !important;
+    color: var(--form-txt-disabled) !important;
+}
+.input-field input:disabled~label,.input-field select:disabled~label{
+    color: var(--form-txt-disabled) !important;
+}
+.input-field select:invalid {
+    /* color: var(--formulario-primario); */
+    color: var(--form-txt);
+}
+
+.input-field label {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    color: var(--black);
+    font-size: 0.9rem;
+    transform: translate(0, -50%);
+    pointer-events: none;
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+
+.input-field input,
+.input-field select {
+    width: 100%;
+    border-radius: 0.3rem;
+    padding: 0.5rem 0.8rem;
+    border: 1px solid var(--form-border-sinfocus);
+    font-size: 0.8rem;
+    box-sizing: border-box;
+    background-color: var(--white);
+    height: 2.4rem;
+}
+.input-field select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23000000" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.3rem center;
+    background-size: 1rem;
+    padding-right: 2.2rem;
+    color: var(--form-txt);
+    /* color de texto por defecto */
+}
+
+/* FLECHA */
+
+.input-field input:focus,
+/* .input-field input:valid, */
+.input-field input:not(:placeholder-shown),
+.input-field textarea:focus,
+.input-field select:focus,
+.input-field select:valid {
+    outline: none;
+    /* border: 1px solid var(--form-txt); */
+}
+
+.input-field input:focus~label,
+/* .input-field input:valid~label */
+.input-field input:not(:placeholder-shown)~label,
+.input-field select:focus~label,
+.input-field select:valid~label,
+.input-field textarea:valid~label,
+.input-field textarea:focus~label,
+.input-field input:disabled~label,
+.input-field select:disabled~label{
+    white-space: nowrap;
+    border-radius: 0.5rem;
+    background-color: #fff;
+    padding: 1px 5px;
+    top: 0;
+    left: 0.5rem;
+    font-size: 0.7rem;
+    color: var(--form-txt);
+    font-weight: 600;
+}
+/* FORMULARIO INVALIDO */ 
+
+/* ❌ INPUT inválido (con texto ingresado pero no válido) */
+.input-field input:invalid:not(:focus):not(:placeholder-shown) {
+    border: 1px solid var(--rojo)  !important;
+}
+
+/* ❌ LABEL rojo si el input es inválido y hay algo escrito */
+.input-field input:invalid:not(:focus):not(:placeholder-shown)~label {
+    top: 0;
+    left: 0.5rem;
+    font-size: 0.7rem;
+    color: var(--rojo) !important;
+    font-weight: 600;
+    background-color: #fff;
+    padding: 1px 5px;
+    white-space: nowrap;
+    border-radius: 0.5rem;
+}
+
+.input-field input.invalid,
+.input-field select.invalid{
+    border: 1px solid var(--rojo) !important;
+}
+
+
+.input-field input.invalid~label,
+.input-field select.invalid~label {
+    top: 0;
+    left: 0.5rem;
+    font-size: 0.7rem;
+    color: var(--rojo) !important;
+    font-weight: 600;
+    background-color: #fff;
+    padding: 1px 5px;
+    white-space: nowrap;
+    border-radius: 0.5rem;
+}
+/* FIN DE FORMULARIO INVALIDO */
+
+
+/* user desactivado */
+.toastSuccess{
+  position: fixed;
+  top:-120px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:9999;
+  animation: toastDrop .5s ease forwards;
+}
+
+.toastBox{
+  background:white;
+  padding:1.5rem 2rem;
+  border-radius:10px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+  min-width:320px;
+  text-align:center;
+}
+
+.ctnCheck{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+}
+
+.title{
+  font-weight:600;
+  font-size:18px;
+}
+
+.toastMessage{
+  color:#555;
+}
+
+.toastBtn{
+  padding:8px 20px;
+  border:none;
+  background:#333;
+  color:white;
+  border-radius:6px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.toastBtn:hover{
+  background:#000;
+}
+
+@keyframes toastDrop{
+  from{
+    top:-120px;
+    opacity:0;
+  }
+  to{
+    top:1rem;
+    opacity:1;
+  }
+}
+/* user desactivado */
+
+
+/* Contenedor del cubo para el Toast */
+.ctnCheck .advanced-checkbox {
+  display: inline-block;
+  perspective: 1000px;
+}
+
+.advanced-checkbox input {
+  display: none;
+}
+
+.advanced-checkbox label {
+  position: relative;
+  display: inline-block;
+  --size:30px;
+  width: var(--size); /* Tamaño ligeramente reducido para el toast */
+  height: var(--size);
+  cursor: pointer;
+}
+
+.box {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform: rotateX(0deg) rotateY(0deg);
+  transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+/* El check del login dispara la rotación */
+.advanced-checkbox input:checked + label .box {
+  transform: rotateX(360deg) rotateY(360deg);
+}
+
+.box > div {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  /* Gradiente en tonos ROJOS */
+  background: linear-gradient(145deg, #ff4d4d, #971A36); 
+  border-radius: 8px;
+  box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Posicionamiento de las caras del cubo */
+.front  { transform: translateZ(calc(var(--size) / 2)); }
+.back   { transform: rotateY(180deg) translateZ(calc(var(--size) / 2)); }
+.left   { transform: rotateY(-90deg) translateZ(calc(var(--size) / 2)); }
+.right  { transform: rotateY(90deg) translateZ(calc(var(--size) / 2)); }
+.top    { transform: rotateX(90deg) translateZ(calc(var(--size) / 2)); }
+.bottom { transform: rotateX(-90deg) translateZ(calc(var(--size) / 2)); }
+
+/* La marca de verificación (Checkmark) ahora BLANCA sobre fondo ROJO */
+.checkmark-3d {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border: solid white; /* Blanco para que resalte */
+  border-width: 0 5px 5px 0;
+  transform: translate(-50%, -60%) rotate(45deg);
+  opacity: 0;
+  transition: width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
+  z-index: 10;
+}
+
+.advanced-checkbox input:checked + label .checkmark-3d {
+  width: 9px;
+  height: 16px;
+  opacity: 1;
+  transition-delay: 0.8s; /* Aparece al final del giro */
+}
