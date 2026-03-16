@@ -68,7 +68,6 @@ export default function Login() {
           <label>Contraseña</label>
         </div>
         <button type="submit">Ingresar</button>
-        {error && <p className="errorTxt">{error}</p>}
       </form>
       {toast && (
         <Toast
