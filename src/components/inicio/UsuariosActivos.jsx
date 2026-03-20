@@ -1,60 +1,47 @@
-// src/components/inicio/UsuariosActivos.jsx
-import { useEffect, useMemo, useState } from "react";
-import { apiGet } from "../../services/api";
+import { useMemo, useState } from "react";
+import { useAuth } from "../../context/AuthContext";
+import { useGlobalData } from "../../context/GlobalDataContext";
 
 export default function UsuariosActivos() {
-  const [usuarios, setUsuarios] = useState([]);
-  const [error, setError] = useState("");
-
-  // Filtro por estado: "" = Todos
   const [estadoFilter, setEstadoFilter] = useState("");
 
-  useEffect(() => {
-    const fetchUsuarios = async () => {
-      try {
-        const res = await apiGet("usuarios");
-        if (!res?.ok) {
-          setError("No se pudo cargar usuarios.");
-          return;
-        }
-        setUsuarios(Array.isArray(res.data) ? res.data : []);
-      } catch (e) {
-        setError("No se pudo cargar usuarios.");
-      }
-    };
+  const { user } = useAuth();
+  const { usuarios, loading } = useGlobalData();
 
-    fetchUsuarios();
-  }, []);
+  const currentRole = String(user?.rol ?? "").toLowerCase();
+  const currentSedeId = Number(user?.id_sede ?? 0);
+
+  const isSuperAdmin = currentRole === "superadmin";
+  const isAdmin = currentRole === "admin";
 
   const rows = useMemo(() => {
-    // Filtrar por estado (si está vacío, mostrar todos)
-    const filtrados = usuarios.filter((u) => {
-      const estado = String(u?.estado || "").toLowerCase();
-      if (!estadoFilter) return true;
-      return estado === estadoFilter;
-    });
+    let visibles = Array.isArray(usuarios) ? [...usuarios] : [];
 
-    // Ordenar por último acceso desc (fallback por id_admin desc)
-    const sorted = [...filtrados].sort((a, b) => {
-      const da = new Date(a?.ultimo_acceso || 0).getTime();
-      const db = new Date(b?.ultimo_acceso || 0).getTime();
-      if (db !== da) return db - da;
-      return (Number(b?.id_admin) || 0) - (Number(a?.id_admin) || 0);
-    });
+    // Restricción por rol
+    if (isSuperAdmin) {
+      visibles = visibles;
+    } else if (isAdmin) {
+      visibles = visibles.filter(
+        (u) => Number(u?.id_sede) === currentSedeId
+      );
+    } else {
+      visibles = [];
+    }
 
-    // Si quieres limitar a 10, descomenta:
-    // return sorted.slice(0, 10);
-    return sorted;
-  }, [usuarios, estadoFilter]);
+    // Filtro por estado
+    if (estadoFilter) {
+      visibles = visibles.filter(
+        (u) => String(u?.estado || "").toLowerCase() === estadoFilter
+      );
+    }
 
-  if (error) {
-    return (
-      <div className="usuariosActivos">
-        <p className="title">Usuarios</p>
-        <p style={{ opacity: 0.7 }}>{error}</p>
-      </div>
+    // Orden por ID ascendente
+    visibles.sort(
+      (a, b) => Number(a?.id_admin || 0) - Number(b?.id_admin || 0)
     );
-  }
+
+    return visibles;
+  }, [usuarios, estadoFilter, isSuperAdmin, isAdmin, currentSedeId]);
 
   return (
     <div className="usuariosActivos">
@@ -78,30 +65,35 @@ export default function UsuariosActivos() {
         <table>
           <thead>
             <tr>
-              <th>Usuario</th>
+              <th>ID</th>
               <th>Nombre</th>
               <th>Estado</th>
               <th>Último acceso</th>
             </tr>
           </thead>
-
           <tbody>
-            {rows.map((u) => (
-              <tr key={u.id_admin}>
-                <td title={u.usuario}>{u.usuario}</td>
-                <td title={u.nombre_completo}>{u.nombre_completo}</td>
-                <td>
-                  <span
-                    className={`estado ${String(u.estado || "").toLowerCase()}`}
-                  >
-                    {u.estado}
-                  </span>
+            {loading ? (
+              <tr>
+                <td colSpan={4} style={{ textAlign: "center", opacity: 0.7 }}>
+                  Cargando usuarios...
                 </td>
-                <td>{u.ultimo_acceso ?? "—"}</td>
               </tr>
-            ))}
-
-            {rows.length === 0 && (
+            ) : rows.length > 0 ? (
+              rows.map((u) => (
+                <tr key={u.id_admin}>
+                  <td title={u.id_admin}>{u.id_admin}</td>
+                  <td title={u.nombre_completo}>{u.nombre_completo}</td>
+                  <td>
+                    <span
+                      className={`estado ${String(u.estado || "").toLowerCase()}`}
+                    >
+                      {u.estado}
+                    </span>
+                  </td>
+                  <td>{u.ultimo_acceso ?? "—"}</td>
+                </tr>
+              ))
+            ) : (
               <tr>
                 <td colSpan={4} style={{ textAlign: "center", opacity: 0.7 }}>
                   No hay usuarios para mostrar.

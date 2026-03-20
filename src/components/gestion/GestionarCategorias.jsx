@@ -220,7 +220,7 @@ export default function GestionarCategoriasItem() {
         </div>
 
         <button className="btnAdd" onClick={openCreate}>
-          <SVG.UserAdd />
+          <SVG.Add />
           Nueva categoría
         </button>
       </div>
@@ -260,7 +260,7 @@ export default function GestionarCategoriasItem() {
                   <td>{Number(c.activo) === 1 ? "Sí" : "No"}</td>
                   <td className="actionsCell">
                     <div className="btnSmall" onClick={() => openEdit(c)}>
-                      <SVG.UserEdit />
+                      <SVG.Edit />
                     </div>
                     {/* <button className="btnSmall" onClick={() => handleDelete(c.id_categoria)}>
                       ❌

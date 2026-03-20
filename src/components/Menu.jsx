@@ -5,7 +5,7 @@ import { useState } from "react";
 import { menuConfig } from "../config/menuConfig";
 import { useGlobalData } from "../context/GlobalDataContext";
 
-export default function Menu({ activeView, setActiveView }) {
+export default function Menu({ activeView, setActiveView, menuOpen }) {
 
   const [isDark, setIsDark] = useState(false);
   const { logout, user } = useAuth();
@@ -22,9 +22,9 @@ export default function Menu({ activeView, setActiveView }) {
   };
 
   return (
-    <div className="ctnMenu">
+    <div className={`ctnMenu ${menuOpen ? "active" : ""}`}>
 
-      <img src={IMAGES.logoNegro} className="logo" />
+      <img src={IMAGES.LogoNegro} className="logo" />
 
       <div className="ctnBotones">
         {menuItems.map((item) => {
@@ -76,7 +76,6 @@ export default function Menu({ activeView, setActiveView }) {
 
         </div>
       </div>
-
     </div>
   );
 }

@@ -1,74 +1,120 @@
-// src/components/inicio/HistorialMovimientos.jsx
 import { useEffect, useMemo, useState } from "react";
 import { apiGet } from "../../services/api";
+import { useAuth } from "../../context/AuthContext";
+import { useGlobalData } from "../../context/GlobalDataContext";
 
 export default function HistorialMovimientos() {
   const [movimientos, setMovimientos] = useState([]);
+  const [loadingMovs, setLoadingMovs] = useState(true);
   const [error, setError] = useState("");
 
-  // Lookups
-  const [usuariosMap, setUsuariosMap] = useState({});
-  const [itemsMap, setItemsMap] = useState({});
+  const { user } = useAuth();
+  const { usuarios, items, loading } = useGlobalData();
+
+  const currentRole = String(user?.rol ?? "").toLowerCase();
+  const currentSedeId = Number(user?.id_sede ?? 0);
+
+  const isSuperAdmin = currentRole === "superadmin";
+  const isAdmin = currentRole === "admin";
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchMovimientos = async () => {
       try {
-        const [movRes, userRes, itemRes] = await Promise.all([
-          apiGet("movimientos-item"),
-          apiGet("usuarios"),
-          apiGet("items"),
-        ]);
+        setLoadingMovs(true);
+        const res = await apiGet("movimientos-item");
 
-        const movs = movRes?.data ?? [];
-        const users = userRes?.data ?? [];
-        const items = itemRes?.data ?? [];
-
-        const userMap = {};
-        for (const u of users) {
-          userMap[u.id_admin] = u.nombre_completo ?? "—";
+        if (!res?.ok) {
+          setError("No se pudo cargar los últimos movimientos.");
+          setMovimientos([]);
+          return;
         }
 
-        const itemMap = {};
-        for (const it of items) {
-          itemMap[it.id_item] = it.nombre_item ?? "—";
-        }
-
-        setUsuariosMap(userMap);
-        setItemsMap(itemMap);
-
-        // Tomamos los 10 más recientes
-        // Si tu API ya viene ordenada por fecha desc, esto basta.
-        // Si NO viene ordenada, abajo intento ordenar por fecha/id.
-        const sorted = [...movs].sort((a, b) => {
-          // Prioridad: fecha_movimiento (si viene ISO o comparable)
-          const da = new Date(a.fecha_movimiento || 0).getTime();
-          const db = new Date(b.fecha_movimiento || 0).getTime();
-          if (db !== da) return db - da;
-
-          // Fallback: id_movimiento desc
-          return (Number(b.id_movimiento) || 0) - (Number(a.id_movimiento) || 0);
-        });
-
-        setMovimientos(sorted.slice(0, 10));
+        setMovimientos(Array.isArray(res.data) ? res.data : []);
       } catch (e) {
         setError("No se pudo cargar los últimos movimientos.");
+        setMovimientos([]);
+      } finally {
+        setLoadingMovs(false);
       }
     };
 
-    fetchData();
+    fetchMovimientos();
   }, []);
 
+  const usuariosMap = useMemo(() => {
+    const map = {};
+    (usuarios || []).forEach((u) => {
+      map[u.id_admin] = u.nombre_completo ?? "—";
+    });
+    return map;
+  }, [usuarios]);
+
+  const usuariosSedeMap = useMemo(() => {
+    const map = {};
+    (usuarios || []).forEach((u) => {
+      map[u.id_admin] = Number(u.id_sede ?? 0);
+    });
+    return map;
+  }, [usuarios]);
+
+  const itemsMap = useMemo(() => {
+    const map = {};
+    (items || []).forEach((it) => {
+      map[it.id_item] = it.nombre_item ?? "—";
+    });
+    return map;
+  }, [items]);
+
   const rows = useMemo(() => {
-    return movimientos.map((m) => ({
+    let visibles = Array.isArray(movimientos) ? [...movimientos] : [];
+
+    // Restricción por rol
+    if (isSuperAdmin) {
+      visibles = visibles;
+    } else if (isAdmin) {
+      visibles = visibles.filter(
+        (m) => Number(usuariosSedeMap[m.id_admin]) === currentSedeId
+      );
+    } else {
+      visibles = [];
+    }
+
+    // Ordenar por ID descendente
+    visibles.sort(
+      (a, b) =>
+        Number(b?.id_movimiento || 0) - Number(a?.id_movimiento || 0)
+    );
+
+    // Solo los 10 más recientes
+    visibles = visibles.slice(0, 10);
+
+    return visibles.map((m) => ({
       id_movimiento: m.id_movimiento ?? "—",
       nombre_admin: usuariosMap[m.id_admin] ?? "—",
       nombre_item: itemsMap[m.id_item] ?? "—",
       tipo_movimiento: m.tipo_movimiento ?? "—",
       cantidad: m.cantidad ?? "—",
     }));
-  }, [movimientos, usuariosMap, itemsMap]);
+  }, [
+    movimientos,
+    usuariosMap,
+    usuariosSedeMap,
+    itemsMap,
+    isSuperAdmin,
+    isAdmin,
+    currentSedeId,
+  ]);
 
-  if (error) return <p>{error}</p>;
+  if (error) {
+    return (
+      <div className="historialMini">
+        <div className="top">
+          <p className="title">Últimos movimientos</p>
+        </div>
+        <p style={{ opacity: 0.7 }}>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="historialMini">
@@ -89,18 +135,25 @@ export default function HistorialMovimientos() {
           </thead>
 
           <tbody>
-            {rows.map((r, idx) => (
-              <tr key={`${r.id_movimiento}-${idx}`}>
-                <td>{r.id_movimiento}</td>
-                <td title={r.nombre_admin}>{r.nombre_admin}</td>
-                <td title={r.nombre_item}>{r.nombre_item}</td>
-                <td className={`tipoM ${String(r.tipo_movimiento || "").toLowerCase()}`}>
-                  <p>{r.tipo_movimiento}</p>
+            {loading || loadingMovs ? (
+              <tr>
+                <td colSpan={5} style={{ textAlign: "center", opacity: 0.7 }}>
+                  Cargando movimientos...
                 </td>
-                <td>{parseInt(r.cantidad, 10) || 0}</td>
               </tr>
-            ))}
-            {rows.length === 0 && (
+            ) : rows.length > 0 ? (
+              rows.map((r, idx) => (
+                <tr key={`${r.id_movimiento}-${idx}`}>
+                  <td>{r.id_movimiento}</td>
+                  <td title={r.nombre_admin}>{r.nombre_admin}</td>
+                  <td title={r.nombre_item}>{r.nombre_item}</td>
+                  <td className={`tipoM ${String(r.tipo_movimiento || "").toLowerCase()}`}>
+                    <p>{r.tipo_movimiento}</p>
+                  </td>
+                  <td>{parseInt(r.cantidad, 10) || 0}</td>
+                </tr>
+              ))
+            ) : (
               <tr>
                 <td colSpan={5} style={{ textAlign: "center", opacity: 0.7 }}>
                   Sin movimientos recientes.

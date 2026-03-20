@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { apiGet, apiPost } from "../../services/api";
 import { SVG } from "../../assets/imgSvg";
 import { useGlobalData } from "../../context/GlobalDataContext";
-import "../styles/usuarios.css";
+import "../../styles/usuarios.css";
+import Toast from "../../components/Toast";
 
 const makeEmptyForm = () => ({
   usuario: "",
@@ -27,11 +28,16 @@ export default function GestionarUsuarios() {
   // Popups
   const [showCreate, setShowCreate] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
-
+  
+  // Detalle (popup al click en ID)
+  const [selectedUserDetalle, setSelectedUserDetalle] = useState(null);
   // Form
   const [selectedUser, setSelectedUser] = useState(null); // el usuario de la fila
   const [form, setForm] = useState(makeEmptyForm());
   const { sedes } = useGlobalData(); // [{id_sede, nombre_sede, ...}]
+
+  const [toast, setToast] = useState(null);
+  
   const normalize = (str) =>
     String(str ?? "")
       .normalize("NFD")
@@ -88,6 +94,7 @@ export default function GestionarUsuarios() {
     setError("");
     setSuccess("");
     setSelectedUser(null);
+    setSelectedUserDetalle(null);
     setForm(makeEmptyForm());
     setShowCreate(true);
   };
@@ -95,6 +102,7 @@ export default function GestionarUsuarios() {
   const openEdit = (u) => {
     setError("");
     setSuccess("");
+    setSelectedUserDetalle(null);
     setSelectedUser(u);
     setForm({
       usuario: u.usuario ?? "",
@@ -108,13 +116,14 @@ export default function GestionarUsuarios() {
     setShowEdit(true);
   };
 
-  const closePopups = () => {
-    setShowCreate(false);
-    setShowEdit(false);
-    setSelectedUser(null);
-    setForm(makeEmptyForm());
-    setError("");
-  };
+    const closePopups = () => {
+      setShowCreate(false);
+      setShowEdit(false);
+      setSelectedUser(null);
+      setSelectedUserDetalle(null);
+      setForm(makeEmptyForm());
+      setError("");
+    };
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -153,16 +162,30 @@ export default function GestionarUsuarios() {
       const res = await apiPost("usuarios-crear", payload);
 
       if (res?.ok) {
-        setSuccess("✅ Usuario creado correctamente");
+        setToast({
+          type: "success",
+          title: "Usuario creado",
+          message: "El usuario fue creado correctamente"
+        });
         // lo más confiable: recargar lista
         await fetchUsuarios();
         setShowCreate(false);
         setForm(makeEmptyForm());
       } else {
-        setError(res?.message || "Error creando el usuario");
+        // setError(res?.message || "Error creando el usuario");
+        setToast({
+          type: "error",
+          title: "Error",
+          message: res?.message || "Error creando el usuario"
+        });
       }
     } catch (err) {
-      setError("Error de servidor creando el usuario");
+      // setError("Error de servidor creando el usuario");
+      setToast({
+        type: "error",
+        title: "Error de servidor",
+        message: "No se pudo crear el usuario"
+      });
     } finally {
       setSaving(false);
     }
@@ -192,7 +215,12 @@ export default function GestionarUsuarios() {
       const res = await apiPost("usuarios-actualizar", payload);
 
       if (res?.ok) {
-        setSuccess("✅ Usuario actualizado");
+        // setSuccess("✅ Usuario actualizado");
+        setToast({
+          type: "success",
+          title: "Usuario actualizado",
+          message: "El usuario fue actualizado correctamente"
+        });
         await fetchUsuarios();
         setShowEdit(false);
         setSelectedUser(null);
@@ -206,6 +234,39 @@ export default function GestionarUsuarios() {
       setSaving(false);
     }
   };
+  
+  /* FORMATO FECHA */
+  const formatFecha = (value) => {
+    if (!value) return "—";
+    const s = String(value);
+    const datePart = s.split("T")[0].split(" ")[0]; // YYYY-MM-DD
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(datePart)) return "—";
+    const [y, m, d] = datePart.split("-");
+    return `${d}-${m}-${y}`;
+  };
+
+  const formatHora = (value) => {
+    if (!value) return "—";
+    const s = String(value);
+    const timeRaw = s.includes("T") ? s.split("T")[1] : s.split(" ")[1];
+    if (!timeRaw) return "—";
+    const clean = timeRaw.replace("Z", "").split(".")[0]; // quita ms/Z
+    const parts = clean.split(":");
+    if (parts.length < 2) return "—";
+    const hh = (parts[0] ?? "").padStart(2, "0");
+    const mm = (parts[1] ?? "").padStart(2, "0");
+    return `${hh}:${mm}`;
+  };
+
+  const formatFechaHora = (value) => {
+    const f = formatFecha(value);
+    const h = formatHora(value);
+    if (f === "—" && h === "—") return "—";
+    if (h === "—") return f;
+    if (f === "—") return h;
+    return `${f} ${h}`;
+  };
+  /* FIN DE FORMATO FECHA */
 
   const handleDeactivate = async (id_admin) => {
     const ok = window.confirm("¿Seguro que deseas desactivar este usuario?");
@@ -217,10 +278,20 @@ export default function GestionarUsuarios() {
     try {
       const res = await apiPost(`usuarios-eliminar/${id_admin}`, {});
       if (res?.ok) {
-        setSuccess("✅ Usuario desactivado");
+        // setSuccess("✅ Usuario desactivado");
+        setToast({
+          type: "success",
+          title: "Usuario deshabilitado",
+          message: "El usuario fue deshabilitado correctamente"
+        });
         await fetchUsuarios();
       } else {
-        setError(res?.message || "No se pudo desactivar el usuario");
+        // setError(res?.message || "No se pudo desactivar el usuario");
+        setToast({
+          type: "error",
+          title: "Error",
+          message: res?.message || "No se pudo desactivar el usuario"
+        });
       }
     } catch (err) {
       setError("Error desactivando el usuario");
@@ -228,10 +299,10 @@ export default function GestionarUsuarios() {
   };
 
   return (
-    <div className="gestionUsuarios">
+    <div className="ctnGestion">
       <h2>Gestionar Usuarios</h2>
 
-      <div className="filtersUsuarios">
+      <div className="ctnAllFilters">
         <div className="input-field">
           <input
             type="text"
@@ -242,7 +313,7 @@ export default function GestionarUsuarios() {
           <label>Buscar (id, usuario, nombre, email, rol...)</label>
         </div>
 
-        <button className="btnPrimary" onClick={openCreate}>
+        <button className="btnAdd" onClick={openCreate}>
           <SVG.UserAdd />
           Nuevo usuario
         </button>
@@ -258,12 +329,12 @@ export default function GestionarUsuarios() {
               <th>ID</th>
               <th>Usuario</th>
               <th>Nombre</th>
-              <th>Email</th>
+              {/* <th>Email</th> */}
               <th>Rol</th>
               <th>Estado</th>
               <th>Sede</th>
               <th>Último acceso</th>
-              <th>Acciones</th>
+              <th>Editar</th>
             </tr>
           </thead>
 
@@ -279,19 +350,24 @@ export default function GestionarUsuarios() {
             ) : (
               filteredUsuarios.map((u) => (
                 <tr key={u.id_admin}>
-                  <td>{u.id_admin}</td>
+                  <td className="clickable" onClick={() => setSelectedUserDetalle(u)} title="Ver detalle">
+                    {u.id_admin}
+                  </td>
                   <td>{u.usuario}</td>
                   <td>{u.nombre_completo}</td>
-                  <td>{u.email}</td>
+                  {/* <td>{u.email}</td> */}
                   <td>{u.rol}</td>
-                  <td>{u.estado}</td>
+                  
+                  <td className={`estado ${String(u.estado || "").toLowerCase()}`}>
+                    <p>{u.estado}</p>
+                  </td>
                   {/* <td>{u.id_sede}</td> */}
                   <td>{getSedeNombre(u.id_sede)}</td>
                   <td>{u.ultimo_acceso ?? "-"}</td>
                   <td className="actionsCell">
-                    <button className="btnSmall" onClick={() => openEdit(u)}>
+                    <div className="btnSmall" onClick={() => openEdit(u)}>
                       <SVG.UserEdit />
-                    </button>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -368,7 +444,7 @@ export default function GestionarUsuarios() {
                   >
                     <option value=""></option>
                     <option value="admin">Administrador</option>
-                    <option value="usuario">Usuario</option>
+                    <option value="asesor">Asesor</option>
                     <option value="superadmin">Superadmin</option>
                   </select>
                   <label>Rol</label>
@@ -554,6 +630,94 @@ export default function GestionarUsuarios() {
             </form>
           </div>
         </div>
+      )}
+      
+      {/* Popup Detalle Usuario */}
+      {selectedUserDetalle && (
+        <div className="popup">
+          <div className="popup-content">
+            <h3>Detalle del Usuario</h3>
+
+            <div className="popup-item">
+              <div className="double__form">
+                <div className="input-field">
+                  <input type="text" value={selectedUserDetalle.id_admin ?? "—"} readOnly />
+                  <label>ID</label>
+                </div>
+                <div className="input-field">
+                  <input type="text" value={selectedUserDetalle.usuario ?? "—"} readOnly />
+                  <label>Usuario</label>
+                </div>
+              </div>
+
+              <div className="double__form">
+                <div className="input-field">
+                  <input type="text" value={selectedUserDetalle.nombre_completo ?? "—"} readOnly />
+                  <label>Nombre completo</label>
+                </div>
+                <div className="input-field">
+                  <input type="text" value={selectedUserDetalle.email ?? "—"} readOnly />
+                  <label>Email</label>
+                </div>
+              </div>
+
+              <div className="double__form">
+                <div className="input-field">
+                  <input type="text" value={selectedUserDetalle.rol ?? "—"} readOnly />
+                  <label>Rol</label>
+                </div>
+                <div className="input-field">
+                  <input type="text" value={selectedUserDetalle.estado ?? "—"} readOnly />
+                  <label>Estado</label>
+                </div>
+              </div>
+
+              <div className="double__form">
+                <div className="input-field">
+                  <input type="text" value={getSedeNombre(selectedUserDetalle.id_sede)} readOnly />
+                  <label>Sede</label>
+                </div>
+                <div className="input-field">
+                  <input
+                    type="text"
+                    value={formatFechaHora(selectedUserDetalle.ultimo_acceso)}
+                    readOnly
+                  />
+                  <label>Último acceso</label>
+                </div>
+              </div>
+
+              {/* Opcionales: si tu API devuelve created_at / updated_at */}
+              {(selectedUserDetalle.created_at || selectedUserDetalle.updated_at) && (
+                <div className="double__form">
+                  <div className="input-field">
+                    <input type="text" value={formatFechaHora(selectedUserDetalle.created_at)} readOnly />
+                    <label>Creado</label>
+                  </div>
+                  <div className="input-field">
+                    <input type="text" value={formatFechaHora(selectedUserDetalle.updated_at)} readOnly />
+                    <label>Actualizado</label>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <button
+              className="closeForm"
+              onClick={() => setSelectedUserDetalle(null)}
+            >
+              <SVG.Close className="icon" />
+            </button>
+          </div>
+        </div>
+      )}
+      {toast && (
+        <Toast
+          type={toast.type}
+          title={toast.title}
+          message={toast.message}
+          onClose={() => setToast(null)}
+        />
       )}
     </div>
   );

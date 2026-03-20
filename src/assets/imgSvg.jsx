@@ -38,12 +38,14 @@ import { ReactComponent as Balance } from "./svg/balance.svg";
 import { ReactComponent as Category } from "./svg/category.svg";
 import { ReactComponent as Filter } from "./svg/filter.svg";
 import { ReactComponent as Edit } from "./svg/edit.svg";
+import { ReactComponent as Add } from "./svg/add.svg";
+import { ReactComponent as Escudo } from "./svg/escudo.svg";
 
-import logoBlanco from "./images/logoBlanco.webp";
-import logoNegro from "./images/logoNegro.webp";
-
+import LogoBlanco from "./images/logoBlanco.webp";
+import LogoNegro from "./images/logoNegro.webp";
 
 export const SVG = {
+  Add,
   Login,
   Logout,
   History,
@@ -80,10 +82,11 @@ export const SVG = {
   Balance,
   Category,
   Filter,
-  Edit
+  Edit,
+  Escudo
 };
 
 export const IMAGES = {
-  logoBlanco,
-  logoNegro,
+  LogoBlanco,
+  LogoNegro
 };

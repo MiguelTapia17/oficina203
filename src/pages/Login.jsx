@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiLogin } from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import { SVG, IMAGES } from "../assets/imgSvg";
 import Toast from "../components/Toast";
 
 
@@ -53,11 +54,56 @@ export default function Login() {
       setError("Error de servidor. Intenta de nuevo.");
     }
   };
+  /* BACKGROUND */
+  function InfiniteText({ text, bold }) {
+    const repeat = 6;
 
+    // Generamos los spans
+    const items = Array.from({ length: repeat }, (_, i) => (
+      <span key={i}>{text}</span>
+    ));
+
+    return (
+      <div className={`fila ${bold ? "txtBold" : "txtMedium"}`}>
+        <div className="track">
+          {items}
+          {items} 
+          {items}
+          {items} 
+          {items}
+          {items} 
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="ctnLogin">
+      <div className="letrasBG">
+        <div className="scrollWrap">
+          <InfiniteText text="Cayetano" />
+          <InfiniteText text="Desarrollo" bold />
+          <InfiniteText text="Cayetano" />
+          <InfiniteText text="Desarrollo" bold />
+          <InfiniteText text="Cayetano" />
+          <InfiniteText text="Desarrollo" bold />
+          <InfiniteText text="Cayetano" />
+          <InfiniteText text="Desarrollo" bold />
+          <InfiniteText text="Cayetano" />
+          <InfiniteText text="Desarrollo" bold />
+          <InfiniteText text="Cayetano" />
+          <InfiniteText text="Desarrollo" bold />
+          <InfiniteText text="Cayetano" />
+          <InfiniteText text="Desarrollo" bold />
+          <InfiniteText text="Cayetano" />
+          <InfiniteText text="Desarrollo" bold />
+          <InfiniteText text="Cayetano" />
+          <InfiniteText text="Desarrollo" bold />
+          <InfiniteText text="Cayetano" />
+        </div>
+      </div>
       <form className="login" onSubmit={handleLogin}>
-        <h2>Login</h2>
+        {/* <h2>Login</h2> */}
+        <img src={IMAGES.LogoNegro} alt="Logo" className="logo"/>
         <div className="input-field">
           <input required placeholder="" value={usuario} autoComplete="off" onChange={(e) => setUsuario(e.target.value)} />
           <label>Usuario</label>
@@ -77,6 +123,7 @@ export default function Login() {
           onClose={() => setToast(null)}
         />
       )}
+
     </div>
   );
 }

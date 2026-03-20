@@ -1,12 +1,10 @@
 import { useMemo, useState } from "react";
 import { apiPost } from "../../services/api";
 import { useGlobalData } from "../../context/GlobalDataContext";
-import { useAuth } from "../../context/AuthContext";
 import { SVG } from "../../assets/imgSvg";
-import Toast from "../Toast";
 import "../../styles/usuarios.css";
 
-const makeEmptyForm = (defaultSede = "") => ({
+const makeEmptyForm = () => ({
   nombre_actividad: "",
   tipo_actividad: "",
   area_responsable: "",
@@ -14,7 +12,6 @@ const makeEmptyForm = (defaultSede = "") => ({
   fecha_fin: "",
   estado_actividad: "planificada",
   activo: 1,
-  id_sede: defaultSede,
 });
 
 export default function GestionarActividades() {
@@ -22,19 +19,8 @@ export default function GestionarActividades() {
     actividades,
     refreshActividades,
     usuariosMap,
-    sedes,
-    sedesMap,
-    loading: globalLoading,
+    loading: globalLoading
   } = useGlobalData();
-
-  const { user } = useAuth();
-
-  const role = String(user?.rol ?? "").toLowerCase();
-  const currentSedeId = Number(user?.id_sede ?? 0);
-  const currentAdminId = Number(user?.id_admin ?? 0);
-
-  const isSuperAdmin = role === "superadmin";
-  const isAdmin = role === "admin";
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -46,9 +32,7 @@ export default function GestionarActividades() {
   const [selectedActividadDetalle, setSelectedActividadDetalle] = useState(null);
 
   const [selectedActividad, setSelectedActividad] = useState(null);
-  const [form, setForm] = useState(makeEmptyForm(isAdmin ? currentSedeId : ""));
-
-  const [toast, setToast] = useState(null);
+  const [form, setForm] = useState(makeEmptyForm());
 
   const normalize = (str) =>
     String(str ?? "")
@@ -56,58 +40,33 @@ export default function GestionarActividades() {
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase();
 
-  const getSedeNombre = (id_sede) => {
-    if (!id_sede) return "Sin sede";
-    return sedesMap?.[id_sede] || `Sede ${id_sede}`;
-  };
-
-  const sedesDisponibles = useMemo(() => {
-    if (isSuperAdmin) return sedes || [];
-    if (isAdmin) {
-      return (sedes || []).filter((s) => Number(s.id_sede) === currentSedeId);
-    }
-    return [];
-  }, [sedes, isSuperAdmin, isAdmin, currentSedeId]);
-
+      
+  // =========================
+  // FILTRO
+  // =========================
   const filteredActividades = useMemo(() => {
-    let visibles = Array.isArray(actividades) ? [...actividades] : [];
-
-    if (isAdmin) {
-      visibles = visibles.filter((a) => Number(a?.id_sede) === currentSedeId);
-    } else if (!isSuperAdmin) {
-      visibles = [];
-    }
-
-    if (!search.trim()) {
-      return visibles.sort(
-        (a, b) => Number(a?.id_actividad || 0) - Number(b?.id_actividad || 0)
-      );
-    }
+    if (!search.trim()) return actividades;
 
     const q = normalize(search);
 
-    return visibles
-      .filter((a) =>
-        normalize(
-          `${a.id_actividad} ${a.nombre_actividad} ${a.tipo_actividad} ${a.area_responsable} ${a.estado_actividad} ${getSedeNombre(a.id_sede)}`
-        ).includes(q)
-      )
-      .sort((a, b) => Number(a?.id_actividad || 0) - Number(b?.id_actividad || 0));
-  }, [actividades, search, isAdmin, isSuperAdmin, currentSedeId]);
+    return actividades.filter((a) =>
+      normalize(
+        `${a.id_actividad} ${a.nombre_actividad} ${a.descripcion} ${a.estado}`
+      ).includes(q)
+    );
+  }, [actividades, search]);
 
+  // =========================
+  // POPUPS
+  // =========================
   const openCreate = () => {
-    setForm(makeEmptyForm(isAdmin ? currentSedeId : ""));
+    setForm(makeEmptyForm());
     setError("");
     setSuccess("");
     setShowCreate(true);
   };
 
   const openEdit = (actividad) => {
-    if (isAdmin && Number(actividad?.id_sede) !== currentSedeId) {
-      setError("Solo puedes editar actividades de tu misma sede");
-      return;
-    }
-
     setSelectedActividad(actividad);
 
     setForm({
@@ -117,16 +76,9 @@ export default function GestionarActividades() {
       fecha_inicio: actividad.fecha_inicio ?? "",
       fecha_fin: actividad.fecha_fin ?? "",
       estado_actividad: actividad.estado_actividad ?? "planificada",
-      activo: Number(actividad.activo ?? 1),
-      id_sede: isAdmin
-        ? currentSedeId
-        : actividad.id_sede != null
-        ? Number(actividad.id_sede)
-        : "",
+      activo: actividad.activo ?? 1,
     });
 
-    setError("");
-    setSuccess("");
     setShowEdit(true);
   };
 
@@ -134,73 +86,47 @@ export default function GestionarActividades() {
     setShowCreate(false);
     setShowEdit(false);
     setSelectedActividad(null);
-    setForm(makeEmptyForm(isAdmin ? currentSedeId : ""));
+    setForm(makeEmptyForm());
     setError("");
   };
 
+  // =========================
+  // CREAR
+  // =========================
   const handleCreate = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!form.nombre_actividad.trim()) {
-    setError("El nombre es obligatorio");
-    return;
-  }
+    if (!form.nombre_actividad.trim()) {
+      setError("El nombre es obligatorio");
+      return;
+    }
 
-  if (!form.id_sede) {
-    setError("La sede es obligatoria");
-    return;
-  }
+    setSaving(true);
+    setError("");
 
-  if (!currentAdminId) {
-    setError("No se encontró el usuario logeado");
-    return;
-  }
-
-  setSaving(true);
-  setError("");
-
-  try {
-      const payload = {
-        ...form,
-        id_sede: isAdmin ? currentSedeId : Number(form.id_sede),
-        id_admin: currentAdminId,
-      };
-
-      const res = await apiPost("actividades-crear", payload);
+    try {
+      const res = await apiPost("actividades-crear", form);
 
       if (res?.ok) {
         setSuccess("✅ Actividad creada correctamente");
-        setToast({
-          type: "success",
-          title: "Actividad creada",
-          message: "",
-        });
-        await refreshActividades();
+        await refreshActividades(); // 👈 solo refresca actividades
         setShowCreate(false);
-        setForm(makeEmptyForm(isAdmin ? currentSedeId : ""));
       } else {
         setError(res?.message || "Error creando actividad");
       }
     } catch {
-      // setError("Error de servidor");
-      setToast({
-          type: "error",
-          title: "Error de servidor",
-          message: "",
-        });
+      setError("Error de servidor");
     } finally {
       setSaving(false);
     }
   };
 
+  // =========================
+  // ACTUALIZAR - EDITAR
+  // =========================
   const handleUpdate = async (e) => {
     e.preventDefault();
     if (!selectedActividad) return;
-
-    if (isAdmin && Number(selectedActividad?.id_sede) !== currentSedeId) {
-      setError("Solo puedes editar actividades de tu misma sede");
-      return;
-    }
 
     setSaving(true);
     setError("");
@@ -209,22 +135,14 @@ export default function GestionarActividades() {
       const payload = {
         id_actividad: selectedActividad.id_actividad,
         ...form,
-        id_sede: isAdmin ? currentSedeId : Number(form.id_sede || 0),
-        id_admin: currentAdminId,
       };
 
       const res = await apiPost("actividades-actualizar", payload);
 
       if (res?.ok) {
-        // setSuccess("✅ Actividad actualizada");
-        setToast({
-          type: "success",
-          title: "Actividad actualizada",
-          message: "",
-        });
+        setSuccess("✅ Actividad actualizada");
         await refreshActividades();
         setShowEdit(false);
-        setSelectedActividad(null);
       } else {
         setError(res?.message || "Error actualizando");
       }
@@ -235,6 +153,9 @@ export default function GestionarActividades() {
     }
   };
 
+  // =========================
+  // ELIMINAR
+  // =========================
   const handleDelete = async (id) => {
     if (!window.confirm("¿Eliminar actividad?")) return;
 
@@ -251,26 +172,23 @@ export default function GestionarActividades() {
       setError("Error eliminando");
     }
   };
+    /* FECHA */
+    const getFecha = (fecha) => {
+      if (!fecha) return "—";
+      const date = new Date(fecha.replace(" ", "T"));
+      const day = date.getDate().toString().padStart(2, "0");
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}-${month}-${year}`;
+    };
 
-  const getFecha = (fecha) => {
-    if (!fecha) return "—";
-    const date = new Date(String(fecha).replace(" ", "T"));
-    if (isNaN(date.getTime())) return "—";
-    const day = date.getDate().toString().padStart(2, "0");
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
-
-  const getHora = (fecha) => {
-    if (!fecha) return "—";
-    const date = new Date(String(fecha).replace(" ", "T"));
-    if (isNaN(date.getTime())) return "—";
-    const hours = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    return `${hours}:${minutes}`;
-  };
-
+    const getHora = (fecha) => {
+      if (!fecha) return "—";
+      const date = new Date(fecha.replace(" ", "T"));
+      const hours = date.getHours().toString().padStart(2, "0");
+      const minutes = date.getMinutes().toString().padStart(2, "0");
+      return `${hours}:${minutes}`;
+    };
   return (
     <div className="ctnGestion">
       <h2>Gestionar Actividades</h2>
@@ -303,7 +221,6 @@ export default function GestionarActividades() {
               <th>Nombre</th>
               <th>Tipo</th>
               <th>Área</th>
-              <th>Sede</th>
               <th>F. Inicio</th>
               <th>F. Fin</th>
               <th>Editar</th>
@@ -313,11 +230,11 @@ export default function GestionarActividades() {
           <tbody>
             {globalLoading ? (
               <tr>
-                <td colSpan="8">Cargando...</td>
+                <td colSpan="5">Cargando...</td>
               </tr>
             ) : filteredActividades.length === 0 ? (
               <tr>
-                <td colSpan="8">No hay actividades</td>
+                <td colSpan="5">No hay actividades</td>
               </tr>
             ) : (
               filteredActividades.map((a) => (
@@ -328,13 +245,18 @@ export default function GestionarActividades() {
                   <td>{a.nombre_actividad}</td>
                   <td>{a.tipo_actividad}</td>
                   <td>{a.area_responsable}</td>
-                  <td>{getSedeNombre(a.id_sede)}</td>
                   <td>{getFecha(a.fecha_inicio)}</td>
                   <td>{getFecha(a.fecha_fin)}</td>
                   <td className="actionsCell">
-                    <div className="btnSmall" onClick={() => openEdit(a)}>
+                    <div className="btnSmall" onClick={() => openEdit(a)} >
                       <SVG.Edit />
                     </div>
+                    {/* <button
+                      className="btnSmall"
+                      onClick={() => handleDelete(a.id_actividad)}
+                    >
+                      ❌
+                    </button> */}
                   </td>
                 </tr>
               ))
@@ -342,13 +264,14 @@ export default function GestionarActividades() {
           </tbody>
         </table>
       </div>
-
+      {/* CREAR ACTIVIDAD  */}
       {showCreate && (
         <div className="popup">
           <div className="popup-content">
             <h3>Crear Actividad</h3>
 
             <form onSubmit={handleCreate} autoComplete="off">
+
               <div className="input-field">
                 <input
                   type="text"
@@ -384,25 +307,6 @@ export default function GestionarActividades() {
                   placeholder=" "
                 />
                 <label>Área Responsable</label>
-              </div>
-
-              <div className="input-field">
-                <select
-                  value={form.id_sede}
-                  onChange={(e) =>
-                    setForm({ ...form, id_sede: Number(e.target.value) })
-                  }
-                  disabled={isAdmin}
-                  required
-                >
-                  <option value=""></option>
-                  {sedesDisponibles.map((s) => (
-                    <option key={s.id_sede} value={s.id_sede}>
-                      {s.nombre_sede}
-                    </option>
-                  ))}
-                </select>
-                <label>Sede</label>
               </div>
 
               <div className="double__form">
@@ -462,13 +366,15 @@ export default function GestionarActividades() {
           </div>
         </div>
       )}
-
+      {/* EDITAR ACTIVIDAD*/}
       {showEdit && selectedActividad && (
         <div className="popup">
           <div className="popup-content">
             <h3>Editar Actividad</h3>
 
             <form onSubmit={handleUpdate} autoComplete="off">
+
+              {/* ID (solo lectura) */}
               <div className="input-field">
                 <input
                   type="text"
@@ -479,6 +385,7 @@ export default function GestionarActividades() {
                 <label>ID Actividad</label>
               </div>
 
+              {/* Nombre + Tipo */}
               <div className="double__form">
                 <div className="input-field">
                   <input
@@ -506,6 +413,7 @@ export default function GestionarActividades() {
                 </div>
               </div>
 
+              {/* Área + Estado */}
               <div className="double__form">
                 <div className="input-field">
                   <input
@@ -535,6 +443,7 @@ export default function GestionarActividades() {
                 </div>
               </div>
 
+              {/* Fechas */}
               <div className="double__form">
                 <div className="input-field">
                   <input
@@ -559,40 +468,21 @@ export default function GestionarActividades() {
                 </div>
               </div>
 
-              <div className="double__form">
-                <div className="input-field">
-                  <select
-                    value={form.id_sede}
-                    onChange={(e) =>
-                      setForm({ ...form, id_sede: Number(e.target.value) })
-                    }
-                    disabled={isAdmin}
-                    required
-                  >
-                    <option value=""></option>
-                    {sedesDisponibles.map((s) => (
-                      <option key={s.id_sede} value={s.id_sede}>
-                        {s.nombre_sede}
-                      </option>
-                    ))}
-                  </select>
-                  <label>Sede</label>
-                </div>
-
-                <div className="input-field">
-                  <select
-                    value={form.activo}
-                    onChange={(e) =>
-                      setForm({ ...form, activo: Number(e.target.value) })
-                    }
-                  >
-                    <option value={1}>Sí</option>
-                    <option value={0}>No</option>
-                  </select>
-                  <label>Activo</label>
-                </div>
+              {/* Activo */}
+              <div className="input-field">
+                <select
+                  value={form.activo}
+                  onChange={(e) =>
+                    setForm({ ...form, activo: Number(e.target.value) })
+                  }
+                >
+                  <option value={1}>Sí</option>
+                  <option value={0}>No</option>
+                </select>
+                <label>Activo</label>
               </div>
 
+              {/* BOTONES */}
               <div className="popupActions">
                 <button className="btnPrimary" type="submit" disabled={saving}>
                   {saving ? "Guardando..." : "Guardar cambios"}
@@ -606,17 +496,19 @@ export default function GestionarActividades() {
                   <SVG.Close />
                 </button>
               </div>
+
             </form>
           </div>
         </div>
       )}
-
+      {/* DETALLE ACTIVIDAD */}
       {selectedActividadDetalle && (
         <div className="popup">
           <div className="popup-content">
             <h3>Detalle de Actividad</h3>
 
             <div className="popup-item">
+
               <div className="triple__form">
                 <div className="input-field">
                   <input type="text" value={selectedActividadDetalle.id_actividad} readOnly />
@@ -664,22 +556,6 @@ export default function GestionarActividades() {
 
               <div className="double__form">
                 <div className="input-field">
-                  <input type="text" value={getSedeNombre(selectedActividadDetalle.id_sede)} readOnly />
-                  <label>Sede</label>
-                </div>
-
-                <div className="input-field">
-                  <input
-                    type="text"
-                    value={selectedActividadDetalle.activo ? "Sí" : "No"}
-                    readOnly
-                  />
-                  <label>Activo</label>
-                </div>
-              </div>
-
-              <div className="double__form">
-                <div className="input-field">
                   <input type="text" value={getFecha(selectedActividadDetalle.fecha_inicio)} readOnly />
                   <label>Fecha Inicio</label>
                 </div>
@@ -697,15 +573,27 @@ export default function GestionarActividades() {
                 </div>
 
                 <div className="input-field">
-                  <input type="text" value={getFecha(selectedActividadDetalle.updated_at)} readOnly />
-                  <label>Última actualización</label>
+                  <input
+                    type="text"
+                    value={selectedActividadDetalle.activo ? "Sí" : "No"}
+                    readOnly
+                  />
+                  <label>Activo</label>
                 </div>
               </div>
 
-              <div className="input-field">
-                <input type="text" value={getHora(selectedActividadDetalle.updated_at)} readOnly />
-                <label>Hora actualización</label>
+              <div className="double__form">
+                <div className="input-field">
+                  <input type="text" value={getFecha(selectedActividadDetalle.updated_at)} readOnly />
+                  <label>Última actualización</label>
+                </div>
+
+                <div className="input-field">
+                  <input type="text" value={getHora(selectedActividadDetalle.updated_at)} readOnly />
+                  <label>Hora actualización</label>
+                </div>
               </div>
+
             </div>
 
             <button
@@ -716,7 +604,8 @@ export default function GestionarActividades() {
             </button>
           </div>
         </div>
-      )}
+      )}     
+      
     </div>
   );
 }

@@ -220,7 +220,7 @@ export default function GestionarUnidadesMedida() {
         </div>
 
         <button className="btnAdd" onClick={openCreate}>
-          <SVG.UserAdd />
+          <SVG.Add />
           Nueva unidad de medida
         </button>
       </div>
@@ -260,7 +260,7 @@ export default function GestionarUnidadesMedida() {
                   <td>{Number(u.activo) === 1 ? "Sí" : "No"}</td>
                   <td className="actionsCell">
                     <div className="btnSmall" onClick={() => openEdit(u)}>
-                      <SVG.UserEdit />
+                      <SVG.Edit />
                     </div>
                     {/* <button className="btnSmall" onClick={() => handleDelete(u.id_unidad)}>
                       ❌
