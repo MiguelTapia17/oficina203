@@ -79,10 +79,10 @@ export default function Inicio() {
         </div>
 
         {/* PRODUCTOS POR ACABARSE */}
-        <div className="item">
+        {/* <div className="item">
           <div className="top">
             <div>
-              {/* <SVG.Vencimiento /> */}
+              <SVG.Vencimiento />
               <p className="subtitle">Materiales por acabarse</p>
             </div>
             <SVG.ArrowRight />
@@ -101,7 +101,7 @@ export default function Inicio() {
               Materiales bajo de stock
             </p>
           </div>
-        </div>
+        </div> */}
 
         {/* PRODUCTOS SIN STOCK */}
         <div className="item">

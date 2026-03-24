@@ -127,7 +127,7 @@ export default function HistorialMovimientos() {
           <thead>
             <tr>
               <th>ID</th>
-              <th>Usuario</th>
+              {/* <th>Usuario</th> */}
               <th>Ítem</th>
               <th>Tipo</th>
               <th>Cant.</th>
@@ -145,7 +145,7 @@ export default function HistorialMovimientos() {
               rows.map((r, idx) => (
                 <tr key={`${r.id_movimiento}-${idx}`}>
                   <td>{r.id_movimiento}</td>
-                  <td title={r.nombre_admin}>{r.nombre_admin}</td>
+                  {/* <td title={r.nombre_admin}>{r.nombre_admin}</td> */}
                   <td title={r.nombre_item}>{r.nombre_item}</td>
                   <td className={`tipoM ${String(r.tipo_movimiento || "").toLowerCase()}`}>
                     <p>{r.tipo_movimiento}</p>

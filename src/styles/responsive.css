@@ -139,8 +139,7 @@
         height: fit-content !important;
     }
     
-    td.entrada p,
-    td.salida p{
+    td.tipoM p{
         display: none;
     }
     td.tipoM::after{
@@ -170,7 +169,7 @@
         color: var(--txtBlueBorder);
     }
     td.sobrante::after{
-        content: "⬇︎";
+        content: "⬆︎";
         background-color: var(--txtYellowBg);
         border-color: var(--txtYellowBorder);
         color: var(--txtYellowBorder);

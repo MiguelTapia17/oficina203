@@ -1,9 +1,7 @@
 import { useMemo, useState } from "react";
 import { apiPost } from "../../services/api";
 import { useGlobalData } from "../../context/GlobalDataContext";
-import { useAuth } from "../../context/AuthContext";
 import { SVG } from "../../assets/imgSvg";
-import Toast from "../../components/Toast";
 import "../../styles/usuarios.css";
 
 const makeEmptyForm = () => ({
@@ -21,15 +19,14 @@ export default function GestionarSedes() {
     sedes,
     usuariosMap,
     loading: globalLoading,
+    // ideal: refreshSedes. Si no lo tienes, usa refreshGlobalData.
     refreshSedes,
     refreshGlobalData,
   } = useGlobalData();
 
-  const { user } = useAuth();
-  const currentAdminId = Number(user?.id_admin ?? 0);
-
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [search, setSearch] = useState("");
 
   const [showCreate, setShowCreate] = useState(false);
@@ -38,7 +35,6 @@ export default function GestionarSedes() {
 
   const [selectedSede, setSelectedSede] = useState(null);
   const [form, setForm] = useState(makeEmptyForm());
-  const [toast, setToast] = useState(null);
 
   const normalize = (str) =>
     String(str ?? "")
@@ -47,30 +43,48 @@ export default function GestionarSedes() {
       .toLowerCase();
 
   const doRefresh = async () => {
+    // Si existe refreshSedes, úsalo. Si no, fallback a refreshGlobalData.
     if (typeof refreshSedes === "function") return refreshSedes();
     if (typeof refreshGlobalData === "function") return refreshGlobalData();
   };
 
+  // =========================
+  // FILTRO
+  // =========================
+  // const filteredSedes = useMemo(() => {
+  //   if (!search.trim()) return sedes || [];
+
+  //   const q = normalize(search);
+
+  //   return (sedes || []).filter((s) =>
+  //     normalize(
+  //       `${s.id_sede} ${s.nombre_sede} ${s.tipo_sede} ${s.direccion} ${s.distrito} ${s.provincia} ${s.departamento} ${s.activo}`
+  //     ).includes(q)
+  //   );
+  // }, [sedes, search]);
   const filteredSedes = useMemo(() => {
-    const base = Array.isArray(sedes) ? [...sedes] : [];
+  const base = Array.isArray(sedes) ? [...sedes] : [];
 
-    base.sort((a, b) => Number(a.id_sede) - Number(b.id_sede));
+  // 🔹 Ordenar por ID ascendente
+  base.sort((a, b) => Number(a.id_sede) - Number(b.id_sede));
 
-    if (!search.trim()) return base;
+  if (!search.trim()) return base;
 
-    const q = normalize(search);
+  const q = normalize(search);
 
-    return base.filter((s) =>
-      normalize(
-        `${s.id_sede} ${s.nombre_sede} ${s.tipo_sede} ${s.direccion} ${s.distrito} ${s.provincia} ${s.departamento} ${s.activo}`
-      ).includes(q)
-    );
-  }, [sedes, search]);
+  return base.filter((s) =>
+    normalize(
+      `${s.id_sede} ${s.nombre_sede} ${s.tipo_sede} ${s.direccion} ${s.distrito} ${s.provincia} ${s.departamento} ${s.activo}`
+    ).includes(q)
+  );
+}, [sedes, search]);
 
+  // =========================
+  // FECHA/HORA (igual estilo)
+  // =========================
   const getFecha = (fecha) => {
     if (!fecha) return "—";
     const date = new Date(String(fecha).replace(" ", "T"));
-    if (isNaN(date.getTime())) return "—";
     const day = date.getDate().toString().padStart(2, "0");
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
@@ -80,17 +94,20 @@ export default function GestionarSedes() {
   const getHora = (fecha) => {
     if (!fecha) return "—";
     const date = new Date(String(fecha).replace(" ", "T"));
-    if (isNaN(date.getTime())) return "—";
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
     return `${hours}:${minutes}`;
   };
 
+  // =========================
+  // POPUPS
+  // =========================
   const openCreate = () => {
     setForm(makeEmptyForm());
     setSelectedSede(null);
     setSelectedSedeDetalle(null);
     setError("");
+    setSuccess("");
     setShowCreate(true);
   };
 
@@ -98,6 +115,7 @@ export default function GestionarSedes() {
     setSelectedSede(sede);
     setSelectedSedeDetalle(null);
     setError("");
+    setSuccess("");
 
     setForm({
       nombre_sede: sede.nombre_sede ?? "",
@@ -106,7 +124,7 @@ export default function GestionarSedes() {
       distrito: sede.distrito ?? "",
       provincia: sede.provincia ?? "",
       departamento: sede.departamento ?? "",
-      activo: Number(sede.activo ?? 1),
+      activo: sede.activo ?? 1,
     });
 
     setShowEdit(true);
@@ -120,29 +138,20 @@ export default function GestionarSedes() {
     setError("");
   };
 
+  // =========================
+  // CREAR
+  // =========================
   const handleCreate = async (e) => {
     e.preventDefault();
 
     if (!form.nombre_sede.trim()) {
-      setToast({
-        type: "error",
-        title: "Campo requerido",
-        message: "El nombre de sede es obligatorio",
-      });
-      return;
-    }
-
-    if (!currentAdminId) {
-      setToast({
-        type: "error",
-        title: "Sesión inválida",
-        message: "No se encontró el usuario logeado",
-      });
+      setError("El nombre de sede es obligatorio");
       return;
     }
 
     setSaving(true);
     setError("");
+    setSuccess("");
 
     try {
       const payload = {
@@ -154,74 +163,39 @@ export default function GestionarSedes() {
         provincia: (form.provincia ?? "").trim(),
         departamento: (form.departamento ?? "").trim(),
         activo: Number(form.activo ?? 1),
-        id_admin: currentAdminId,
       };
 
       const res = await apiPost("sedes-crear", payload);
 
       if (res?.ok) {
-        setToast({
-          type: "success",
-          title: "Sede creada",
-          message: "La sede fue creada correctamente",
-        });
+        setSuccess("✅ Sede creada correctamente");
         await doRefresh();
         setShowCreate(false);
-        setForm(makeEmptyForm());
       } else {
-        setToast({
-          type: "error",
-          title: "Error",
-          message: res?.message || "Error creando sede",
-        });
+        setError(res?.message || "Error creando sede");
       }
     } catch {
-      setToast({
-        type: "error",
-        title: "Error de servidor",
-        message: "No se pudo crear la sede",
-      });
+      setError("Error de servidor");
     } finally {
       setSaving(false);
     }
   };
 
+  // =========================
+  // ACTUALIZAR
+  // =========================
   const handleUpdate = async (e) => {
     e.preventDefault();
-
-    if (!selectedSede?.id_sede) {
-      setToast({
-        type: "error",
-        title: "Error",
-        message: "No se encontró la sede a editar",
-      });
-      return;
-    }
-
-    if (!form.nombre_sede.trim()) {
-      setToast({
-        type: "error",
-        title: "Campo requerido",
-        message: "El nombre de sede es obligatorio",
-      });
-      return;
-    }
-
-    if (!currentAdminId) {
-      setToast({
-        type: "error",
-        title: "Sesión inválida",
-        message: "No se encontró el usuario logeado",
-      });
-      return;
-    }
+    if (!selectedSede) return;
 
     setSaving(true);
     setError("");
+    setSuccess("");
 
     try {
       const payload = {
-        id_sede: Number(selectedSede.id_sede),
+        id_sede: selectedSede.id_sede,
+        ...form,
         nombre_sede: form.nombre_sede.trim(),
         tipo_sede: (form.tipo_sede ?? "").trim(),
         direccion: (form.direccion ?? "").trim(),
@@ -229,65 +203,45 @@ export default function GestionarSedes() {
         provincia: (form.provincia ?? "").trim(),
         departamento: (form.departamento ?? "").trim(),
         activo: Number(form.activo ?? 1),
-        id_admin: currentAdminId,
       };
 
       const res = await apiPost("sedes-actualizar", payload);
 
       if (res?.ok) {
-        setToast({
-          type: "success",
-          title: "Sede actualizada",
-          message: "La sede fue actualizada correctamente",
-        });
+        setSuccess("✅ Sede actualizada");
         await doRefresh();
         setShowEdit(false);
         setSelectedSede(null);
         setForm(makeEmptyForm());
       } else {
-        setToast({
-          type: "error",
-          title: "Error",
-          message: res?.message || "Error actualizando sede",
-        });
+        setError(res?.message || "Error actualizando sede");
       }
     } catch {
-      setToast({
-        type: "error",
-        title: "Error de servidor",
-        message: "No se pudo actualizar la sede",
-      });
+      setError("Error de servidor");
     } finally {
       setSaving(false);
     }
   };
 
+  // =========================
+  // ELIMINAR (desactivación lógica)
+  // =========================
   const handleDelete = async (id) => {
     if (!window.confirm("¿Eliminar sede? (desactivación lógica)")) return;
 
+    setError("");
+    setSuccess("");
+
     try {
       const res = await apiPost(`sedes-eliminar/${id}`, {});
-
       if (res?.ok) {
-        setToast({
-          type: "success",
-          title: "Sede desactivada",
-          message: "La sede fue desactivada correctamente",
-        });
+        setSuccess("✅ Sede desactivada");
         await doRefresh();
       } else {
-        setToast({
-          type: "error",
-          title: "Error",
-          message: res?.message || "No se pudo desactivar la sede",
-        });
+        setError(res?.message || "No se pudo desactivar la sede");
       }
     } catch {
-      setToast({
-        type: "error",
-        title: "Error de servidor",
-        message: "No se pudo eliminar la sede",
-      });
+      setError("Error eliminando sede");
     }
   };
 
@@ -313,6 +267,7 @@ export default function GestionarSedes() {
       </div>
 
       {error && <p className="errorTxt">{error}</p>}
+      {success && <p className="successTxt">{success}</p>}
 
       <div className="ctnTable">
         <table>
@@ -322,6 +277,7 @@ export default function GestionarSedes() {
               <th>Nombre</th>
               <th>Tipo</th>
               <th>Distrito</th>
+              {/* <th>Provincia</th> */}
               <th>Activo</th>
               <th>Editar</th>
             </tr>
@@ -345,11 +301,15 @@ export default function GestionarSedes() {
                   <td>{s.nombre_sede}</td>
                   <td>{s.tipo_sede}</td>
                   <td>{s.distrito}</td>
+                  {/* <td>{s.provincia}</td> */}
                   <td>{Number(s.activo) === 1 ? "Sí" : "No"}</td>
                   <td className="actionsCell">
                     <div className="btnSmall" onClick={() => openEdit(s)}>
                       <SVG.LocationEdit />
                     </div>
+                    {/* <button className="btnSmall" onClick={() => handleDelete(s.id_sede)}>
+                      ❌
+                    </button> */}
                   </td>
                 </tr>
               ))
@@ -358,6 +318,7 @@ export default function GestionarSedes() {
         </table>
       </div>
 
+      {/* ===================== POPUP CREAR ===================== */}
       {showCreate && (
         <div className="popup">
           <div className="popup-content">
@@ -452,6 +413,7 @@ export default function GestionarSedes() {
         </div>
       )}
 
+      {/* ===================== POPUP EDITAR ===================== */}
       {showEdit && selectedSede && (
         <div className="popup">
           <div className="popup-content">
@@ -551,6 +513,7 @@ export default function GestionarSedes() {
         </div>
       )}
 
+      {/* ===================== POPUP DETALLE ===================== */}
       {selectedSedeDetalle && (
         <div className="popup">
           <div className="popup-content">
@@ -642,15 +605,6 @@ export default function GestionarSedes() {
             </button>
           </div>
         </div>
-      )}
-
-      {toast && (
-        <Toast
-          type={toast.type}
-          title={toast.title}
-          message={toast.message}
-          onClose={() => setToast(null)}
-        />
       )}
     </div>
   );

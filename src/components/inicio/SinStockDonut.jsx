@@ -1,85 +1,84 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import Chart from "react-apexcharts";
+import { useGlobalData } from "../../context/GlobalDataContext";
+import { useAuth } from "../../context/AuthContext";
 
-export default function SinStockDonut({ sinStock = [] }) {
-  const [selectedSede, setSelectedSede] = useState(""); // "" = Todas
-  const [selectedItem, setSelectedItem] = useState("");
-  
-  useEffect(() => {
-    setSelectedItem("");
-  }, [selectedSede]);
+export default function UsuariosPorSedeDonut() {
+  const [selectedSede, setSelectedSede] = useState("");
 
-  const sedesSinStock = useMemo(() => {
-    const set = new Set(sinStock.map((x) => x?.nombre_sede).filter(Boolean));
-    return Array.from(set).sort((a, b) => a.localeCompare(b));
-  }, [sinStock]);
+  const { usuarios, sedes, sedesMap, loading } = useGlobalData();
+  const { user } = useAuth();
 
-  const sinStockFiltrado = useMemo(() => {
-    if (!selectedSede) return sinStock;
-    return sinStock.filter((x) => x?.nombre_sede === selectedSede);
-  }, [sinStock, selectedSede]);
+  const role = String(user?.rol ?? "").toLowerCase();
+  const currentSedeId = Number(user?.id_sede ?? 0);
 
-  const sinStockGrouped = useMemo(() => {
+  const isSuperAdmin = role === "superadmin";
+  const isAdmin = role === "admin";
+
+  const usuariosVisibles = useMemo(() => {
+    if (isSuperAdmin) return usuarios || [];
+    if (isAdmin) {
+      return (usuarios || []).filter(
+        (u) => Number(u?.id_sede) === currentSedeId
+      );
+    }
+    return [];
+  }, [usuarios, isSuperAdmin, isAdmin, currentSedeId]);
+
+  const sedesDisponibles = useMemo(() => {
+    if (isSuperAdmin) {
+      return (sedes || [])
+        .filter((s) => s?.id_sede && s?.nombre_sede)
+        .sort((a, b) => a.nombre_sede.localeCompare(b.nombre_sede));
+    }
+
+    if (isAdmin) {
+      return (sedes || [])
+        .filter((s) => Number(s?.id_sede) === currentSedeId)
+        .sort((a, b) => a.nombre_sede.localeCompare(b.nombre_sede));
+    }
+
+    return [];
+  }, [sedes, isSuperAdmin, isAdmin, currentSedeId]);
+
+  const usuariosAgrupadosPorSede = useMemo(() => {
     const map = new Map();
 
-    for (const row of sinStockFiltrado) {
-      const nombre = row?.nombre_item || "Sin nombre";
-      const sede = row?.nombre_sede || "Sin sede";
+    for (const user of usuariosVisibles) {
+      const idSede = Number(user?.id_sede ?? 0);
+      const nombreSede = sedesMap?.[idSede] || "Sin sede";
 
-      if (!map.has(nombre)) {
-        map.set(nombre, { nombre_item: nombre, total: 0, sedes: new Set() });
+      if (!map.has(nombreSede)) {
+        map.set(nombreSede, 0);
       }
 
-      const item = map.get(nombre);
-      item.total += 1;
-      item.sedes.add(sede);
+      map.set(nombreSede, map.get(nombreSede) + 1);
     }
 
-    return Array.from(map.values())
-      .map((x) => ({
-        nombre_item: x.nombre_item,
-        total: x.total,
-        sedes: Array.from(x.sedes),
-        total_sedes_unicas: x.sedes.size,
-      }))
-      .sort((a, b) => b.total - a.total);
-  }, [sinStockFiltrado]);
+    let result = Array.from(map.entries()).map(([nombre_sede, total]) => ({
+      nombre_sede,
+      total,
+    }));
 
-  const donutTopN = 6;
+    if (selectedSede) {
+      result = result.filter((x) => x.nombre_sede === selectedSede);
+    }
+
+    return result.sort((a, b) => b.total - a.total);
+  }, [usuariosVisibles, sedesMap, selectedSede]);
 
   const donutData = useMemo(() => {
-    const top = sinStockGrouped.slice(0, donutTopN);
-    const rest = sinStockGrouped.slice(donutTopN);
-
-    const labels = top.map((x) => x.nombre_item);
-    const series = top.map((x) => x.total_sedes_unicas);
-
-    const otros = rest.reduce((acc, x) => acc + x.total_sedes_unicas, 0);
-    if (otros > 0) {
-      labels.push("Otros");
-      series.push(otros);
-    }
-
-    return { labels, series };
-  }, [sinStockGrouped]);
+    return {
+      labels: usuariosAgrupadosPorSede.map((x) => x.nombre_sede),
+      series: usuariosAgrupadosPorSede.map((x) => x.total),
+    };
+  }, [usuariosAgrupadosPorSede]);
 
   const donutOptions = useMemo(
     () => ({
       chart: {
         type: "donut",
         toolbar: { show: false },
-        events: {
-          dataPointSelection: (event, chartContext, config) => {
-            const idx = config.dataPointIndex;
-            const label = donutData.labels[idx];
-
-            if (label === "Otros") {
-              setSelectedItem("");
-              return;
-            }
-            setSelectedItem(label);
-          },
-        },
       },
       labels: donutData.labels,
       legend: {
@@ -91,26 +90,20 @@ export default function SinStockDonut({ sinStock = [] }) {
         y: {
           formatter: (val) => {
             const n = Number(val) || 0;
-            const text = selectedSede ? "producto" : "sede";
-            return `${n} ${text}${n === 1 ? "" : "s"}`;
+            return `${n} usuario${n === 1 ? "" : "s"}`;
           },
         },
       },
       states: {
-        active: {
-          filter: { type: "none" }, // evita el oscurecido al click
-        },
-        hover: {
-          filter: { type: "none" }, // opcional: evita cambio al hover
-        },
+        active: { filter: { type: "none" } },
+        hover: { filter: { type: "none" } },
       },
       plotOptions: {
         pie: {
-          expandOnClick: true, // que se agrande al click
+          expandOnClick: true,
           donut: { size: "68%" },
         },
       },
-
       colors: [
         "var(--primary)",
         "var(--ciencia)",
@@ -120,22 +113,27 @@ export default function SinStockDonut({ sinStock = [] }) {
         "var(--gestion)",
         "var(--secundary)",
       ],
+      noData: {
+        text: "Sin datos",
+      },
     }),
-    [donutData.labels, selectedSede]
+    [donutData.labels]
   );
-
 
   return (
     <div className="vistaRigth">
       <div className="top">
-        <p className="title">Productos sin stock</p>
+        <p className="title">Usuarios por sede</p>
 
         <div className="input-field">
-          <select value={selectedSede} onChange={(e) => setSelectedSede(e.target.value)}>
+          <select
+            value={selectedSede}
+            onChange={(e) => setSelectedSede(e.target.value)}
+          >
             <option value="">Todos</option>
-            {sedesSinStock.map((s) => (
-              <option key={s} value={s}>
-                {s}
+            {sedesDisponibles.map((s) => (
+              <option key={s.id_sede} value={s.nombre_sede}>
+                {s.nombre_sede}
               </option>
             ))}
           </select>
@@ -144,10 +142,17 @@ export default function SinStockDonut({ sinStock = [] }) {
       </div>
 
       <div style={{ width: "100%", height: 280 }}>
-        <Chart options={donutOptions} series={donutData.series} type="donut" height={280} />
+        {loading ? (
+          <p style={{ opacity: 0.7 }}>Cargando...</p>
+        ) : (
+          <Chart
+            options={donutOptions}
+            series={donutData.series}
+            type="donut"
+            height={280}
+          />
+        )}
       </div>
-
-      
     </div>
   );
 }

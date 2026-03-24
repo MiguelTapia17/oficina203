@@ -136,13 +136,13 @@
 }
 
 .nivel.dos .ctnHistorial{
-    width: 59%;
-    min-width: 59%;
+    width: 63%;
+    min-width: 63%;
     height: 100%;
 }
 .nivel.dos .vistaRigth{
-    width: 40%;
-    min-width: 40%;
+    width: 36%;
+    min-width: 36%;
     height: 100%;
     display: flex;
     flex-direction: column;

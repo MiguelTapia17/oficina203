@@ -11,18 +11,13 @@ function PrivateRoute({ children }) {
 }
 
 export default function App() {
-  const token = localStorage.getItem("token");
-
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={<Navigate to={token ? "/dashboard" : "/login"} replace />}
-        />
 
         <Route path="/login" element={<Login />} />
 
+        {/* DASHBOARD PARA TODOS LOS ROLES */}
         <Route
           path="/dashboard"
           element={
@@ -34,7 +29,8 @@ export default function App() {
           }
         />
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+
       </Routes>
     </BrowserRouter>
   );
