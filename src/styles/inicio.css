@@ -91,27 +91,27 @@
     display: none;
 }
 .nivel.uno .item .medium .barra{
-    background-color: #d4f5e6; /* fondo claro */
-    border-color:  #129b62; /* borde */
-    color: #129b62;
+    background-color: var(--txtGreenBg);
+    border-color: var(--txtGreenBorder); 
+    color: var(--txtGreen);
 }
 .nivel.uno .item .medium .barra svg{
-    fill: #129b62;
+    fill: var(--txtGreen);
 }
 
 .nivel.uno .item .medium .resta{
-    background-color: #FFF6DB; /* fondo claro */
-    border-color: #F2B705; /* borde */
-    color: #7A5A00;
+    background-color: var(--txtYellowBg);
+    border-color: var(--txtYellowBorder);
+    color: var(--txtYellowBorder);
 }
 .nivel.uno .item .medium .resta svg{
     fill: #7A5A00;
 }
 
 .nivel.uno .item .medium .menos{
-    background-color: #FDECEC; /* fondo claro */
-    border-color: #E4142C; /* borde */
-    color: #8B1D2C;
+    background-color: var(--txtRedBg);
+    border-color: var(--txtRedBorder); 
+    color: var(--txtRed);
 }
 .nivel.uno .item .medium .menos svg{
     fill: #8B1D2C;

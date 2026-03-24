@@ -476,7 +476,8 @@ const handleStockFilterToggle = () => {
         
         {/* Botón para agregar un nuevo producto */}
         <div className="btnAdd" onClick={handleAddNewProduct}>
-          <SVG.BoxAdd className="icon" /> Nuevo Producto
+          <SVG.BoxAdd className="icon" /> 
+          <p>Nuevo Producto</p>
         </div>
 
       </div>

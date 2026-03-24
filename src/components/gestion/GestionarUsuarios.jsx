@@ -401,7 +401,7 @@ export default function GestionarUsuarios() {
         {(isAdmin || isSuperAdmin) && (
           <button className="btnAdd" onClick={openCreate}>
             <SVG.UserAdd />
-            Nuevo usuario
+            <p>Nuevo usuario</p>
           </button>
         )}
       </div>

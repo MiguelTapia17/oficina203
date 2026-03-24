@@ -221,7 +221,7 @@ export default function GestionarUnidadesMedida() {
 
         <button className="btnAdd" onClick={openCreate}>
           <SVG.Add />
-          Nueva unidad de medida
+          <p>Nueva unidad de medida</p>
         </button>
       </div>
 

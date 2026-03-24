@@ -226,7 +226,12 @@ export default function GestionarActividades() {
         setShowEdit(false);
         setSelectedActividad(null);
       } else {
-        setError(res?.message || "Error actualizando");
+        // setError(res?.message || "Error actualizando");
+        setToast({
+          type: "error",
+          title: "Error",
+          message: res?.message || "Error al actualizar",
+        });
       }
     } catch {
       setError("Error de servidor");
@@ -243,6 +248,11 @@ export default function GestionarActividades() {
 
       if (res?.ok) {
         setSuccess("✅ Eliminada");
+        setToast({
+          type: "success",
+          title: "Eliminado Correctamente",
+          message: "",
+        });
         await refreshActividades();
       } else {
         setError("No se pudo eliminar");
@@ -288,7 +298,7 @@ export default function GestionarActividades() {
 
         <button className="btnAdd" onClick={openCreate}>
           <SVG.Add />
-          Nueva actividad
+          <p>Nueva actividad</p>
         </button>
       </div>
 
@@ -301,8 +311,9 @@ export default function GestionarActividades() {
             <tr>
               <th>ID</th>
               <th>Nombre</th>
-              <th>Tipo</th>
+              {/* <th>Tipo</th> */}
               <th>Área</th>
+              <th>Activo</th>
               <th>Sede</th>
               <th>F. Inicio</th>
               <th>F. Fin</th>
@@ -326,8 +337,9 @@ export default function GestionarActividades() {
                     {a.id_actividad}
                   </td>
                   <td>{a.nombre_actividad}</td>
-                  <td>{a.tipo_actividad}</td>
+                  {/* <td>{a.tipo_actividad}</td> */}
                   <td>{a.area_responsable}</td>
+                  <td>{a.activo}</td>
                   <td>{getSedeNombre(a.id_sede)}</td>
                   <td>{getFecha(a.fecha_inicio)}</td>
                   <td>{getFecha(a.fecha_fin)}</td>
@@ -716,6 +728,14 @@ export default function GestionarActividades() {
             </button>
           </div>
         </div>
+      )}
+      {toast && (
+        <Toast
+          type={toast.type}
+          title={toast.title}
+          message={toast.message}
+          onClose={() => setToast(null)}
+        />
       )}
     </div>
   );

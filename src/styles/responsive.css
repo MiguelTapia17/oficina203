@@ -1,5 +1,5 @@
+
 .hamburger {
-    
     position: absolute;
     bottom: 0.5rem;
     right: 0.5rem;
@@ -10,8 +10,10 @@
     overflow: hidden;
     z-index: 2;
     background-color: white;
-    border-radius: 1rem 0 1rem 0;
+    /* border-radius: 1rem 0 1rem 0; */
+    border-radius: 1rem;
     padding: 0.5rem;
+    box-shadow: 0 0 1rem var(--gray);
 }
 
 .hamburger input {
@@ -19,9 +21,7 @@
 }
 
 .hamburger svg {
-  /* The size of the SVG defines the overall size */
-  height: 2.5rem;
-  /* Define the transition for transforming the SVG */
+  height: 2rem;
   transition: transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -93,7 +93,7 @@
     .ctnUsuario{
         width: 80%;
         position: absolute;
-        padding: 0.8rem 24px !important;
+        padding: 0.4rem 24px !important;
         justify-content: start !important;
         bottom: 0;
         left: 0;
@@ -103,34 +103,134 @@
         display: none;
     }
     .ctnInicio{
+        width: 100%;
         gap: 1rem;
+        overflow: visible;
     }
     .nivel.dos{
         flex-direction: column;
+        height: auto !important;
     }
     .nivel.dos .ctnHistorial {
-        height: 50rem !important;
+        height: 26rem !important;
+    }
+    .nivel.dos .vistaRigth {
+        height: 26rem !important;
     }
     .nivel.dos .ctnHistorial, .nivel.dos .vistaRigth{
         width: 100% !important;
     }
 }
 
-
+@media (max-width: 1000px){
+    .nivel.tres {
+        flex-direction: column;
+        height: 30rem !important;
+        gap: 1rem;
+    }
+    .nivel.tres > div{
+        width: 100% !important;
+    }
+    .ctnContenido{
+        display: flex;
+        justify-content: center;
+    }
+    .ctnGestionGeneral{
+        height: fit-content !important;
+    }
+    
+    td.entrada p,
+    td.salida p{
+        display: none;
+    }
+    td.tipoM::after{
+        text-align: center;
+        font-weight: 500;
+        border: 1px solid;
+        border-radius: 1rem;
+        font-size: 0.8rem;
+        padding: 2px 8px;
+    }
+    td.entrada::after{
+        content: "⬆︎";
+        background-color: var(--txtGreenBg);
+        border-color: var(--txtGreenBorder); 
+        color: var(--txtGreen);
+    }
+    td.salida::after{
+        content: "⬇︎";
+        background-color: var(--txtRedBg);
+        border-color: var(--txtRedBorder); 
+        color: var(--txtRed);
+    }
+    td.merma::after{
+        content: "⬇︎";
+        background-color: var(--txtBlueBg);
+        border-color: var(--txtBlueBorder);
+        color: var(--txtBlueBorder);
+    }
+    td.sobrante::after{
+        content: "⬇︎";
+        background-color: var(--txtYellowBg);
+        border-color: var(--txtYellowBorder);
+        color: var(--txtYellowBorder);
+    }
+}
 @media (max-width: 800px){
+    .filtersCTA p, .btnAdd p{
+        display: none;
+    }
+    .ctnAllFilters .btnAdd, .ctnAllFilters .filters{
+        min-width: 4rem !important;
+        width: 4rem !important;
+    }
     .ctnContenido{
         overflow: auto;
     }
+    /* .ctnAllFilters .filters .ctnFilters{
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+    } */
     .nivel.uno{
         flex-wrap: wrap !important;
         height: auto !important;
+        gap: 1rem !important;
     }
     .nivel.uno .item{
-        width: 49.5% !important;
+        width: calc(50% - 0.5rem) !important;
         height: 10rem !important;
+    }
+    
+    .inventario thead tr th:nth-of-type(3), .inventario tbody tr td:nth-of-type(3),
+    .inventario thead tr th:nth-of-type(4), .inventario tbody tr td:nth-of-type(4),
+
+    .historial thead tr th:nth-of-type(2), .historial tbody tr td:nth-of-type(2),
+    .historial thead tr th:nth-of-type(3), .historial tbody tr td:nth-of-type(3),
+
+    .ctnGestion thead tr th:nth-of-type(6), .ctnGestion tbody tr td:nth-of-type(6)
+    {
+        display: none;
+    }
+}
+@media (max-width: 700px){
+}
+@media (max-width: 600px){
+    .ctnGestionGeneral .ctnItems{
+        grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+    }
+    .ctnGestionGeneral .btnItems {
+        height: 9rem;
+    }
+    .ctnGestionGeneral .btnItems p{
+        font-size: 1rem !important;
+        padding: 0 1rem;
     }
 }
 @media (max-width: 500px){
+    .ctnAllFilters .filters .ctnFilters{
+        width: 15rem !important;
+    }
     .ctnContenido{
         border-radius: 0 !important;
     }

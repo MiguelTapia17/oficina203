@@ -229,7 +229,7 @@ export default function GestionarTiposItem() {
 
         <button className="btnAdd" onClick={openCreate}>
           <SVG.UserAdd />
-          Nuevo tipo de ítem
+          <p>Nuevo tipo de ítem</p>
         </button>
       </div>
 

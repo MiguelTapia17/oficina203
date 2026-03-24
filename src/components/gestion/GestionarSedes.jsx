@@ -262,7 +262,7 @@ export default function GestionarSedes() {
 
         <button className="btnAdd" onClick={openCreate}>
           <SVG.LocationAdd />
-          Nueva sede
+          <p>Nueva sede</p>
         </button>
       </div>
 

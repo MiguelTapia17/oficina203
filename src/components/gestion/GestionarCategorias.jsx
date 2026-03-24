@@ -221,7 +221,7 @@ export default function GestionarCategoriasItem() {
 
         <button className="btnAdd" onClick={openCreate}>
           <SVG.Add />
-          Nueva categoría
+          <p>Nueva categoría</p>
         </button>
       </div>
 
