@@ -42,7 +42,8 @@ export default function Inventario() {
   
   const [sedeTransferencia, setSedeTransferencia] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  
+
+  const [editImageFile, setEditImageFile] = useState(null);
   const [selectedItemDetalle, setSelectedItemDetalle] = useState(null);
   
   const MAX_OBS = 150; // limite de campo observaciones
@@ -60,7 +61,42 @@ export default function Inventario() {
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase();
 
+  /*==========================
+     FILTRAR SEDE POR USUARIO
+    ==========================*/
+  const IMG_BASE = "https://comerciald4.sg-host.com/";
 
+  const [selectedImage, setSelectedImage] = useState(null); 
+  // selectedImage = { url: string, name: string }
+
+  const [imgError, setImgError] = useState(false);
+
+  const getImageUrl = (path) => {
+    if (!path) return "";
+    const p = String(path);
+    if (p.startsWith("http")) return p; // por si algún día ya viene completa
+    return `${IMG_BASE}${p.replace(/^\/+/, "")}`; // quita "/" al inicio si hubiera
+  };
+
+  const openImagePopup = (item) => {
+    const url = getImageUrl(item?.imagen); // puede ser ""
+    setImgError(false);
+    setSelectedImage({ url, name: item?.nombre_item ?? "Producto" });
+  };
+
+  const closeImagePopup = () => {
+    setSelectedImage(null);
+  };
+    useEffect(() => {
+    if (!selectedImage) return;
+
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") closeImagePopup();
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [selectedImage]);
 
   /* ================================
      FILTRAR SEDE POR USUARIO
@@ -291,6 +327,16 @@ const handleStockFilterToggle = () => {
         tipo_movimiento: movementType,
         id_actividad: selectActividad ? Number(selectActividad) : null
       };
+      if (editImageFile) {
+        const formData = new FormData();
+        formData.append("file", editImageFile);
+        formData.append("id_item", selectedItem.id_item);
+
+        await fetch("https://TU_API.com/api/items/upload-image", {
+          method: "POST",
+          body: formData,
+        });
+      }
       console.log("Payload enviado al servidor:", payload);  // Esto te permitirá ver todos los datos antes de enviarlos
       const update = await apiPost("items-actualizar", payload);
 
@@ -386,7 +432,6 @@ const handleStockFilterToggle = () => {
           <NewProduct setShowPopup={setShowNewProductPopup} setShowSuccessMessage={setSuccessMessage} />
         )}
       <div className="ctnAllFilters">
-
         <div className='input-field'>
           <input
             type="text"
@@ -490,6 +535,7 @@ const handleStockFilterToggle = () => {
               <th>Nombre</th>
               <th>Categoría</th>
               <th>Descripción</th>
+              <th>Img</th>
               <th>Stock</th>
               {selectedSede && <th>Editar</th>}
             </tr>
@@ -510,6 +556,20 @@ const handleStockFilterToggle = () => {
                   <td>{item.nombre_item}</td>
                   <td>{item.nombre_categoria}</td>
                   <td>{item.descripcion}</td>
+                  <td className="center">
+                    {item.imagen ? (
+                      <button
+                        type="button"
+                        className="imgLink"
+                        onClick={() => openImagePopup(item)}
+                        title="Ver imagen"
+                      >
+                        <SVG.Img className="icon" />
+                      </button>
+                    ) : (
+                      <span className="muted"> - </span>
+                    )}
+                  </td>
                   <td>{stock}</td>
 
                   {selectedSede && (
@@ -644,6 +704,7 @@ const handleStockFilterToggle = () => {
                 <label className="active">Futuro Stock</label>
               </div>
             </div>
+
             {/* OBSERVACIONES */}
             <div className='input-field ctnTextArea'>
               <textarea
@@ -659,7 +720,16 @@ const handleStockFilterToggle = () => {
                 {observaciones.length} / {MAX_OBS}
               </div>
             </div>
-            
+
+            {/* EDITAR IMAGEN */}
+            <div className="input-field">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setEditImageFile(e.target.files[0])}
+              />
+              <label className="active">Actualizar imagen</label>
+            </div>
             <div className="disclaimer">
               {errorMsg && <p className="error"><b> {errorMsg}</b></p>}
               {successMsg && <p className="success">{successMsg}</p>}
@@ -717,7 +787,6 @@ const handleStockFilterToggle = () => {
                   <label>Descripción</label>
                 </div>
               </div>
-
               {/* STOCK + SEDE */}
               <div className="double__form">
 
@@ -739,6 +808,34 @@ const handleStockFilterToggle = () => {
                 </div>
 
 
+              </div>
+              <div className="double__form">
+                  <div className="input-field">
+                    <input value={selectedItemDetalle.peresible || "No"} readOnly/>
+                    <label>Peresible</label>
+                  </div>
+                  <div className="input-field">
+                    <input value={selectedItemDetalle.fecha_caducidad || "-"} readOnly/>
+                    <label>Fecha de Caducidad</label>
+                  </div>
+              </div>
+              <div className="input-field ctnImgReferencial">
+                <input
+                  type="text"
+                  readOnly
+                  value={
+                    selectedItemDetalle?.imagen
+                      ? selectedItemDetalle.nombre_item
+                      : "No tiene imagen referencial"
+                  }
+                  onClick={() => {
+                    if (selectedItemDetalle?.imagen) {
+                      openImagePopup(selectedItemDetalle);
+                    }
+                  }}
+                  className={selectedItemDetalle?.imagen ? "clickable" : "muted"}
+                />
+                <label className="active">Imagen referencial</label>
               </div>
 
               {/* SOLO MOSTRAR STOCK POR SEDE SI ES ALL */}
@@ -771,6 +868,38 @@ const handleStockFilterToggle = () => {
               className="closeForm"
               onClick={() => setSelectedItemDetalle(null)}
             >
+              <SVG.Close className="icon" />
+            </button>
+          </div>
+        </div>
+      )}
+      {selectedImage && (
+        <div className="popup" onClick={closeImagePopup}>
+          <div
+            className="popup-content imagePopup"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3>Imagen: {selectedImage.name}</h3>
+
+            <div className="imagePreview">
+              {!selectedImage.url ? (
+                <p style={{ margin: 0 }}>No tiene imagen.</p>
+              ) : !imgError ? (
+                <img
+                  src={selectedImage.url}
+                  alt={`Imagen de ${selectedImage.name}`}
+                  onError={() => setImgError(true)}
+                />
+              ) : (
+                <p style={{ margin: 0 }}>
+                  No se pudo cargar la imagen.
+                  <br />
+                  <small>{selectedImage.url}</small>
+                </p>
+              )}
+            </div>
+
+            <button className="closeForm" onClick={closeImagePopup}>
               <SVG.Close className="icon" />
             </button>
           </div>

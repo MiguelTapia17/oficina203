@@ -5,6 +5,7 @@ import { useGlobalData } from "../context/GlobalDataContext";
 import { SVG } from "../assets/imgSvg";
 import "../styles/inventario.css";
 import NewProduct from "./NewProduct"; // Importamos el componente
+import Toast from "../components/Toast";
 
 export default function Inventario() {
   const [showNewProductPopup, setShowNewProductPopup] = useState(false); // Controlamos la visibilidad del popup
@@ -28,6 +29,7 @@ export default function Inventario() {
   const [selectedSede, setSelectedSede] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [toast, setToast] = useState(null);
   
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -46,6 +48,7 @@ export default function Inventario() {
   const MAX_OBS = 150; // limite de campo observaciones
   const [observaciones, setObservaciones] = useState("");
   
+  
   //FILTROS
   const [showFilters, setShowFilters] = useState(false);
 
@@ -57,7 +60,42 @@ export default function Inventario() {
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase();
 
+  /*==========================
+     FILTRAR SEDE POR USUARIO
+    ==========================*/
+  const IMG_BASE = "https://comerciald4.sg-host.com/";
 
+  const [selectedImage, setSelectedImage] = useState(null); 
+  // selectedImage = { url: string, name: string }
+
+  const [imgError, setImgError] = useState(false);
+
+  const getImageUrl = (path) => {
+    if (!path) return "";
+    const p = String(path);
+    if (p.startsWith("http")) return p; // por si algún día ya viene completa
+    return `${IMG_BASE}${p.replace(/^\/+/, "")}`; // quita "/" al inicio si hubiera
+  };
+
+  const openImagePopup = (item) => {
+    const url = getImageUrl(item?.imagen); // puede ser ""
+    setImgError(false);
+    setSelectedImage({ url, name: item?.nombre_item ?? "Producto" });
+  };
+
+  const closeImagePopup = () => {
+    setSelectedImage(null);
+  };
+    useEffect(() => {
+    if (!selectedImage) return;
+
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") closeImagePopup();
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [selectedImage]);
 
   /* ================================
      FILTRAR SEDE POR USUARIO
@@ -283,7 +321,8 @@ const handleStockFilterToggle = () => {
           : "",
         observaciones: observaciones,
         activo: Number(item.activo ?? 1),
-        id_admin: Number(item.id_admin),
+        // id_admin: Number(item.id_admin),
+        id_admin: Number(user.id_admin),
         tipo_movimiento: movementType,
         id_actividad: selectActividad ? Number(selectActividad) : null
       };
@@ -318,23 +357,20 @@ const handleStockFilterToggle = () => {
           }
         ];
       });
-      const detalleMovimiento = `
-        Movimiento: ${movementType}
-        Cantidad: ${cantidad}
-        Nuevo stock: ${nuevoStock}
-        `;
+      setToast({
+        type: "success",
+        title: "Actualización correcta",
+        message: `Stock actualizado correctamente`
+      });
 
-        setSuccessMsg(`Actualización exitosa. ${detalleMovimiento}`);
-        setErrorMsg("");
-
-        setTimeout(() => {
-          setSuccessMsg("");
-        }, 5000);
-      // setShowEditPopup(false);
       setTimeout(() => {
-        setShowEditPopup(false);
-        setSelectedItem(null);
-      }, 5000);
+        setToast(null);
+      }, 4000);
+      
+      setShowEditPopup(false);
+      setSelectedItem(null);
+      // setTimeout(() => {
+      // }, 5000);
 
     } catch (error) {
       console.error(error);
@@ -370,20 +406,21 @@ const handleStockFilterToggle = () => {
     if (["salida", "merma", "transferencia"].includes(movementType)) {
       return currentStock;
     }
+    
     return undefined;
   })();
+  
   return (
     <div className="inventario">
       <h2>Inventario</h2>
-          {/* Mostrar mensaje de éxito */}
-          {successMessage && <div className="successMessage">{successMessage}</div>}
+        {/* Mostrar mensaje de éxito */}
+        {successMessage && <div className="successMessage">{successMessage}</div>}
 
-          {/* Condicionalmente mostrar el popup */}
-          {showNewProductPopup && (
-            <NewProduct setShowPopup={setShowNewProductPopup} setShowSuccessMessage={setSuccessMessage} />
-          )}
+        {/* Condicionalmente mostrar el popup */}
+        {showNewProductPopup && (
+          <NewProduct setShowPopup={setShowNewProductPopup} setShowSuccessMessage={setSuccessMessage} />
+        )}
       <div className="ctnAllFilters">
-
         <div className='input-field'>
           <input
             type="text"
@@ -473,7 +510,8 @@ const handleStockFilterToggle = () => {
         
         {/* Botón para agregar un nuevo producto */}
         <div className="btnAdd" onClick={handleAddNewProduct}>
-          <SVG.BoxAdd className="icon" /> Nuevo Producto
+          <SVG.BoxAdd className="icon" /> 
+          <p>Nuevo Producto</p>
         </div>
 
       </div>
@@ -486,6 +524,7 @@ const handleStockFilterToggle = () => {
               <th>Nombre</th>
               <th>Categoría</th>
               <th>Descripción</th>
+              <th>Img</th>
               <th>Stock</th>
               {selectedSede && <th>Editar</th>}
             </tr>
@@ -506,6 +545,20 @@ const handleStockFilterToggle = () => {
                   <td>{item.nombre_item}</td>
                   <td>{item.nombre_categoria}</td>
                   <td>{item.descripcion}</td>
+                  <td className="center">
+                    {item.imagen ? (
+                      <button
+                        type="button"
+                        className="imgLink"
+                        onClick={() => openImagePopup(item)}
+                        title="Ver imagen"
+                      >
+                        <SVG.Img className="icon" />
+                      </button>
+                    ) : (
+                      <span className="muted"> - </span>
+                    )}
+                  </td>
                   <td>{stock}</td>
 
                   {selectedSede && (
@@ -624,13 +677,14 @@ const handleStockFilterToggle = () => {
                 <label className="active">Stock actual</label>
               </div>
               <div className='input-field'>
-                <input type="number" min="1" step="1" value={editStock} placeholder="" required 
-                  max={
-                    ["salida", "merma", "transferencia"].includes(movementType)
-                      ? currentStock
-                      : undefined
-                  }
-                  onChange={(e) => setEditStock(e.target.value)}
+                <input type="number" min="1" step="1" value={editStock} max={maxCantidad}
+                  onChange={(e) => {
+                    let value = Number(e.target.value);
+                    if (maxCantidad && value > maxCantidad) {
+                      value = maxCantidad;
+                    }
+                    setEditStock(value);
+                  }}
                 />
                 <label className="active">{cantidadLabel}</label>
               </div>
@@ -712,7 +766,6 @@ const handleStockFilterToggle = () => {
                   <label>Descripción</label>
                 </div>
               </div>
-
               {/* STOCK + SEDE */}
               <div className="double__form">
 
@@ -734,6 +787,34 @@ const handleStockFilterToggle = () => {
                 </div>
 
 
+              </div>
+              <div className="double__form">
+                  <div className="input-field">
+                    <input value={selectedItemDetalle.peresible || "No"} readOnly/>
+                    <label>Peresible</label>
+                  </div>
+                  <div className="input-field">
+                    <input value={selectedItemDetalle.fecha_caducidad || "-"} readOnly/>
+                    <label>Fecha de Caducidad</label>
+                  </div>
+              </div>
+              <div className="input-field ctnImgReferencial">
+                <input
+                  type="text"
+                  readOnly
+                  value={
+                    selectedItemDetalle?.imagen
+                      ? selectedItemDetalle.nombre_item
+                      : "No tiene imagen referencial"
+                  }
+                  onClick={() => {
+                    if (selectedItemDetalle?.imagen) {
+                      openImagePopup(selectedItemDetalle);
+                    }
+                  }}
+                  className={selectedItemDetalle?.imagen ? "clickable" : "muted"}
+                />
+                <label className="active">Imagen referencial</label>
               </div>
 
               {/* SOLO MOSTRAR STOCK POR SEDE SI ES ALL */}
@@ -771,7 +852,46 @@ const handleStockFilterToggle = () => {
           </div>
         </div>
       )}
+      {selectedImage && (
+        <div className="popup" onClick={closeImagePopup}>
+          <div
+            className="popup-content imagePopup"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3>Imagen: {selectedImage.name}</h3>
 
+            <div className="imagePreview">
+              {!selectedImage.url ? (
+                <p style={{ margin: 0 }}>No tiene imagen.</p>
+              ) : !imgError ? (
+                <img
+                  src={selectedImage.url}
+                  alt={`Imagen de ${selectedImage.name}`}
+                  onError={() => setImgError(true)}
+                />
+              ) : (
+                <p style={{ margin: 0 }}>
+                  No se pudo cargar la imagen.
+                  <br />
+                  <small>{selectedImage.url}</small>
+                </p>
+              )}
+            </div>
+
+            <button className="closeForm" onClick={closeImagePopup}>
+              <SVG.Close className="icon" />
+            </button>
+          </div>
+        </div>
+      )}
+      {toast && (
+        <Toast
+          type={toast.type}
+          title={toast.title}
+          message={toast.message}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }

@@ -12,7 +12,40 @@ export const GlobalDataProvider = ({ children }) => {
   const [tipos, setTipos] = useState([]); // Nuevo estado para tipos
   const [unidades, setUnidades] = useState([]); // Nuevo estado para unidades
   const [loading, setLoading] = useState(true);
+  const uploadItemImage = async (file, id_item) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("id_item", id_item);
 
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/items/upload-image`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Error subiendo imagen");
+
+      const data = await res.json(); // 👈 importante
+
+      // 🔥 ACTUALIZAR SOLO ESE ITEM (SIN REFETCH GLOBAL)
+      setItems(prev =>
+        prev.map(item =>
+          Number(item.id_item) === Number(id_item)
+            ? {
+                ...item,
+                imagen: data?.imagen || item.imagen // usa lo que devuelva el backend
+              }
+            : item
+        )
+      );
+
+      return true;
+
+    } catch (error) {
+      console.error("Error en uploadItemImage", error);
+      return false;
+    }
+  };
   const fetchGlobalData = async () => {
     try {
       const [
@@ -123,7 +156,8 @@ export const GlobalDataProvider = ({ children }) => {
         unidades,
         loading,
         refreshGlobalData: fetchGlobalData,
-        // Nuevos maps
+        // Nuevos maps}
+        uploadItemImage,
         sedesMap,
         actividadesMap,
         usuariosMap,

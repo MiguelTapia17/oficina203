@@ -79,27 +79,123 @@ export default function Login() {
   return (
     <div className="ctnLogin">
       <div className="letrasBG">
-        <div className="scrollWrap">
-          <InfiniteText text="Cayetano" />
-          <InfiniteText text="Desarrollo" bold />
-          <InfiniteText text="Cayetano" />
-          <InfiniteText text="Desarrollo" bold />
-          <InfiniteText text="Cayetano" />
-          <InfiniteText text="Desarrollo" bold />
-          <InfiniteText text="Cayetano" />
-          <InfiniteText text="Desarrollo" bold />
-          <InfiniteText text="Cayetano" />
-          <InfiniteText text="Desarrollo" bold />
-          <InfiniteText text="Cayetano" />
-          <InfiniteText text="Desarrollo" bold />
-          <InfiniteText text="Cayetano" />
-          <InfiniteText text="Desarrollo" bold />
-          <InfiniteText text="Cayetano" />
-          <InfiniteText text="Desarrollo" bold />
-          <InfiniteText text="Cayetano" />
-          <InfiniteText text="Desarrollo" bold />
-          <InfiniteText text="Cayetano" />
-        </div>
+          <div className="scrollWrap">
+              <div className="fila txtMedium">
+                  <div className='track'>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                  </div>
+              </div>
+              <div className="fila txtBold">
+                  <div className='track'>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                  </div>
+              </div>
+              <div className="fila txtMedium">
+                  <div className='track'>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                  </div>
+              </div>
+              <div className="fila txtBold">
+                  <div className='track'>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                  </div>
+              </div>
+              <div className="fila txtMedium">
+                  <div className='track'>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                  </div>
+              </div>
+              <div className="fila txtBold">
+                  <div className='track'>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                  </div>
+              </div>
+              <div className="fila txtMedium">
+                  <div className='track'>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                  </div>
+              </div>
+              <div className="fila txtBold">
+                  <div className='track'>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                  </div>
+              </div>
+              <div className="fila txtMedium">
+                  <div className='track'>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                      <span>Cayetano</span>
+                  </div>
+              </div>
+              <div className="fila txtBold">
+                  <div className='track'>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                      <span>Desarrollo</span>
+                  </div>
+              </div>
+          </div>
       </div>
       <form className="login" onSubmit={handleLogin}>
         {/* <h2>Login</h2> */}

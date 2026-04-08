@@ -40,6 +40,7 @@ import { ReactComponent as Filter } from "./svg/filter.svg";
 import { ReactComponent as Edit } from "./svg/edit.svg";
 import { ReactComponent as Add } from "./svg/add.svg";
 import { ReactComponent as Escudo } from "./svg/escudo.svg";
+import { ReactComponent as Img } from "./svg/img.svg";
 
 import LogoBlanco from "./images/logoBlanco.webp";
 import LogoNegro from "./images/logoNegro.webp";
@@ -83,7 +84,8 @@ export const SVG = {
   Category,
   Filter,
   Edit,
-  Escudo
+  Escudo,
+  Img
 };
 
 export const IMAGES = {

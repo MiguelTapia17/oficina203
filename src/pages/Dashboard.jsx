@@ -39,26 +39,23 @@ export default function Dashboard() {
         <Contenido activeView={activeView} loading={loading}/>
         
         <label className="hamburger">
-  <input 
-    type="checkbox"
-    onChange={(e) => setMenuOpen(e.target.checked)}
-  />
-  <svg viewBox="0 0 32 32">
-    <path
-      className="line line-top-bottom"
-      d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22"
-    />
-    <path className="line" d="M7 16 27 16" />
-  </svg>
-</label>
+          <input 
+            type="checkbox"
+            onChange={(e) => setMenuOpen(e.target.checked)}
+          />
+          <svg viewBox="0 0 32 32">
+            <path
+              className="line line-top-bottom"
+              d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22"
+            />
+            <path className="line" d="M7 16 27 16" />
+          </svg>
+        </label>
       </div>
       
       {/* <SVG.Escudo/> */}
       <div className="logo escudoOndas">
-        <svg
-          viewBox="-120 -120 770 980"
-          preserveAspectRatio="xMidYMid meet"
-        >
+        <svg viewBox="-120 -120 770 980" preserveAspectRatio="xMidYMid meet">
           <defs>
             <path
               id="escudo"
@@ -67,15 +64,9 @@ export default function Dashboard() {
           </defs>
           <g className="ondas">
             {[...Array(16)].map((_, i) => (
-              <use
-                key={i}
-                href="#escudo"
-                className="ondaEstatica"
-                style={{ transform: `scale(${1 + i * 0.15})` }}
-              />
+              <use key={i} href="#escudo" className="ondaEstatica" style={{ transform: `scale(${1 + i * 0.15})` }} />
             ))}
           </g>
-
           <use href="#escudo" className="escudoBase" />
         </svg>
       </div>
