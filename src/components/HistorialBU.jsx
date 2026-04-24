@@ -15,7 +15,7 @@ export default function Historial() {
   const [selectedMovimiento, setSelectedMovimiento] = useState(null); // Estado para el popup
 
   // Filtros adicionales
-  
+  const [sedeFilter, setSedeFilter] = useState("");
   const [usuarioFilter, setUsuarioFilter] = useState(""); // Filtro de usuario
   const [fechaInicio, setFechaInicio] = useState(""); // Filtro de fecha inicio
   const [fechaFin, setFechaFin] = useState(""); // Filtro de fecha fin
@@ -68,53 +68,55 @@ export default function Historial() {
 
   // Filtrado de elementos (incluyendo por usuario y rango de fechas)
   const filteredItems = useMemo(() => {
-  const q = normalize(search);
+    const q = normalize(search);
 
-  return enriched.filter((m) => {
+    return enriched.filter((m) => {
 
-    // const matchesSede =
-    //   userRole === "superadmin"
-    //     ? true
-    //     : Number(m.id_sede) === Number(userSede);
-    let matchesPermiso = true;
-    if (userRole === "admin") {
-      matchesPermiso = Number(m.id_sede) === Number(userSede);
-    }
-    if (userRole === "asesor") {
-      matchesPermiso = Number(m.id_admin) === Number(userId);
-    }
+      let matchesPermiso = true;
+      if (userRole === "admin") {
+        matchesPermiso = Number(m.id_sede) === Number(userSede);
+      }
+      if (userRole === "asesor") {
+        matchesPermiso = Number(m.id_admin) === Number(userId);
+      }
 
-    const matchesTipo = tipoFilter ? m.tipo_movimiento === tipoFilter : true;
+      const matchesTipo = tipoFilter ? m.tipo_movimiento === tipoFilter : true;
 
-    const matchesUsuario = usuarioFilter
-      ? m.nombre_admin === usuarioFilter
-      : true;
+      const matchesUsuario = usuarioFilter
+        ? m.nombre_admin === usuarioFilter
+        : true;
 
-    const matchesFecha =
-      (!fechaInicio || new Date(m.fecha_movimiento) >= new Date(fechaInicio)) &&
-      (!fechaFin || new Date(m.fecha_movimiento) <= new Date(fechaFin));
+      // 🔥 NUEVO FILTRO SEDE
+      const matchesSede = sedeFilter
+        ? Number(m.id_sede) === Number(sedeFilter)
+        : true;
 
-    if (!q) return matchesPermiso && matchesTipo && matchesUsuario && matchesFecha;
+      const matchesFecha =
+        (!fechaInicio || new Date(m.fecha_movimiento) >= new Date(fechaInicio)) &&
+        (!fechaFin || new Date(m.fecha_movimiento) <= new Date(fechaFin));
 
-    const fechaSolo = String(m.fecha_movimiento ?? "").split(" ")[0].split("T")[0];
+      if (!q) return matchesPermiso && matchesTipo && matchesUsuario && matchesFecha && matchesSede;
 
-    const rowString = normalize(`
-      ${m.id_movimiento}
-      ${m.nombre_actividad}
-      ${m.nombre_admin}
-      ${m.nombre_item}
-      ${fechaSolo}
-    `);
+      const fechaSolo = String(m.fecha_movimiento ?? "").split(" ")[0].split("T")[0];
 
-    return (
-      matchesPermiso &&
-      matchesTipo &&
-      matchesUsuario &&
-      matchesFecha &&
-      rowString.includes(q)
-    );
-  });
-}, [enriched, search, tipoFilter, usuarioFilter, fechaInicio, fechaFin, userRole, userSede]);
+      const rowString = normalize(`
+        ${m.id_movimiento}
+        ${m.nombre_actividad}
+        ${m.nombre_admin}
+        ${m.nombre_item}
+        ${fechaSolo}
+      `);
+
+      return (
+        matchesPermiso &&
+        matchesTipo &&
+        matchesUsuario &&
+        matchesFecha &&
+        matchesSede &&
+        rowString.includes(q)
+      );
+    });
+  }, [enriched, search, tipoFilter, usuarioFilter, fechaInicio, fechaFin, sedeFilter, userRole, userSede]);
 
   // Si los datos globales están cargando, mostramos el loader
   if (globalLoading) return <Loader />;
@@ -202,6 +204,20 @@ export default function Historial() {
                 </select>
                 <label>Usuario</label>
               </div>
+              {/* Filtro por Sede */}
+              {userRole === "superadmin" && (
+                <div className="input-field">
+                  <select value={sedeFilter} onChange={(e) => setSedeFilter(e.target.value)}>
+                    <option value="">Todas las sedes</option>
+                    {sedes.map((s) => (
+                      <option key={s.id_sede} value={s.id_sede}>
+                        {s.nombre_sede}
+                      </option>
+                    ))}
+                  </select>
+                  <label>Sede</label>
+                </div>
+              )}
               {/* Filtro de fecha */}
               <div className="input-field">
                 <input
@@ -231,6 +247,7 @@ export default function Historial() {
             <tr>
               <th>N°</th>
               <th>Admin</th>
+              <th>Sede</th>
               <th>Actividad</th>
               <th>Ítem</th>
               <th>Tipo</th>
@@ -243,6 +260,7 @@ export default function Historial() {
               <tr key={m.id_movimiento}>
                 <td onClick={() => handleMovimientoClick(m)} className="clickable">{m.id_movimiento}</td>
                 <td>{m.nombre_admin}</td>
+                <td>{getSedeNombre(m.id_sede)}</td>
                 <td>{m.nombre_actividad}</td>
                 <td>{m.nombre_item}</td>
                 <td className={`tipoM ${String(m.tipo_movimiento || "").toLowerCase()}`}>

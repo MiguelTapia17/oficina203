@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, useMemo } from "react";
-import { apiGet } from "../services/api";
+import { apiGet, apiUpload } from "../services/api";
 
 const GlobalDataContext = createContext();
 
@@ -12,7 +12,19 @@ export const GlobalDataProvider = ({ children }) => {
   const [tipos, setTipos] = useState([]); // Nuevo estado para tipos
   const [unidades, setUnidades] = useState([]); // Nuevo estado para unidades
   const [loading, setLoading] = useState(true);
+  const uploadItemImage = async (file, id_item) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("id_item", id_item);
 
+    try {
+      const data = await apiUpload("items/upload-image", formData);
+      return data.ok;
+    } catch (error) {
+      console.error("Error subiendo imagen:", error);
+      return false;
+    }
+  };
   const fetchGlobalData = async () => {
     try {
       const [
@@ -123,7 +135,8 @@ export const GlobalDataProvider = ({ children }) => {
         unidades,
         loading,
         refreshGlobalData: fetchGlobalData,
-        // Nuevos maps
+        // Nuevos maps}
+        uploadItemImage,
         sedesMap,
         actividadesMap,
         usuariosMap,

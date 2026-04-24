@@ -136,7 +136,6 @@ input.cantidad{
 
 .popup-content h3 {
   text-align: center;
-  padding: 5px 0 15px;
 }
 
 .popup-content form {
@@ -205,7 +204,11 @@ input.cantidad{
   display: block;
   margin: 0 auto;
 }
-
+.imagePopup .imagePreview{
+  border: 1px solid var(--gray-two);
+  border-radius: 1rem;
+  overflow: hidden;
+}
 .muted{
   opacity: 0.6;
 }
@@ -213,4 +216,10 @@ input.cantidad{
   height: auto;
   width: 100%;
   object-fit: cover;
+}
+.updateImageSection{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 1rem;
 }

@@ -12,13 +12,15 @@ export default function NewProduct({ setShowPopup, setShowSuccessMessage }) {
   const [unidad, setUnidad] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [estado, setEstado] = useState("Disponible");
-  const [peresible, setPeresible] = useState("Sí");
+  // const [peresible, setPeresible] = useState("Sí");
+  const [peresible, setPeresible] = useState("si");
   const [fechaCaducidad, setFechaCaducidad] = useState("");
   const [cantidad, setCantidad] = useState("0.00");
   const [stock_minimo, setStockMinimo] = useState("0.00");
   const [errorMsg, setErrorMsg] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  const { categories, tipos, unidades } = useGlobalData(); 
+  const { categories, tipos, unidades, uploadItemImage, refreshGlobalData } = useGlobalData();
+  // const { categories, tipos, unidades } = useGlobalData();
 
   const handleSaveProduct = async () => {
     if (isSaving) return;
@@ -41,7 +43,6 @@ export default function NewProduct({ setShowPopup, setShowSuccessMessage }) {
     setIsSaving(true);
 
     try {
-      // 1️⃣ CREAR PRODUCTO
       const payload = {
         nombre_item: nombreItem,
         id_categoria: categoria,
@@ -63,20 +64,19 @@ export default function NewProduct({ setShowPopup, setShowSuccessMessage }) {
 
       const newItemId = response.data?.id_item;
 
-      // 2️⃣ SUBIR IMAGEN (SI EXISTE)
       if (imageFile && newItemId) {
-        const formData = new FormData();
-        formData.append("file", imageFile);
-        formData.append("id_item", newItemId);
-
-        await fetch("https://TU_API.com/api/items/upload-image", {
-          method: "POST",
-          body: formData,
-        });
+        const ok = await uploadItemImage(imageFile, newItemId);
+        if (!ok) throw new Error("Error subiendo imagen");
       }
 
-      setShowSuccessMessage("Producto creado correctamente.");
-      setShowPopup(false);
+      // 🔥 refresca
+      await refreshGlobalData();
+
+      // 🔥 pequeño delay para evitar glitch visual
+      setTimeout(() => {
+        setShowSuccessMessage("Producto creado correctamente.");
+        setShowPopup(false);
+      }, 300);
 
     } catch (error) {
       console.error(error);

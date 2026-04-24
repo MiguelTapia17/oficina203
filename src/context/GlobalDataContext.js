@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, useMemo } from "react";
-import { apiGet } from "../services/api";
+import { apiGet, apiUpload } from "../services/api";
 
 const GlobalDataContext = createContext();
 
@@ -13,36 +13,15 @@ export const GlobalDataProvider = ({ children }) => {
   const [unidades, setUnidades] = useState([]); // Nuevo estado para unidades
   const [loading, setLoading] = useState(true);
   const uploadItemImage = async (file, id_item) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("id_item", id_item);
+
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("id_item", id_item);
-
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/items/upload-image`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) throw new Error("Error subiendo imagen");
-
-      const data = await res.json(); // 👈 importante
-
-      // 🔥 ACTUALIZAR SOLO ESE ITEM (SIN REFETCH GLOBAL)
-      setItems(prev =>
-        prev.map(item =>
-          Number(item.id_item) === Number(id_item)
-            ? {
-                ...item,
-                imagen: data?.imagen || item.imagen // usa lo que devuelva el backend
-              }
-            : item
-        )
-      );
-
-      return true;
-
+      const data = await apiUpload("items/upload-image", formData);
+      return data.ok;
     } catch (error) {
-      console.error("Error en uploadItemImage", error);
+      console.error("Error subiendo imagen:", error);
       return false;
     }
   };

@@ -4,13 +4,14 @@ import { useAuth } from "../context/AuthContext";
 import { useGlobalData } from "../context/GlobalDataContext";
 import { SVG } from "../assets/imgSvg";
 import "../styles/inventario.css";
+
 import NewProduct from "./NewProduct"; // Importamos el componente
 import Toast from "../components/Toast";
 
 export default function Inventario() {
   const [showNewProductPopup, setShowNewProductPopup] = useState(false); // Controlamos la visibilidad del popup
   const [successMessage, setSuccessMessage] = useState("");
-
+  
   // Mostrar el popup
   const handleAddNewProduct = () => {
     setShowNewProductPopup(true);
@@ -20,9 +21,10 @@ export default function Inventario() {
   const handleClosePopup = () => {
     setShowNewProductPopup(false);
   };
-    
-  const { items, sedes, categories, actividades } = useGlobalData();
+  const [newImageFile, setNewImageFile] = useState(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
+  const { items, sedes, categories, actividades, uploadItemImage, refreshGlobalData } = useGlobalData();
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [categoria, setCategoria] = useState("");
@@ -43,7 +45,6 @@ export default function Inventario() {
   const [sedeTransferencia, setSedeTransferencia] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
-  const [editImageFile, setEditImageFile] = useState(null);
   const [selectedItemDetalle, setSelectedItemDetalle] = useState(null);
   
   const MAX_OBS = 150; // limite de campo observaciones
@@ -55,6 +56,54 @@ export default function Inventario() {
 
 
   const [stockFilter, setStockFilter] = useState("all"); 
+
+  /*==========================
+     Editar imagen
+    ==========================*/
+  const handleUpdateImage = async () => {
+    if (!newImageFile || !selectedImage) return;
+
+    try {
+      setIsUploadingImage(true);
+
+      const ok = await uploadItemImage(
+        newImageFile,
+        selectedImage.id_item
+      );
+
+      if (!ok) throw new Error("Error subiendo imagen");
+
+      // 🔥 REFRESCA DATA GLOBAL
+      await refreshGlobalData();
+
+      // 🔥 FORZAR RECARGA DE IMAGEN (evita cache)
+      setSelectedImage(prev => ({
+        ...prev,
+        url: getImageUrl(prev.url)
+      }));
+
+      setToast({
+        type: "success",
+        title: "Imagen actualizada",
+        message: "Se actualizó correctamente"
+      });
+
+      setNewImageFile(null);
+
+      // OPCIONAL: cerrar popup
+      closeImagePopup();
+
+    } catch (error) {
+      console.error(error);
+      setToast({
+        type: "error",
+        title: "Error",
+        message: "No se pudo subir la imagen"
+      });
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
   const normalize = (str) =>
     String(str ?? "")
       .normalize("NFD")
@@ -74,16 +123,22 @@ export default function Inventario() {
   const getImageUrl = (path) => {
     if (!path) return "";
     const p = String(path);
-    if (p.startsWith("http")) return p; // por si algún día ya viene completa
-    return `${IMG_BASE}${p.replace(/^\/+/, "")}`; // quita "/" al inicio si hubiera
+    const base = p.startsWith("http") ? p : `${IMG_BASE}${p.replace(/^\/+/, "")}`;
+
+    // 🔥 evitar cache
+    return `${base}?t=${Date.now()}`;
   };
 
   const openImagePopup = (item) => {
     const url = getImageUrl(item?.imagen); // puede ser ""
     setImgError(false);
-    setSelectedImage({ url, name: item?.nombre_item ?? "Producto" });
+    setSelectedImage({
+      url,
+      name: item?.nombre_item ?? "Producto",
+      id_item: item?.id_item
+    });
   };
-
+  
   const closeImagePopup = () => {
     setSelectedImage(null);
   };
@@ -327,16 +382,6 @@ const handleStockFilterToggle = () => {
         tipo_movimiento: movementType,
         id_actividad: selectActividad ? Number(selectActividad) : null
       };
-      if (editImageFile) {
-        const formData = new FormData();
-        formData.append("file", editImageFile);
-        formData.append("id_item", selectedItem.id_item);
-
-        await fetch("https://TU_API.com/api/items/upload-image", {
-          method: "POST",
-          body: formData,
-        });
-      }
       console.log("Payload enviado al servidor:", payload);  // Esto te permitirá ver todos los datos antes de enviarlos
       const update = await apiPost("items-actualizar", payload);
 
@@ -600,8 +645,7 @@ const handleStockFilterToggle = () => {
                     ? sedes.find(s => Number(s.id_sede) === Number(selectedSede))?.nombre_sede || ""
                     : "Todas las sedes"
                 }
-                readOnly
-                disabled
+                readOnly disabled
               />
               <label className="active">Sede</label>
             </div>
@@ -633,6 +677,21 @@ const handleStockFilterToggle = () => {
               </select>
               <label>Tipo de movimiento</label>
             </div>
+            {/* ENTRADA */}
+            {movementType === "entrada" && (
+              <div className='input-field'>
+                <select value={selectActividad} 
+                        onChange={(e) => setSelectActividad(e.target.value)} required >
+                  <option value=""></option>
+                  {actividades.map((actividades) => (
+                      <option key={actividades.id_actividad} value={actividades.id_actividad}>
+                        {actividades.nombre_actividad}
+                      </option>
+                    ))}
+                </select>
+                <label>Lote</label>
+              </div>
+            )}
             {/* ACTIVIDAD */}
             {movementType === "salida" && (
               <div className='input-field'>
@@ -721,15 +780,6 @@ const handleStockFilterToggle = () => {
               </div>
             </div>
 
-            {/* EDITAR IMAGEN */}
-            <div className="input-field">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setEditImageFile(e.target.files[0])}
-              />
-              <label className="active">Actualizar imagen</label>
-            </div>
             <div className="disclaimer">
               {errorMsg && <p className="error"><b> {errorMsg}</b></p>}
               {successMsg && <p className="success">{successMsg}</p>}
@@ -898,7 +948,15 @@ const handleStockFilterToggle = () => {
                 </p>
               )}
             </div>
-
+            <div className="updateImageSection">
+              <div className="input-field">
+                <input type="file" accept="image/*" onChange={(e) => setNewImageFile(e.target.files[0])}/>
+                <label className="active">Nueva imagen</label>
+              </div>
+              <button className="saveEdit" onClick={handleUpdateImage} disabled={isUploadingImage}>
+                {isUploadingImage ? "Subiendo..." : "Actualizar imagen"}
+              </button>
+            </div>
             <button className="closeForm" onClick={closeImagePopup}>
               <SVG.Close className="icon" />
             </button>
